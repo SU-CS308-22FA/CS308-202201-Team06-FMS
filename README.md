@@ -1,2 +1,8 @@
-# CS308-202201-Team06-FMS
-Financial Management System - Team 06
+# Team 06 - Financial Management System
+Team Members:
+- Özgür Yılmaz Beker
+- Ege Bağırsakçı
+- Kaan Süleyman Karabacakoğlu
+- Yavuz Mehmet Oğuz Şimşek
+
+Supervisor: Hasan Kemik
