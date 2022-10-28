@@ -6,16 +6,19 @@
 # Includes the tables to be used in backend.
 
 
-import datetime as dt
-from operator import index
-
+import datetime as _dt
+from dateutil import tz as _tz
 import sqlalchemy as _sql
 import sqlalchemy.orm as _orm
 import passlib.hash as _hash
-
 import database as _database
 
-class TeamAcc(_database.Base):
+# Define timezones
+from_zone = _tz.gettz('UTC')
+to_zone = _tz.gettz('Turkey')
+
+
+class Team(_database.Base):
     
     # Name
     __tablename__ = "teams"
@@ -30,6 +33,10 @@ class TeamAcc(_database.Base):
     is_overlimit = _sql.Column(_sql.Boolean)                          # Is over the budget
     pass_hash = _sql.Column(_sql.String)                              # Password hash
 
+    
+    #Establish relationship
+    owner  = _orm.relationship("BudgetItem", back_populates = "teams")
+    
     def verify_password(self, password: str):
         return _hash.bcrypt.verify(password, self.pass_hash)
 
@@ -44,6 +51,25 @@ class Admin(_database.Base):
     email = _sql.Column(_sql.String, unique = True, index = True)     # E-mail for admin
     ssn = _sql.Column(_sql.Integer, Unique = True, index = True)      # SSN (SGK) No.
     pass_hash = _sql.Column(_sql.String)
+    first_name = _sql.Column(_sql.String, index = True)
+    last_name = _sql.Column(_sql.String, index = True)
+    date_registered = _sql.Column(_sql.DateTime, default = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone))
 
     def verify_password(self, password: str):
         return _hash.bcrypt.verify(password, self.pass_hash)
+
+class BudgetItem(_database.Base):
+
+    #Name
+    __tablename__ = "budgetitems"
+
+    # Cols
+    team_name = _sql.Column(_sql.String, _sql.ForeignKey("teams.name"), primary_key = True)
+    item_name = _sql.Column(_sql.String, primary_key = True, index = True)
+    amount = _sql.Column(_sql.Float)
+
+    # Establish relation with TeamAcc
+    teams = _orm.relationship("Team", back_populates = "owner")
+
+    # TODO : Add file verification
+
