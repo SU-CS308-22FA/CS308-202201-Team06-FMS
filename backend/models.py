@@ -40,7 +40,6 @@ class Team(_database.Base):
     def verify_password(self, password: str):
         return _hash.bcrypt.verify(password, self.pass_hash)
 
-
 class Admin(_database.Base):
 
     # Name
@@ -49,7 +48,6 @@ class Admin(_database.Base):
     # Cols
     id = _sql.Column(_sql.Integer, primary_key = True, index = True)                                                             # Unique admin id - pkey
     email = _sql.Column(_sql.String, unique = True, index = True)                                                                # E-mail for admin
-    ssn = _sql.Column(_sql.Integer, Unique = True, index = True)                                                                 # SSN (SGK) No.
     pass_hash = _sql.Column(_sql.String)                                                                                         # Password hash
     first_name = _sql.Column(_sql.String, index = True)                                                                          # Name
     last_name = _sql.Column(_sql.String, index = True)                                                                           # Surname

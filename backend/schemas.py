@@ -1,4 +1,4 @@
-# Models file for database Team 06 - FMS
+# Schemas file for database Team 06 - FMS
 #
 # @zgr2788
 #
@@ -40,7 +40,6 @@ class Team(_TeamBase):
 ## Base model
 class _AdminBase(_pydantic.BaseModel):
     email: str
-    ssn: int
     first_name: str
     last_name: str
 
