@@ -79,7 +79,12 @@ async def create_admin(
 
     return await _services.create_admin_token(adminObj)
 
-# Create team user
+# Get current admin user
+@app.get("/api/admins/me", response_model=_schemas.Admin)
+async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
+    return admin
+
+# Create Team user
 @app.post("/api/admins/createteam")
 async def create_team(
     team: _schemas.TeamCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
@@ -99,17 +104,21 @@ async def create_team(
 
     return await _services.create_team_token(teamObj)
 
-# Get current admin user
-@app.get("/api/admins/me", response_model=_schemas.Admin)
-async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
-    return admin
-
-# Get team users
+# Get Team user
 @app.get("/api/admins/{team_name}", status_code = 200)
 async def admin_get_team(team_name: str, admin : _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_team_admin(team_name = team_name, db = db)
 
+# Update Team user
+@app.put("/api/admins/updateteam/{team_name}", status_code = 200)
+async def admin_update_team(team_name : str, team: _schemas.TeamCreate, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.update_team_admin(team_name = team_name, team = team, db = db)
 
+# Delete Team user
+@app.delete("/api/admins/deleteteam/{team_name}", status_code = 204)
+async def admin_delete_team(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.delete_team_admin(team_name = team_name, db = db)
+    return {"message", "Successfully Deleted"}
 
 # Create budget item - Admin
 @app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)

@@ -6,6 +6,7 @@
 # Includes the services provided by the backend.
 
 
+from curses import use_default_colors
 import database as _database
 import models as _models
 import schemas as _schemas
@@ -79,7 +80,73 @@ async def create_admin(admin: _schemas.AdminCreate, db: _orm.Session):
 
 # Get team info - Admin
 async def get_team_admin(team_name : str, db: _orm.Session):
-    return await get_team_by_name(team_name, db)
+    team = await get_team_by_name(team_name, db)
+
+    if team is None:
+        raise _fastapi.HTTPException(status_code=404, detail="Team not found in database!")
+    
+    return team
+
+# Update team info - Admin
+async def update_team_admin(team_name : str, team : _schemas.TeamCreate, db : _orm.Session):
+    
+    # Check if new team name is unique
+    team_db = await get_team_by_name(team.name, db)
+    mail_db = await get_team_by_email(team.email, db)
+    
+    if team_db:
+        raise _fastapi.HTTPException(status_code = 400, detail = "A team with the same name exists!")
+    
+    if mail_db:
+        raise _fastapi.HTTPException(status_code = 400, detail = "A team with the same email exists!")
+    
+
+    # Update all items belonging to team
+    items = db.query(_models.BudgetItem).filter_by(team_name=team_name)
+
+    for item in items:
+        item.team_name = team.name
+        item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+        db.commit()
+        db.refresh(item)
+
+    # Now update the team
+    team_db = await get_team_by_name(name = team_name, db = db)
+    print(team_db)
+
+
+    if team_db is None:
+        raise _fastapi.HTTPException(status_code=404, detail = "Team not found in database!")
+
+    team_db.name = team.name
+    team_db.email = team.email
+    team_db.budget_total = team.budget_total
+    team_db.pass_hash = _hash.bcrypt.hash(team.pass_hash)
+
+    db.commit()
+    db.refresh(team_db)
+
+    return _schemas.Team.from_orm(team_db)
+
+# Delete team info - Admin
+async def delete_team_admin(team_name : str, db : _orm.Session):
+    
+    # Delete all items belonging to team
+    items = db.query(_models.BudgetItem).filter_by(team_name=team_name)
+
+    for item in items:
+        await update_team_budget(name = team_name, change = -item.amount, db = db)
+        db.delete(item)
+        db.commit()
+    
+    # Now delete the team
+    team_db = await get_team_by_name(name = team_name, db = db)
+
+    if team_db is None:
+        raise _fastapi.HTTPException(status_code=404, detail = "Team not found in database!")
+
+    db.delete(team_db)
+    db.commit()
 
 # Authenticate Admin
 async def authenticate_admin(email: str, password: str, db: _orm.Session):
