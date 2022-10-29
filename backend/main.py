@@ -8,11 +8,30 @@
 import fastapi as _fastapi
 import fastapi.security as _security
 import sqlalchemy.orm as _orm
-import services as _services, schemas as _schemas, models as _models
+import services as _services, schemas as _schemas, models as _models, database as _database
+import passlib.hash as _hash
 
 app = _fastapi.FastAPI()
 
 _services.create_database()
+
+
+@app.on_event("startup")
+async def startup():
+    # Add the superadmin account that can add others
+    superAdmin = _models.Admin(
+        email = "admin@admin.com", 
+        first_name = "admin", 
+        last_name = "admin", 
+        pass_hash = _hash.bcrypt.hash("admin123")
+    )
+
+    if not await _services.get_admin_by_email(superAdmin.email, _database.SessionLocal()):
+        return await _services.create_master(superAdmin, _database.SessionLocal())
+    
+    return 0
+
+
 
 #*************************
 #       ADMIN + TEAM
@@ -64,9 +83,9 @@ async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_curre
 #*************************
 
 # Create team user
-@app.post("/api/teams")
+@app.post("/api/admins/createteam")
 async def create_team(
-    team: _schemas.TeamCreate, db:_orm.Session = _fastapi.Depends(_services.get_db)
+    team: _schemas.TeamCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
     # Check if team exists
     db_team_name = await _services.get_team_by_name(team.name ,db)
@@ -92,7 +111,7 @@ async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_
 #*************************
 
 # Create budget item - Team
-@app.post("/api/budgetitems/teamcreate")
+@app.post("/api/teams/createitem")
 async def team_create_item(
     budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)
 ):
@@ -134,7 +153,7 @@ async def team_create_item(
 
 
 # Create budget item - Admin
-@app.post("/api/budgetitems/admincreate")
+@app.post("/api/admins/createitem")
 async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
 

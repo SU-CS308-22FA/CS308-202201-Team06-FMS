@@ -34,9 +34,20 @@ def get_db():
     finally:
         db.close()
 
+
+
 #*************************
 #       ADMIN
 #*************************
+
+# Create Master Admin
+async def create_master(admin: _models.Admin, db: _orm.Session):
+
+    # Write to db
+    db.add(admin)
+    db.commit()
+    db.refresh(admin)
+    return admin
 
 # Get Admin through email
 async def get_admin_by_email(email: str, db: _orm.Session):
