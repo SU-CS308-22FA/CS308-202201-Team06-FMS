@@ -10,6 +10,7 @@ import fastapi.security as _security
 import sqlalchemy.orm as _orm
 import services as _services, schemas as _schemas, models as _models, database as _database
 import passlib.hash as _hash
+from typing import List
 
 app = _fastapi.FastAPI()
 
@@ -72,7 +73,9 @@ async def create_admin(
         raise _fastapi.HTTPException(status_code = 400, detail = "Admin email already registered to database!")
     
     # If not, create new admin
-    return await _services.create_admin(admin, db)
+    await _services.create_admin(admin, db)
+
+    return await _services.create_admin_token(admin)
 
 # Get current admin user
 @app.get("/api/admins/me", response_model=_schemas.Admin)
@@ -99,7 +102,9 @@ async def create_team(
         raise _fastapi.HTTPException(status_code = 400, detail = "Team email already registered to database!")
 
     # If not, create new team
-    return await _services.create_team(team, db)
+    await _services.create_team(team, db)
+
+    return await _services.create_team_token(team)
 
 
 # Get current team user
@@ -112,7 +117,7 @@ async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_
 #*************************
 
 # Create budget item - Team
-@app.post("/api/teams/createitem")
+@app.post("/api/teams/createitem", response_model=_schemas.BudgetItem)
 async def team_create_item(
     budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)
 ):
@@ -154,7 +159,7 @@ async def team_create_item(
 
 
 # Create budget item - Admin
-@app.post("/api/admins/createitem")
+@app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)
 async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
 
@@ -184,3 +189,11 @@ async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Sessi
 
     # Create new budget item
     return await _services.create_budgetItem(budgetItem, db)
+
+
+# Get all budget items - Team
+@app.get("/api/teams/getitem", response_model= List[_schemas.BudgetItem])
+async def team_get_item(db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
+    return await _services.get_items(team = team, db = db)
+
+

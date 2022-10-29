@@ -193,3 +193,9 @@ async def create_budgetItem(budgetItem: _schemas.BudgetItemCreate, db: _orm.Sess
     db.commit()
     db.refresh(budgetObj)
     return budgetObj
+
+# Get Items
+async def get_items(team: _schemas.Team, db: _orm.Session):
+    items = db.query(_models.Team).filter_by(team_name=team.name)
+
+    return list(map(_schemas.BudgetItem.from_orm, items))
