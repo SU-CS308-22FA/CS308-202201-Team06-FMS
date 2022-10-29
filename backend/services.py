@@ -77,6 +77,10 @@ async def create_admin(admin: _schemas.AdminCreate, db: _orm.Session):
     db.refresh(adminObj)
     return adminObj
 
+# Get team info - Admin
+async def get_team_admin(team_name : str, db: _orm.Session):
+    return await get_team_by_name(team_name, db)
+
 # Authenticate Admin
 async def authenticate_admin(email: str, password: str, db: _orm.Session):
     admin = await get_admin_by_email(email, db)
@@ -134,6 +138,37 @@ async def get_item_admin(item_name: str, team_name: str, db: _orm.Session):
     item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
 
     return _schemas.BudgetItem.from_orm(item)
+
+# Delete item - Admin
+async def delete_item_admin(team_name : str, item_name: str, db: _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
+
+    # Update team budget as well
+    await update_team_budget(name = team_name, change = -item.amount, db = db)
+
+    db.delete(item)
+    db.commit()
+
+# Update item - Team
+async def update_item_admin(team_name : str, item_name: str, budgetItem: _schemas._BudgetItemBase, db: _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
+
+    item.item_name = budgetItem.item_name
+    change = budgetItem.amount - item.amount 
+    item.amount = budgetItem.amount
+    item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+
+    # Update team budget as well
+    await update_team_budget(name = team_name, change = change, db = db)
+
+
+
+    db.commit()
+    db.refresh(item)
+
+    return _schemas.BudgetItem.from_orm(item)
+
+
 
 #*************************
 #       TEAM

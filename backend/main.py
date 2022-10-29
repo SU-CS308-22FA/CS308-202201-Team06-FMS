@@ -104,6 +104,13 @@ async def create_team(
 async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
     return admin
 
+# Get team users
+@app.get("/api/admins/{team_name}", status_code = 200)
+async def admin_get_team(team_name: str, admin : _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_team_admin(team_name = team_name, db = db)
+
+
+
 # Create budget item - Admin
 @app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)
 async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
@@ -145,6 +152,18 @@ async def admin_get_items(team_name: str, admin: _schemas.Admin = _fastapi.Depen
 @app.get("/api/admins/getspecificitem/{team_name}/{item_name}", status_code=200)
 async def admin_get_item(team_name: str, item_name : str , admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_admin(item_name = item_name, team_name = team_name, db = db)
+
+# Delete a specific budget item - Admin
+@app.delete("/api/admins/deleteitem/{team_name}/{item_name}", status_code = 204)
+async def admin_delete_item(team_name: str, item_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.delete_item_admin(team_name = team_name, item_name = item_name, db = db)
+    return {"message", "Successfully Deleted"}
+
+# Update a specific budget item - Admin
+@app.put("/api/admins/updateitem/{team_name}/{item_name}", status_code = 200)
+async def admin_update_item(team_name : str, item_name : str, budgetItem: _schemas._BudgetItemBase, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.update_item_admin(team_name = team_name, item_name = item_name, budgetItem = budgetItem, db = db)
+
 
 
 #*************************
