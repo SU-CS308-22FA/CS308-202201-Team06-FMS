@@ -87,7 +87,7 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
         payload = _jwt.decode(token, JWT_SECRET_ADMIN, algorithms=["HS256"])
         admin = db.query(_models.Admin).get(payload["id"])
     except:
-        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid email or password!")
+        raise _fastapi.HTTPException(status_code = 401, detail = "Your account is not authorized for this action!")
 
     return _schemas.Admin.from_orm(admin)
 
@@ -152,7 +152,7 @@ async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: 
         payload = _jwt.decode(token, JWT_SECRET_TEAM, algorithms=["HS256"])
         team = db.query(_models.Team).get(payload["id"])
     except:
-        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid email or password!")
+        raise _fastapi.HTTPException(status_code = 401, detail = "Your account is not authorized for this action!")
 
     return _schemas.Team.from_orm(team)
 

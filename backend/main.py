@@ -91,11 +91,14 @@ async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_
 #       BUDGET
 #*************************
 
-# Create budget item
+# Create budget item, TODO: limit creation to registered team and admin only.
 @app.post("/api/budgetitems")
-async def create_item(
-    budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db)
+async def team_create_item(
+    budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)
 ):
+
+    print(team)
+   
 
     # Check if budget item exists
     db_budget = await _services.get_budget_item(budgetItem.team_name, budgetItem.item_name, db)
@@ -106,6 +109,11 @@ async def create_item(
     
     if not db_team:
         raise _fastapi.HTTPException(status_code = 400, detail = "Team does not exist in database!")
+    
+
+    # Make sure the team is writing to itself
+    if team.name != budgetItem.team_name:
+        raise _fastapi.HTTPException(status_code = 401, detail = "You are not authorized to write this item!")
     
     # Query team to see if they will be overbudget, do not allow if so
     #Team = db.query(_models.Team).filter(_models.Team.name == budgetItem.team_name).first()
