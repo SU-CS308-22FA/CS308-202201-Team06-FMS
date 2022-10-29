@@ -11,6 +11,12 @@ import models as _models
 import schemas as _schemas
 import sqlalchemy.orm as _orm
 import passlib.hash as _hash
+import jwt as _jwt
+import json as _json
+
+# JWT encode secrets for authTokens
+JWT_SECRET_ADMIN = "MESSISUPPORTSFINANCIALMANGEMENTSYSTEM"
+JWT_SECRET_TEAM = "RONALDOSUPPORTSFINANCIALMANAGEMENTSYSTEM"
 
 # Create
 def create_database():
@@ -50,6 +56,28 @@ async def create_admin(admin: _schemas.AdminCreate, db: _orm.Session):
     db.refresh(adminObj)
     return adminObj
 
+# Authenticate Admin
+async def authenticate_admin(email: str, password: str, db: _orm.Session):
+    admin = await get_admin_by_email(email, db)
+
+    # Check if admin in database
+    if not admin:
+        return False
+    
+    # Check if password matches
+    if not admin.verify_password(password):
+        return False
+
+    return admin
+
+# Generate Admin token
+async def create_admin_token(admin: _models.Admin):
+    adminObj = _schemas.Admin.from_orm(admin)
+
+    token = _jwt.encode(_json.loads(_json.dumps(adminObj.dict(), indent = 4, sort_keys=True, default=str)), JWT_SECRET_ADMIN)
+
+    return dict(access_token = token, token_type = "bearer")
+
 
 
 #*************************
@@ -84,6 +112,28 @@ async def create_team(team: _schemas.TeamCreate, db: _orm.Session):
     db.commit()
     db.refresh(teamObj)
     return teamObj
+
+# Authenticate Team
+async def authenticate_team(email: str, password: str, db: _orm.Session):
+    team = await get_team_by_email(email, db)
+
+    # Check if team in database
+    if not team:
+        return False
+    
+    # Check if password matches
+    if not team.verify_password(password):
+        return False
+
+    return team
+
+# Generate Team token
+async def create_team_token(team: _models.Team):
+    teamObj = _schemas.Team.from_orm(team)
+
+    token = _jwt.encode(teamObj.dict(), JWT_SECRET_TEAM)
+
+    return dict(access_token = token, token_type = "bearer")
 
 
 #*************************

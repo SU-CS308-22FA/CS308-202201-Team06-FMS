@@ -54,6 +54,8 @@ class Admin(_database.Base):
     def verify_password(self, password: str):
         return _hash.bcrypt.verify(password, self.pass_hash)
 
+# TODO : Add file verification
+
 class BudgetItem(_database.Base):
 
     #Name
@@ -69,5 +71,4 @@ class BudgetItem(_database.Base):
     # Establish relation with TeamAcc
     teams = _orm.relationship("Team", back_populates = "owner")
 
-    # TODO : Add file verification
 

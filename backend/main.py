@@ -13,6 +13,10 @@ import services as _services, schemas as _schemas, models as _models
 app = _fastapi.FastAPI()
 
 _services.create_database()
+
+
+#*************************
+#       ADMIN
 #*************************
 
 # Create admin user
@@ -29,6 +33,18 @@ async def create_admin(
     # If not, create new admin
     return await _services.create_admin(admin, db)
 
+# Authenticate admin user
+@app.post("/api/admintoken")
+async def generate_admin_token(
+    form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(), 
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):
+    admin = await _services.authenticate_admin(form_data.username, form_data.password, db)
+
+    if not admin:
+        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid credentials!")
+
+    return await _services.create_admin_token(admin)
 
 #*************************
 #       TEAM
@@ -52,7 +68,18 @@ async def create_team(
     # If not, create new team
     return await _services.create_team(team, db)
 
+# Authenticate team user
+@app.post("/api/teamtoken")
+async def generate_team_token(
+    form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(), 
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):
+    team = await _services.authenticate_team(form_data.username, form_data.password, db)
 
+    if not team:
+        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid credentials!")
+
+    return await _services.create_team_token(team)
 #*************************
 #       BUDGET
 #*************************
