@@ -15,6 +15,13 @@ import jwt as _jwt
 import json as _json
 import fastapi as _fastapi
 import fastapi.security as _security
+import datetime as _dt
+from dateutil import tz as _tz
+
+
+# Define timezones
+from_zone = _tz.gettz('UTC')
+to_zone = _tz.gettz('Turkey')
 
 # Secrets and oauth2 schemas
 JWT_SECRET_ADMIN = "MESSISUPPORTSFINANCIALMANGEMENTSYSTEM"
@@ -102,6 +109,32 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
 
     return _schemas.Admin.from_orm(admin)
 
+# Get Items - Admin
+async def get_items_admin(teamname: str, db: _orm.Session):
+    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
+
+    return list(map(_schemas.BudgetItem.from_orm, items))
+
+# Item selector - Admin
+async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
+    item = (
+
+        db.query(_models.BudgetItem)
+        .filter(_models.BudgetItem.item_name == item_name, _models.BudgetItem.team_name == team_name)
+        .first()
+    )
+
+    if item is None:
+        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
+    
+    return item
+
+# Get item - Admin
+async def get_item_admin(item_name: str, team_name: str, db: _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
+
+    return _schemas.BudgetItem.from_orm(item)
+
 #*************************
 #       TEAM
 #*************************
@@ -167,6 +200,61 @@ async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: 
 
     return _schemas.Team.from_orm(team)
 
+# Get Items - Team
+async def get_items_team(team: _schemas.Team, db: _orm.Session):
+    items = db.query(_models.BudgetItem).filter_by(team_name=team.name)
+
+    return list(map(_schemas.BudgetItem.from_orm, items))
+
+# Item selector - Team
+async def _item_selector(item_name: str, team: _schemas.Team, db: _orm.Session):
+    item = (
+
+        db.query(_models.BudgetItem)
+        .filter_by(team_name = team.name)
+        .filter(_models.BudgetItem.item_name == item_name)
+        .first()
+    )
+
+    if item is None:
+        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
+    
+    return item
+
+# Get item - Team
+async def get_item_team(item_name: str, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector(item_name = item_name, team = team, db = db)
+
+    return _schemas.BudgetItem.from_orm(item)
+
+# Delete item - Team
+async def delete_item_team(item_name: str, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector(item_name = item_name, team = team, db = db)
+
+    item.delete()
+    db.commit()
+
+# Update item - Team
+async def update_item_team(item_name: str, budgetItem: _schemas.BudgetItemCreate, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector(item_name = item_name, team = team, db = db)
+
+    item.team_name = budgetItem.team_name
+    item.item_name = budgetItem.item_name
+    change = budgetItem.amount - item.amount 
+    item.amount = budgetItem.amount
+    item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+
+    # Update team budget as well
+    await update_team_budget(name = team.name, change = change, db = db)
+
+
+
+    db.commit()
+    db.refresh(item)
+
+    return _schemas.BudgetItem.from_orm(item)
+
+
 #*************************
 #       BUDGET
 #*************************
@@ -194,56 +282,8 @@ async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Ses
     db.refresh(budgetObj)
     return budgetObj
 
-# Get Items - Team
-async def get_items_team(team: _schemas.Team, db: _orm.Session):
-    items = db.query(_models.BudgetItem).filter_by(team_name=team.name)
-
-    return list(map(_schemas.BudgetItem.from_orm, items))
-
-# Get Items - Admin
-async def get_items_admin(teamname: str, db: _orm.Session):
-    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
-
-    return list(map(_schemas.BudgetItem.from_orm, items))
 
 
-# Item selector - Team
-async def _item_selector(item_name: str, team: _schemas.Team, db: _orm.Session):
-    item = (
 
-        db.query(_models.BudgetItem)
-        .filter_by(team_name = team.name)
-        .filter(_models.BudgetItem.item_name == item_name)
-        .first()
-    )
 
-    if item is None:
-        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
-    
-    return item
 
-# Item selector - Admin
-async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
-    item = (
-
-        db.query(_models.BudgetItem)
-        .filter(_models.BudgetItem.item_name == item_name, _models.BudgetItem.team_name == team_name)
-        .first()
-    )
-
-    if item is None:
-        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
-    
-    return item
-
-# Get item - Team
-async def get_item(item_name: str, team: _schemas.Team, db: _orm.Session):
-    item = await _item_selector(item_name = item_name, team = team, db = db)
-
-    return _schemas.BudgetItem.from_orm(item)
-
-# Get item - Admin
-async def get_item_admin(item_name: str, team_name: str, db: _orm.Session):
-    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
-
-    return _schemas.BudgetItem.from_orm(item)

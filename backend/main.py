@@ -5,6 +5,7 @@
 # Description:
 # Includes the driver code for the backend.
 
+from email import iterators
 import fastapi as _fastapi
 import fastapi.security as _security
 import sqlalchemy.orm as _orm
@@ -136,14 +137,15 @@ async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Sessi
     return await _services.create_budgetItem(budgetItem, db)
 
 # Get all budget items - Admin
-@app.get("/api/admins/getitems", status_code=200)
+@app.get("/api/admins/getitems/{team_name}", status_code=200)
 async def admin_get_items(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_items_admin(teamname = team_name, db = db)
 
 # Get a specific budget item - Admin
-@app.get("/api/admins/getspecificitem", status_code=200)
+@app.get("/api/admins/getspecificitem/{team_name}/{item_name}", status_code=200)
 async def admin_get_item(team_name: str, item_name : str , admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_admin(item_name = item_name, team_name = team_name, db = db)
+
 
 #*************************
 #       TEAM
@@ -202,11 +204,20 @@ async def team_get_items(db:_orm.Session = _fastapi.Depends(_services.get_db), t
     return await _services.get_items_team(team = team, db = db)
 
 # Get a specific budget item - Team
-@app.get("/api/teams/getspecificitem", status_code=200)
+@app.get("/api/teams/getspecificitem/{item_name}", status_code=200)
 async def team_get_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
-    return await _services.get_item(item_name = item_name, team = team, db = db)
+    return await _services.get_item_team(item_name = item_name, team = team, db = db)
 
+# Delete a specific budget item - Team
+@app.delete("/api/teams/deleteitem/{item_name}", status_code = 204)
+async def team_delete_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    await _services.delete_item_team(item_name = item_name, team = team, db = db)
+    return {"message", "Successfully Deleted"}
 
+# Update a specific budget item - Team
+@app.put("/api/teams/updateitem/{item_name}", status_code = 200)
+async def team_update_item(item_name : str, budgetItem: _schemas.BudgetItemCreate, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.update_item_team(item_name = item_name, budgetItem = budgetItem, team = team, db = db)
 
 
 
