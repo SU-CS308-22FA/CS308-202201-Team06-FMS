@@ -19,6 +19,7 @@ class _TeamBase(_pydantic.BaseModel):
 ## Team create model - inherits TeamBase
 class TeamCreate(_TeamBase):
     pass_hash: str
+    budget_total: float
 
 
     class Config:
@@ -27,11 +28,10 @@ class TeamCreate(_TeamBase):
 ## Main Team schema - inherits TeamBase
 class Team(_TeamBase):
     id: int
-    budget_total: float
     budget_alloc: float
     budget_rem: float
     is_overlimit: bool
-
+    
     class Config:
         orm_mode = True
 

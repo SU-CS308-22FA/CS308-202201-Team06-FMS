@@ -51,13 +51,19 @@ async def create_admin(admin: _schemas.AdminCreate, db: _orm.Session):
 async def get_team_by_name(name: str, db: _orm.Session):
     return db.query(_models.Team).filter(_models.Team.name == name).first()
 
+# Get Team through e-mail
+async def get_team_by_email(email: str, db: _orm.Session):
+    return db.query(_models.Team).filter(_models.Team.email == email).first()
+
+
 # Create new Team user
 async def create_team(team: _schemas.TeamCreate, db: _orm.Session):
     
     # New Team object
     teamObj = _models.Team(
         email = team.email, 
-        name = team.first_name,  
+        name = team.name,
+        budget_total = team.budget_tota0l,  
         pass_hash = _hash.bcrypt.hash(team.pass_hash)
     )
 

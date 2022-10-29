@@ -28,11 +28,10 @@ class Team(_database.Base):
     email = _sql.Column(_sql.String, unique = True, index = True)     # General manager e-mail
     name = _sql.Column(_sql.String, unique = True, index = True)      # Name of the team
     budget_total = _sql.Column(_sql.Float)                            # Total budget
-    budget_alloc = _sql.Column(_sql.Float)                            # Used budget
-    budget_rem = _sql.Column(_sql.Float)                              # Remaining budget
-    is_overlimit = _sql.Column(_sql.Boolean)                          # Is over the budget
+    budget_alloc = _sql.Column(_sql.Float, default = 0)               # Used budget
+    budget_rem = _orm.column_property(budget_total - budget_alloc)    # Remaining budget
+    is_overlimit = _orm.column_property(bool(budget_rem) < 0)                          # Is over the budget
     pass_hash = _sql.Column(_sql.String)                              # Password hash
-
     
     #Establish relationship
     owner  = _orm.relationship("BudgetItem", back_populates = "teams")
