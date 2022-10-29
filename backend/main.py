@@ -16,6 +16,7 @@ app = _fastapi.FastAPI()
 _services.create_database()
 
 
+# Create master admin
 @app.on_event("startup")
 async def startup():
     # Add the superadmin account that can add others
@@ -62,7 +63,7 @@ async def generate_token(
 # Create admin user
 @app.post("/api/admins")
 async def create_admin(
-    admin: _schemas.AdminCreate, db:_orm.Session = _fastapi.Depends(_services.get_db)
+    admin: _schemas.AdminCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), adminAuth: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
     # Check if admin exists
     db_admin = await _services.get_admin_by_email(admin.email ,db)
