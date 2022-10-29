@@ -222,8 +222,28 @@ async def _item_selector(item_name: str, team: _schemas.Team, db: _orm.Session):
     
     return item
 
+# Item selector - Admin
+async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
+    item = (
+
+        db.query(_models.BudgetItem)
+        .filter(_models.BudgetItem.item_name == item_name, _models.BudgetItem.team_name == team_name)
+        .first()
+    )
+
+    if item is None:
+        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
+    
+    return item
+
 # Get item - Team
 async def get_item(item_name: str, team: _schemas.Team, db: _orm.Session):
     item = await _item_selector(item_name = item_name, team = team, db = db)
+
+    return _schemas.BudgetItem.from_orm(item)
+
+# Get item - Admin
+async def get_item_admin(item_name: str, team_name: str, db: _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
 
     return _schemas.BudgetItem.from_orm(item)

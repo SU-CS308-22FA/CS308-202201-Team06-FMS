@@ -57,6 +57,7 @@ async def generate_token(
     elif admin:
         return await _services.create_admin_token(admin)
 
+
 #*************************
 #       ADMIN
 #*************************
@@ -139,6 +140,10 @@ async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Sessi
 async def admin_get_items(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_items_admin(teamname = team_name, db = db)
 
+# Get a specific budget item - Admin
+@app.get("/api/admins/getspecificitem", status_code=200)
+async def admin_get_item(team_name: str, item_name : str , admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_item_admin(item_name = item_name, team_name = team_name, db = db)
 
 #*************************
 #       TEAM
