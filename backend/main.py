@@ -22,10 +22,20 @@ async def create_admin(
     db_admin = await _services.get_admin_by_email(admin.email ,db)
     
     if db_admin:
-        raise _fastapi.HTTPException(status_code = 400, detail = "Email already registered to database!")
+        raise _fastapi.HTTPException(status_code = 400, detail = "Admin already registered to database!")
     
     # If not, create new admin
     return await _services.create_admin(admin, db)
-   
 
-
+# Create team user
+async def create_team(
+    team: _schemas.TeamCreate, db:_orm.Session = _fastapi.Depends(_services.get_db)
+):
+    # Check if admin exists
+    db_team = await _services.get_team_by_name(team.name ,db)
+    
+    if db_team:
+        raise _fastapi.HTTPException(status_code = 400, detail = "Team already registered to database!")
+    
+    # If not, create new admin
+    return await _services.create_team(team, db)

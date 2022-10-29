@@ -45,3 +45,24 @@ async def create_admin(admin: _schemas.AdminCreate, db: _orm.Session):
     db.commit()
     db.refresh(adminObj)
     return adminObj
+
+
+# Get Team through name
+async def get_team_by_name(name: str, db: _orm.Session):
+    return db.query(_models.Team).filter(_models.Team.name == name).first()
+
+# Create new Team user
+async def create_team(team: _schemas.TeamCreate, db: _orm.Session):
+    
+    # New Team object
+    teamObj = _models.Team(
+        email = team.email, 
+        name = team.first_name,  
+        pass_hash = _hash.bcrypt.hash(team.pass_hash)
+    )
+
+    # Write to db
+    db.add(teamObj)
+    db.commit()
+    db.refresh(teamObj)
+    return teamObj
