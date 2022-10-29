@@ -9,6 +9,9 @@
 import datetime as _dt
 import pydantic as _pydantic
 
+#*************************
+#       TEAM
+#*************************
 
 # Team Schemas
 ## Base model
@@ -30,11 +33,14 @@ class Team(_TeamBase):
     id: int
     budget_alloc: float
     budget_rem: float
-    is_overlimit: bool
-    
+
     class Config:
         orm_mode = True
 
+
+#*************************
+#       ADMIN
+#*************************
 
 # Admin Schemas
 ## Base model
@@ -58,6 +64,9 @@ class Admin(_AdminBase):
     class Config:
         orm_mode = True
 
+#*************************
+#       BUDGET
+#*************************
 
 # Budget Schemas
 ## Base model
