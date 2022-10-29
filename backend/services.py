@@ -231,14 +231,16 @@ async def get_item_team(item_name: str, team: _schemas.Team, db: _orm.Session):
 async def delete_item_team(item_name: str, team: _schemas.Team, db: _orm.Session):
     item = await _item_selector(item_name = item_name, team = team, db = db)
 
-    item.delete()
+    # Update team budget as well
+    await update_team_budget(name = team.name, change = -item.amount, db = db)
+
+    db.delete(item)
     db.commit()
 
 # Update item - Team
-async def update_item_team(item_name: str, budgetItem: _schemas.BudgetItemCreate, team: _schemas.Team, db: _orm.Session):
+async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team, db: _orm.Session):
     item = await _item_selector(item_name = item_name, team = team, db = db)
 
-    item.team_name = budgetItem.team_name
     item.item_name = budgetItem.item_name
     change = budgetItem.amount - item.amount 
     item.amount = budgetItem.amount

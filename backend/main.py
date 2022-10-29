@@ -134,7 +134,7 @@ async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Sessi
  
 
     # Create new budget item
-    return await _services.create_budgetItem(budgetItem, db)
+    return await _services.create_budget_item(budgetItem, db)
 
 # Get all budget items - Admin
 @app.get("/api/admins/getitems/{team_name}", status_code=200)
@@ -216,7 +216,7 @@ async def team_delete_item(item_name : str, team: _schemas.Team = _fastapi.Depen
 
 # Update a specific budget item - Team
 @app.put("/api/teams/updateitem/{item_name}", status_code = 200)
-async def team_update_item(item_name : str, budgetItem: _schemas.BudgetItemCreate, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+async def team_update_item(item_name : str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_team(item_name = item_name, budgetItem = budgetItem, team = team, db = db)
 
 
