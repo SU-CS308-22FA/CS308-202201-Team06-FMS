@@ -14,6 +14,27 @@ app = _fastapi.FastAPI()
 
 _services.create_database()
 
+#*************************
+#       ADMIN + TEAM
+#*************************
+
+@app.post("/api/tokens")
+async def generate_token(
+    form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(), 
+    db: _orm.Session = _fastapi.Depends(_services.get_db)
+):
+    team = await _services.authenticate_team(form_data.username, form_data.password, db)
+    admin = await _services.authenticate_admin(form_data.username, form_data.password, db)
+
+
+    if not team and not admin:
+        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid credentials!")
+
+    if team:
+        return await _services.create_team_token(team)
+
+    elif admin:
+        return await _services.create_admin_token(admin)
 
 #*************************
 #       ADMIN
@@ -33,18 +54,10 @@ async def create_admin(
     # If not, create new admin
     return await _services.create_admin(admin, db)
 
-# Authenticate admin user
-@app.post("/api/admintoken")
-async def generate_admin_token(
-    form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(), 
-    db: _orm.Session = _fastapi.Depends(_services.get_db)
-):
-    admin = await _services.authenticate_admin(form_data.username, form_data.password, db)
-
-    if not admin:
-        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid credentials!")
-
-    return await _services.create_admin_token(admin)
+# Get current admin user
+@app.get("/api/admins/me", response_model=_schemas.Admin)
+async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
+    return admin
 
 #*************************
 #       TEAM
@@ -68,18 +81,12 @@ async def create_team(
     # If not, create new team
     return await _services.create_team(team, db)
 
-# Authenticate team user
-@app.post("/api/teamtoken")
-async def generate_team_token(
-    form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(), 
-    db: _orm.Session = _fastapi.Depends(_services.get_db)
-):
-    team = await _services.authenticate_team(form_data.username, form_data.password, db)
 
-    if not team:
-        raise _fastapi.HTTPException(status_code = 401, detail = "Invalid credentials!")
+# Get current team user
+@app.get("/api/teams/me", response_model=_schemas.Team)
+async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
+    return team
 
-    return await _services.create_team_token(team)
 #*************************
 #       BUDGET
 #*************************
@@ -101,14 +108,14 @@ async def create_item(
         raise _fastapi.HTTPException(status_code = 400, detail = "Team does not exist in database!")
     
     # Query team to see if they will be overbudget, do not allow if so
-    Team = db.query(_models.Team).filter(_models.Team.name == budgetItem.team_name).first()
-    
-    if (Team.budget_rem < budgetItem.amount):
-        raise _fastapi.HTTPException(status_code = 400, detail = "Budget will be exceeded, item not allowed!")
+    #Team = db.query(_models.Team).filter(_models.Team.name == budgetItem.team_name).first()
+    #
+    #if (Team.budget_rem < budgetItem.amount):
+    #    raise _fastapi.HTTPException(status_code = 400, detail = "Budget will be exceeded, item not allowed!")
     
     # Amount should be above 0
-    if (budgetItem.amount <= 0):
-        raise _fastapi.HTTPException(status_code = 400, detail = "Item amount should be larger than 0!")
+    #if (budgetItem.amount <= 0):
+    #    raise _fastapi.HTTPException(status_code = 400, detail = "Item amount should be larger than 0!")
 
 
     
