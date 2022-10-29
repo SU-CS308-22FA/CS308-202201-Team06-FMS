@@ -16,13 +16,14 @@ import pydantic as _pydantic
 # Team Schemas
 ## Base model
 class _TeamBase(_pydantic.BaseModel):
-    email: str
     name: str
 
 ## Team create model - inherits TeamBase
 class TeamCreate(_TeamBase):
     pass_hash: str
     budget_total: float
+    email: str
+
 
 
     class Config:

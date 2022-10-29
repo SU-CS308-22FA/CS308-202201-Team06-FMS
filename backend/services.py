@@ -176,7 +176,7 @@ async def get_budget_item(team_name: str, item_name: str, db: _orm.Session):
     return db.query(_models.BudgetItem).filter(_models.BudgetItem.team_name == team_name, _models.BudgetItem.item_name == item_name).first()
 
 # Create new BudgetItem
-async def create_budgetItem(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):
+async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):
     
     # Update Team Budget
     await update_team_budget(budgetItem.team_name, budgetItem.amount, db)
@@ -194,8 +194,36 @@ async def create_budgetItem(budgetItem: _schemas.BudgetItemCreate, db: _orm.Sess
     db.refresh(budgetObj)
     return budgetObj
 
-# Get Items
-async def get_items(team: _schemas.Team, db: _orm.Session):
-    items = db.query(_models.Team).filter_by(team_name=team.name)
+# Get Items - Team
+async def get_items_team(team: _schemas.Team, db: _orm.Session):
+    items = db.query(_models.BudgetItem).filter_by(team_name=team.name)
 
     return list(map(_schemas.BudgetItem.from_orm, items))
+
+# Get Items - Admin
+async def get_items_admin(teamname: str, db: _orm.Session):
+    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
+
+    return list(map(_schemas.BudgetItem.from_orm, items))
+
+
+# Item selector - Team
+async def _item_selector(item_name: str, team: _schemas.Team, db: _orm.Session):
+    item = (
+
+        db.query(_models.BudgetItem)
+        .filter_by(team_name = team.name)
+        .filter(_models.BudgetItem.item_name == item_name)
+        .first()
+    )
+
+    if item is None:
+        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
+    
+    return item
+
+# Get item - Team
+async def get_item(item_name: str, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector(item_name = item_name, team = team, db = db)
+
+    return _schemas.BudgetItem.from_orm(item)

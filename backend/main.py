@@ -73,18 +73,9 @@ async def create_admin(
         raise _fastapi.HTTPException(status_code = 400, detail = "Admin email already registered to database!")
     
     # If not, create new admin
-    await _services.create_admin(admin, db)
+    adminObj = await _services.create_admin(admin, db)
 
-    return await _services.create_admin_token(admin)
-
-# Get current admin user
-@app.get("/api/admins/me", response_model=_schemas.Admin)
-async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
-    return admin
-
-#*************************
-#       TEAM
-#*************************
+    return await _services.create_admin_token(adminObj)
 
 # Create team user
 @app.post("/api/admins/createteam")
@@ -102,19 +93,62 @@ async def create_team(
         raise _fastapi.HTTPException(status_code = 400, detail = "Team email already registered to database!")
 
     # If not, create new team
-    await _services.create_team(team, db)
+    teamObj = await _services.create_team(team, db)
 
-    return await _services.create_team_token(team)
+    return await _services.create_team_token(teamObj)
+
+# Get current admin user
+@app.get("/api/admins/me", response_model=_schemas.Admin)
+async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
+    return admin
+
+# Create budget item - Admin
+@app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)
+async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
+):
+
+    # Check if budget item exists
+    db_budget = await _services.get_budget_item(budgetItem.team_name, budgetItem.item_name, db)
+    db_team = await _services.get_team_by_name(budgetItem.team_name, db)
+    
+    if db_budget:
+        raise _fastapi.HTTPException(status_code = 400, detail = "Duplicate budget items are not allowed!")
+    
+    if not db_team:
+        raise _fastapi.HTTPException(status_code = 400, detail = "Team does not exist in database!")
+    
+    # Query team to see if they will be overbudget, do not allow if so
+    #Team = db.query(_models.Team).filter(_models.Team.name == budgetItem.team_name).first()
+    #
+    #if (Team.budget_rem < budgetItem.amount):
+    #    raise _fastapi.HTTPException(status_code = 400, detail = "Budget will be exceeded, item not allowed!")
+    
+    # Amount should be above 0
+    #if (budgetItem.amount <= 0):
+    #    raise _fastapi.HTTPException(status_code = 400, detail = "Item amount should be larger than 0!")
+
+
+    # Admins can write to anyone, so no restrictions
+ 
+
+    # Create new budget item
+    return await _services.create_budgetItem(budgetItem, db)
+
+# Get all budget items - Admin
+@app.get("/api/admins/getitems", status_code=200)
+async def admin_get_items(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_items_admin(teamname = team_name, db = db)
+
+
+#*************************
+#       TEAM
+#*************************
 
 
 # Get current team user
 @app.get("/api/teams/me", response_model=_schemas.Team)
 async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
     return team
-
-#*************************
-#       BUDGET
-#*************************
 
 # Create budget item - Team
 @app.post("/api/teams/createitem", response_model=_schemas.BudgetItem)
@@ -155,45 +189,19 @@ async def team_create_item(
  
 
     # Create new budget item
-    return await _services.create_budgetItem(budgetItem, db)
-
-
-# Create budget item - Admin
-@app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)
-async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
-):
-
-    # Check if budget item exists
-    db_budget = await _services.get_budget_item(budgetItem.team_name, budgetItem.item_name, db)
-    db_team = await _services.get_team_by_name(budgetItem.team_name, db)
-    
-    if db_budget:
-        raise _fastapi.HTTPException(status_code = 400, detail = "Duplicate budget items are not allowed!")
-    
-    if not db_team:
-        raise _fastapi.HTTPException(status_code = 400, detail = "Team does not exist in database!")
-    
-    # Query team to see if they will be overbudget, do not allow if so
-    #Team = db.query(_models.Team).filter(_models.Team.name == budgetItem.team_name).first()
-    #
-    #if (Team.budget_rem < budgetItem.amount):
-    #    raise _fastapi.HTTPException(status_code = 400, detail = "Budget will be exceeded, item not allowed!")
-    
-    # Amount should be above 0
-    #if (budgetItem.amount <= 0):
-    #    raise _fastapi.HTTPException(status_code = 400, detail = "Item amount should be larger than 0!")
-
-
-    # Admins can write to anyone, so no restrictions
- 
-
-    # Create new budget item
-    return await _services.create_budgetItem(budgetItem, db)
-
+    return await _services.create_budget_item(budgetItem, db)
 
 # Get all budget items - Team
-@app.get("/api/teams/getitem", response_model= List[_schemas.BudgetItem])
-async def team_get_item(db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
-    return await _services.get_items(team = team, db = db)
+@app.get("/api/teams/getitems", response_model= List[_schemas.BudgetItem])
+async def team_get_items(db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
+    return await _services.get_items_team(team = team, db = db)
+
+# Get a specific budget item - Team
+@app.get("/api/teams/getspecificitem", status_code=200)
+async def team_get_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_item(item_name = item_name, team = team, db = db)
+
+
+
 
 
