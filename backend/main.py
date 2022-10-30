@@ -39,7 +39,7 @@ async def startup():
 #*************************
 @app.get("/api")
 async def root():
-    return {"message" : "Financial Management System - Team 06"}
+    return {"message" : "Welcome to the Financial Management System by Team 06"}
 
 
 #*************************
