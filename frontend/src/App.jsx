@@ -4,6 +4,7 @@
 
 
 import React, { useEffect, useState } from "react";
+import Register from "./components/RegisterAdmin";
 
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
   return (
     <div>
       <h1>{message}</h1>
+      <Register />
     </div>
   
   );
