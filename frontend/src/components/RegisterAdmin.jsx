@@ -130,9 +130,6 @@ const RegisterAdmin = () => {
                 <ErrorMessage message = {errorMessage} />
                 <SuccessMessage message = {successMessage} />
                 <br />
-                <br />
-                <br />
-                <br />
 
                 <button className="button is-primary" type = "submit">
                     Register

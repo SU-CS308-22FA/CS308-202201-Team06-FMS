@@ -1,4 +1,4 @@
-// Admin register component
+// Team register component
 //
 // @zgr2788
 
@@ -8,7 +8,7 @@ import { AdminContext } from "../context/AdminContext";
 import ErrorMessage from "./ErrorMessage";
 import SuccessMessage from "./SuccessMessage";
 
-const RegisterTeam = () => {
+const RegisterTeamAdmin = () => {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [budget, setBudget] = useState("");
@@ -37,7 +37,7 @@ const RegisterTeam = () => {
 
         } else {
             setSuccessMessage("Team registered successfully!");
-            setErrorMessage("")
+            setErrorMessage("");
         }
     };
 
@@ -77,7 +77,7 @@ const RegisterTeam = () => {
                     <div className="control">
                         <input 
                             type="text" 
-                            placeholder = "First Name" 
+                            placeholder = "Team Name" 
                             value = {name} 
                             onChange = { (n) => setName(n.target.value) }
                             className = "input"
@@ -134,9 +134,6 @@ const RegisterTeam = () => {
                 <ErrorMessage message = {errorMessage} />
                 <SuccessMessage message = {successMessage} />
                 <br />
-                <br />
-                <br />
-                <br />
 
                 <button className="button is-primary" type = "submit">
                     Register
@@ -150,4 +147,4 @@ const RegisterTeam = () => {
 
 };
 
-export default RegisterTeam;
+export default RegisterTeamAdmin;
