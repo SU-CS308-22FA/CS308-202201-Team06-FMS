@@ -39,7 +39,7 @@ async def startup():
 #*************************
 @app.get("/api")
 async def root():
-    return {"message" : "Financial Management System - Team 06"}
+    return {"message" : "Welcome to the Financial Management System by Team 06"}
 
 
 #*************************
@@ -72,7 +72,7 @@ async def generate_token(
 # Create admin user
 @app.post("/api/admins")
 async def create_admin(
-    admin: _schemas.AdminCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), adminAuth: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
+    admin: _schemas.AdminCreate, db:_orm.Session = _fastapi.Depends(_services.get_db)#, adminAuth: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
     # Check if admin exists
     db_admin = await _services.get_admin_by_email(admin.email ,db)
@@ -81,9 +81,7 @@ async def create_admin(
         raise _fastapi.HTTPException(status_code = 400, detail = "Admin email already registered to database!")
     
     # If not, create new admin
-    adminObj = await _services.create_admin(admin, db)
-
-    return await _services.create_admin_token(adminObj)
+    return await _services.create_admin(admin, db)
 
 # Get current admin user
 @app.get("/api/admins/me", response_model=_schemas.Admin)
@@ -106,9 +104,9 @@ async def create_team(
         raise _fastapi.HTTPException(status_code = 400, detail = "Team email already registered to database!")
 
     # If not, create new team
-    teamObj = await _services.create_team(team, db)
+    return await _services.create_team(team, db)
 
-    return await _services.create_team_token(teamObj)
+    #return await _services.create_team_token(teamObj)
 
 # Get Team user
 @app.get("/api/admins/{team_name}", status_code = 200)
