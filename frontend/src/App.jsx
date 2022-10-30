@@ -22,7 +22,11 @@ const App = () => {
     const response = await fetch("/api", requestOptions); 
     const data = await response.json();
 
-    console.log(data);
+    if (!response.ok){
+      console.log("Error encountered when getting welcome message.");
+    } else {
+      setMessage(data.message);
+    }
   };
 
 
@@ -33,7 +37,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Hello World</h1>
+      <h1>{message}</h1>
     </div>
   
   );
