@@ -43,6 +43,7 @@ const RegisterAdmin = () => {
             submitRegistration();
         } else {
             setErrorMessage("Ensure that the passwords are matching and longer than 8 characters.");
+            setSuccessMessage("");
         }
     }
 

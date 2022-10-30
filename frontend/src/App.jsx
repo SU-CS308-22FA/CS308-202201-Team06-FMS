@@ -7,6 +7,7 @@ import React, { useContext, useState } from "react";
 import RegisterAdmin from "./components/RegisterAdmin";
 import RegisterTeamAdmin from "./components/RegisterTeamAdmin";
 import DeleteTeamAdmin from "./components/DeleteTeamAdmin";
+import UpdateTeamAdmin from "./components/UpdateTeamAdmin";
 import Header from "./components/Header";
 import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
@@ -43,6 +44,7 @@ const App = () => {
               <RegisterAdmin />
               <RegisterTeamAdmin />
               <DeleteTeamAdmin />
+              <UpdateTeamAdmin />
               </div>
             )
             )
