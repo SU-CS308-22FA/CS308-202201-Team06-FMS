@@ -34,6 +34,12 @@ async def startup():
     
     return 0
 
+#*************************
+#       ROOT
+#*************************
+@app.get("/api")
+async def root():
+    return {"message" : "Financial Management System - Team 06"}
 
 
 #*************************
@@ -118,7 +124,7 @@ async def admin_update_team(team_name : str, team: _schemas.TeamCreate, admin: _
 @app.delete("/api/admins/deleteteam/{team_name}", status_code = 204)
 async def admin_delete_team(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_team_admin(team_name = team_name, db = db)
-    return {"message", "Successfully Deleted"}
+    return {"message" : "Successfully Deleted"}
 
 # Create budget item - Admin
 @app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)
@@ -166,7 +172,7 @@ async def admin_get_item(team_name: str, item_name : str , admin: _schemas.Admin
 @app.delete("/api/admins/deleteitem/{team_name}/{item_name}", status_code = 204)
 async def admin_delete_item(team_name: str, item_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_item_admin(team_name = team_name, item_name = item_name, db = db)
-    return {"message", "Successfully Deleted"}
+    return {"message" : "Successfully Deleted"}
 
 # Update a specific budget item - Admin
 @app.put("/api/admins/updateitem/{team_name}/{item_name}", status_code = 200)
@@ -240,7 +246,7 @@ async def team_get_item(item_name : str, team: _schemas.Team = _fastapi.Depends(
 @app.delete("/api/teams/deleteitem/{item_name}", status_code = 204)
 async def team_delete_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_item_team(item_name = item_name, team = team, db = db)
-    return {"message", "Successfully Deleted"}
+    return {"message" : "Successfully Deleted"}
 
 # Update a specific budget item - Team
 @app.put("/api/teams/updateitem/{item_name}", status_code = 200)
