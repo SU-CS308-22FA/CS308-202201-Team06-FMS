@@ -4,36 +4,21 @@
 
 
 import React, { useContext, useState } from "react";
-import RegisterAdmin from "./components/RegisterAdmin"; 
+import RegisterAdmin from "./components/RegisterAdmin";
+import RegisterTeam from "./components/RegisterTeam";
 import Header from "./components/Header";
-import Login from "./components/Login";
+import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
+import { TeamContext } from "./context/TeamContext";
+import TeamLogin from "./components/LoginTeam";
 
 
 const App = () => {
   
   // Print welcome message
-  const [message, setMessage] = useState("");
-  const [token,] = useContext(AdminContext);
-
-  const getWelcomeMessage = async () => {
-    const requestOptions = {
-      method : "GET",
-      headers: {
-        "Content-Type" : "application/json",
-      },
-    };
-
-    const response = await fetch("/api", requestOptions); 
-    const data = await response.json();
-
-    if (!response.ok){
-      console.log("Error encountered when getting welcome message.");
-    } else {
-      setMessage(data.message);
-    }
-  };
-
+  const [message,] = useState("");
+  const [adminToken,] = useContext(AdminContext);
+  const [teamToken,] = useContext(TeamContext);
 
   return (
     <>
@@ -43,14 +28,23 @@ const App = () => {
         <div className="column"></div>
         <div className="column m-5 is-two-thirds">
           {
-            !token ? (
+            !(adminToken || teamToken) ? (
               <div className="columns">
-                <Login />
+              <AdminLogin />
+              <TeamLogin />
+              </div>
+            ) : ( teamToken ? (
+              <div className="column">
+                Under development...
               </div>
             ) : (
-
+              <div className="columns">
               <RegisterAdmin />
+              <RegisterTeam />
+              </div>
             )
+            )
+             
           }
         </div>
         <div className="column"></div>

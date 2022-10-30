@@ -30,6 +30,7 @@ const RegisterAdmin = () => {
 
         if (!response.ok){
             setErrorMessage(data.detail);
+            setSuccessMessage("");
         } else {
             setSuccessMessage("Admin registered successfully!");
             setErrorMessage("")

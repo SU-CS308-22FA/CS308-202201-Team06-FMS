@@ -1,4 +1,4 @@
-// Login component
+// Admin login component
 //
 // @zgr2788
 import React, { useContext, useState } from "react";
@@ -6,12 +6,11 @@ import React, { useContext, useState } from "react";
 import ErrorMessage from "./ErrorMessage";
 import { AdminContext } from "../context/AdminContext";
 
-const Login = () => {
+const AdminLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [,setToken] = useContext(AdminContext);
-
+    const [,setAdminToken] = useContext(AdminContext);
 
     const submitLogin = async () => {
         const requestOptions = {
@@ -28,8 +27,7 @@ const Login = () => {
         if (!response.ok){
             setErrorMessage(data.detail);
         } else {
-            setToken(data.access_token);
-            console.log(data.access_token);
+            setAdminToken(data.access_token)
         }
     };
 
@@ -41,7 +39,7 @@ const Login = () => {
     return (
         <div className = "column">
             <form className = "box" onSubmit = {handleSubmit}>
-                <h1 className = "title has-text-centered">Financial Management System - Login</h1>
+                <h1 className = "title has-text-centered">Admin Login</h1>
                 <br />
                 <br />
                 <div className = "field">
@@ -88,4 +86,4 @@ const Login = () => {
 
 };
 
-export default Login;
+export default AdminLogin;
