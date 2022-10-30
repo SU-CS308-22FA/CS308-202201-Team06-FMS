@@ -106,9 +106,9 @@ async def create_team(
         raise _fastapi.HTTPException(status_code = 400, detail = "Team email already registered to database!")
 
     # If not, create new team
-    teamObj = await _services.create_team(team, db)
+    return await _services.create_team(team, db)
 
-    return await _services.create_team_token(teamObj)
+    #return await _services.create_team_token(teamObj)
 
 # Get Team user
 @app.get("/api/admins/{team_name}", status_code = 200)

@@ -3,14 +3,17 @@
 // @zgr2788
 
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Register from "./components/RegisterAdmin";
+import Header from "./components/Header";
+import { AdminContext } from "./context/AdminContext";
 
 
 const App = () => {
   
   // Print welcome message
   const [message, setMessage] = useState("");
+  const [token, setToken] = useContext(AdminContext);
 
   const getWelcomeMessage = async () => {
     const requestOptions = {
@@ -37,10 +40,26 @@ const App = () => {
 
 
   return (
-    <div>
-      <h1>{message}</h1>
-      <Register />
-    </div>
+    <>
+      <Header title = {message} />
+      
+      <div className="columns">
+        <div className="column"></div>
+        <div className="column m-5 is-two-thirds">
+          {
+            !token ? (
+              <div className="columns">
+                <Register />
+              </div>
+            ) : (
+              <p>Table</p>
+            )
+          }
+        </div>
+        <div className="column"></div>
+      </div>
+    
+    </>
   
   );
 }
