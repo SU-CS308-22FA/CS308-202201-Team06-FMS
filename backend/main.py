@@ -81,9 +81,7 @@ async def create_admin(
         raise _fastapi.HTTPException(status_code = 400, detail = "Admin email already registered to database!")
     
     # If not, create new admin
-    adminObj = await _services.create_admin(admin, db)
-
-    return await _services.create_admin_token(adminObj)
+    return await _services.create_admin(admin, db)
 
 # Get current admin user
 @app.get("/api/admins/me", response_model=_schemas.Admin)

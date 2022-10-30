@@ -1,11 +1,12 @@
-// Main driver js for React frontend
+// Main page for the app
 // 
 // @zgr2788
 
 
-import React, { useContext, useEffect, useState } from "react";
-import Register from "./components/RegisterAdmin";
+import React, { useContext, useState } from "react";
+import RegisterAdmin from "./components/RegisterAdmin"; 
 import Header from "./components/Header";
+import Login from "./components/Login";
 import { AdminContext } from "./context/AdminContext";
 
 
@@ -13,7 +14,7 @@ const App = () => {
   
   // Print welcome message
   const [message, setMessage] = useState("");
-  const [token, setToken] = useContext(AdminContext);
+  const [token,] = useContext(AdminContext);
 
   const getWelcomeMessage = async () => {
     const requestOptions = {
@@ -34,11 +35,6 @@ const App = () => {
   };
 
 
-  useEffect(() => {
-    getWelcomeMessage()
-  }, []);
-
-
   return (
     <>
       <Header title = {message} />
@@ -49,10 +45,11 @@ const App = () => {
           {
             !token ? (
               <div className="columns">
-                <Register />
+                <Login />
               </div>
             ) : (
-              <p>Table</p>
+
+              <RegisterAdmin />
             )
           }
         </div>

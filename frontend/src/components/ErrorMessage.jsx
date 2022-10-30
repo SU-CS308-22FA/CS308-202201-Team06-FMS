@@ -1,3 +1,6 @@
+// Error message component
+//
+// @zgr2788
 import React from "react";
 
 const ErrorMessage = ({message}) => (

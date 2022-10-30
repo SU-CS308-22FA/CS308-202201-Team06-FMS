@@ -1,3 +1,6 @@
+// Driver script for the app
+//
+// @zgr2788
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import "bulma/css/bulma.min.css";

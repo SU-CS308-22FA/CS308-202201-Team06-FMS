@@ -1,3 +1,6 @@
+// Header component
+//
+// @zgr2788
 import React, { useContext } from "react";
 
 import { AdminContext } from "../context/AdminContext";

@@ -1,21 +1,20 @@
-// Admin Register
+// Admin register component
 //
 // @zgr2788
 
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
-import { AdminContext } from "../context/AdminContext";
 import ErrorMessage from "./ErrorMessage";
+import SuccessMessage from "./SuccessMessage";
 
-const Register = () => {
+const RegisterAdmin = () => {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [password, setPassword] = useState("");
     const [confirmationPassword, setConfirmationPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [,setToken] = useContext(AdminContext);
-
+    const [successMessage, setSuccessMessage] = useState("");
 
     const submitRegistration = async () => {
         const requestOptions = {
@@ -32,7 +31,8 @@ const Register = () => {
         if (!response.ok){
             setErrorMessage(data.detail);
         } else {
-            setToken(data.access_token);
+            setSuccessMessage("Admin registered successfully!");
+            setErrorMessage("")
         }
     };
 
@@ -51,7 +51,7 @@ const Register = () => {
     return (
         <div className = "column">
             <form className = "box" onSubmit = {handleSubmit}>
-                <h1 className = "title has-text-centered">Register</h1>
+                <h1 className = "title has-text-centered">Register New Admin</h1>
                 
                 <div className = "field">
                     <label className = "label">Email Address</label>
@@ -127,7 +127,7 @@ const Register = () => {
                 </div>
 
                 <ErrorMessage message = {errorMessage} />
-                
+                <SuccessMessage message = {successMessage} />
                 <br />
                 <br />
                 <br />
@@ -145,4 +145,4 @@ const Register = () => {
 
 };
 
-export default Register
+export default RegisterAdmin
