@@ -27,7 +27,7 @@ const AdminLogin = () => {
         if (!response.ok){
             setErrorMessage(data.detail);
         } else {
-            setAdminToken(data.access_token)
+            setAdminToken(data.access_token);
         }
     };
 

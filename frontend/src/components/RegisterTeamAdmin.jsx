@@ -8,7 +8,7 @@ import { AdminContext } from "../context/AdminContext";
 import ErrorMessage from "./ErrorMessage";
 import SuccessMessage from "./SuccessMessage";
 
-const RegisterTeamAdmin = () => {
+const RegisterTeamAdmin = ({loggedInAdmin}) => {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [budget, setBudget] = useState("");
@@ -53,7 +53,7 @@ const RegisterTeamAdmin = () => {
 
 
 
-
+    if (loggedInAdmin){
     return (
         <div className="column">
             <form className="box" onSubmit={handleSubmit}>
@@ -145,6 +145,9 @@ const RegisterTeamAdmin = () => {
 
 
     );
+    }
+
+    return (null);
 
 };
 

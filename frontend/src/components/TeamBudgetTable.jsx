@@ -6,12 +6,12 @@ import { TeamContext } from "../context/TeamContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 
-const TeamBudgetTable = () => {
+const TeamBudgetTable = ({loggedInTeam}) => {
     const [teamToken,] = useContext(TeamContext);
     const [budgetItems, setBudgetItems] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
     const [itemName, setItemName] = useState(null);
 
@@ -35,13 +35,15 @@ const TeamBudgetTable = () => {
     };
 
     useEffect(() => {
-        setLoading(true);
+        setChildLoading(true);
         setTimeout(() => {
             getBudgetItems();
-            setLoading(false);
+            setChildLoading(false);
         }, 100)
     }, []);
 
+
+    if (loggedInTeam) {
     return (
 
         <>
@@ -52,7 +54,7 @@ const TeamBudgetTable = () => {
             </button>
 
             <ErrorMessage message={errorMessage} />
-            {!loading ? (
+            {!childLoading ? (
                 <table className="table is-fullwidth">
                     <thead>
                         <tr>
@@ -81,7 +83,10 @@ const TeamBudgetTable = () => {
             ) : (<p>Loading</p>)}
 
         </>
-    )
+    );
+    }
+
+    return (null);
 
 
 }

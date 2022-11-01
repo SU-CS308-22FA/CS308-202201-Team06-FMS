@@ -6,7 +6,7 @@ import React, { useContext } from "react";
 import { AdminContext } from "../context/AdminContext";
 import { TeamContext } from "../context/TeamContext";
 
-const Header = ({title}) => {
+const Header = ({loggedInTeam}, {loggedInAdmin}) => {
     const [teamToken, setTeamToken] = useContext(TeamContext);
     const [adminToken, setAdminToken] = useContext(AdminContext);
 
@@ -15,17 +15,20 @@ const Header = ({title}) => {
         setTeamToken(null);
     }
 
-    return (
-        <div className="has-text-centered m-6">
-            <h1 className="title">{title}</h1>
-            {(adminToken || teamToken) && (
-                <button className="button" onClick = {handleLogout}>
-                    Logout
-                </button>
-            )}
-        </div>
+    if (loggedInTeam || loggedInAdmin){
+        return (
+            <div className="has-text-centered m-6">
+                {(adminToken || teamToken) && (
+                    <button className="button" onClick = {handleLogout}>
+                        Logout
+                    </button>
+                )}
+            </div>
+        );
+    }
 
-    );
+    return (null);
+
 };
 
 export default Header;

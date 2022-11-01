@@ -10,7 +10,7 @@ const TeamLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [teamToken, setTeamToken] = useContext(TeamContext);
+    const [,setTeamToken] = useContext(TeamContext);
 
     const submitLogin = async () => {
         const requestOptions = {
@@ -28,8 +28,6 @@ const TeamLogin = () => {
             setErrorMessage(data.detail);
         } else {
             setTeamToken(data.access_token);
-            console.log(data.access_token);
-            console.log(teamToken)
         }
     };
 
