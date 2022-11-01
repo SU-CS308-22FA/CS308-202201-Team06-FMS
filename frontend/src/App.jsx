@@ -29,17 +29,20 @@ const App = () => {
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
-        setLoading(false);
+      setAdminToken(null);
+      setTeamToken(null);
+      setAdminLogin(false);
+      setTeamLogin(false);
+      setLoading(false);
     }, 3000)
-}, []);
-
+}, [setAdminToken, setTeamToken, setAdminLogin, setTeamLogin])
 
 
 
 
   return (
     <>
-      <Header />
+
 
       <div className="columns">
         <div className="column"></div>
@@ -47,6 +50,7 @@ const App = () => {
           { loading ? (
           <div className="column"> 
           Loading - TODO: Place Spinner Here
+         
           </div>) : 
             (() => {
             
@@ -58,18 +62,27 @@ const App = () => {
               }
             
               else if (adminToken) {
-                  return <div className="columns">
+                  return <div className="column">
+                  <Header />
+                  <div className="columns">
                   <RegisterAdmin loggedInAdmin={adminLogin}/>
                   <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
                   <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
                   <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
+                  </div>   
                   </div>
+
+                  
               }
             
               else if (teamToken) {
-                return <div className="column"> 
+                return <div className="column">
+                <Header />
+                <div className="column">
                 <Table loggedInTeam={teamLogin}/> 
-                </div>
+                </div> 
+                </div> 
+
               }
             })()
           }

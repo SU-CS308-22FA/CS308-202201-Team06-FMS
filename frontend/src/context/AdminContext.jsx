@@ -33,12 +33,12 @@ export const AdminProvider = (props) => {
             }
             
             localStorage.setItem("AdminToken", token);
-            localStorage.setItem("AdminLogin", login)
+            localStorage.setItem("AdminLogin", login);
         };
 
         fetchAdmin();
 
-    }, [token]);
+    }, [token, login]);
 
     return (
         <AdminContext.Provider value = {[token, setToken, login, setLogin]}>

@@ -16,18 +16,16 @@ const Header = () => {
         setAdminLogin(false);
         setTeamLogin(false);
     }
-
-    if (adminLogin || teamLogin){
+        if (adminLogin || teamLogin)
         return (
             <div className="has-text-centered m-6">
-                {(adminToken || teamToken) && (
-                    <button className="button" onClick = {handleLogout}>
-                        Logout
-                    </button>
-                )}
+                <button className="button" onClick = {handleLogout}>
+                    Logout
+                </button>
             </div>
         );
-    }
+
+        return(null);
 
 };
 

@@ -35,12 +35,12 @@ export const TeamProvider = (props) => {
             }
 
             localStorage.setItem("TeamToken", token);
-            localStorage.setItem("TeamLogin", login)
+            localStorage.setItem("TeamLogin", login);
         };
 
         fetchTeam();
 
-    }, [token]);
+    }, [token, login]);
 
     return (
         <TeamContext.Provider value={[token, setToken, login, setLogin]}>
