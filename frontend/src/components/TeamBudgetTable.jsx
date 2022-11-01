@@ -20,7 +20,7 @@ const TeamBudgetTable = () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Autharization: "Bearer " + teamToken,
+                Authorization: "Bearer " + teamToken,
             },
         };
 
@@ -51,7 +51,7 @@ const TeamBudgetTable = () => {
                 Create New Budget Item
             </button>
 
-            <errorMessage message={errorMessage} />
+            <ErrorMessage message={errorMessage} />
             {!loading ? (
                 <table className="table is-fullwidth">
                     <thead>
