@@ -6,16 +6,18 @@ import React, { useContext } from "react";
 import { AdminContext } from "../context/AdminContext";
 import { TeamContext } from "../context/TeamContext";
 
-const Header = ({loggedInTeam}, {loggedInAdmin}) => {
-    const [teamToken, setTeamToken] = useContext(TeamContext);
-    const [adminToken, setAdminToken] = useContext(AdminContext);
+const Header = () => {
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
+    const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
 
     const handleLogout = () => {
         setAdminToken(null);
         setTeamToken(null);
+        setAdminLogin(false);
+        setTeamLogin(false);
     }
 
-    if (loggedInTeam || loggedInAdmin){
+    if (adminLogin || teamLogin){
         return (
             <div className="has-text-centered m-6">
                 {(adminToken || teamToken) && (
@@ -26,8 +28,6 @@ const Header = ({loggedInTeam}, {loggedInAdmin}) => {
             </div>
         );
     }
-
-    return (null);
 
 };
 

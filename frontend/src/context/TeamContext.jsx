@@ -8,6 +8,8 @@ export const TeamContext = createContext();
 
 export const TeamProvider = (props) => {
     const [token, setToken] = useState(localStorage.getItem("TeamToken"))
+    const [login, setLogin] = useState(localStorage.getItem("TeamLogin"))
+
 
     useEffect(() => {
         const fetchTeam = async () => {
@@ -28,7 +30,12 @@ export const TeamProvider = (props) => {
                 setToken(null);
             }
 
+            if (response.ok){
+                setLogin(true);
+            }
+
             localStorage.setItem("TeamToken", token);
+            localStorage.setItem("TeamLogin", login)
         };
 
         fetchTeam();
@@ -36,7 +43,7 @@ export const TeamProvider = (props) => {
     }, [token]);
 
     return (
-        <TeamContext.Provider value={[token, setToken]}>
+        <TeamContext.Provider value={[token, setToken, login, setLogin]}>
             {props.children}
         </TeamContext.Provider>
     )

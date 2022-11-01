@@ -19,9 +19,8 @@ import Table from "./components/TeamBudgetTable";
 const App = () => {
 
   // Print welcome message
-  const [message,] = useState("");
-  const [adminToken,setAdminToken] = useContext(AdminContext);
-  const [teamToken,setTeamToken] = useContext(TeamContext);
+  const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
+  const [teamToken,setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
   //const [loggedInTeam, setLoggedInTeam] = useState(false);
   //const [loggedInAdmin, setLoggedInAdmin] = useState(false);
@@ -30,8 +29,6 @@ const App = () => {
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
-        setAdminToken(null);
-        setTeamToken(null);
         setLoading(false);
     }, 3000)
 }, []);
@@ -61,19 +58,17 @@ const App = () => {
               }
             
               else if (adminToken) {
-                  //setLoggedInAdmin(true)
                   return <div className="columns">
-                  <RegisterAdmin loggedInAdmin={adminToken}/>
-                  <RegisterTeamAdmin loggedInAdmin={adminToken}/>
-                  <DeleteTeamAdmin loggedInAdmin={adminToken}/>
-                  <UpdateTeamAdmin loggedInAdmin={adminToken}/>
+                  <RegisterAdmin loggedInAdmin={adminLogin}/>
+                  <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
+                  <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
+                  <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
                   </div>
               }
             
               else if (teamToken) {
-                //setLoggedInTeam(true)
                 return <div className="column"> 
-                <Table loggedInTeam={teamToken}/> 
+                <Table loggedInTeam={teamLogin}/> 
                 </div>
               }
             })()
