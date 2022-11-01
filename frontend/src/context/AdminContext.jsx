@@ -8,10 +8,10 @@ export const AdminContext = createContext();
 
 export const AdminProvider = (props) => {
     const [token, setToken] = useState(localStorage.getItem("AdminToken"))
+    const [login, setLogin] = useState(localStorage.getItem("AdminLogin"))
 
     useEffect(() => {
         const fetchAdmin = async () => {
-            
             // Get options
             const requestOptions = {
                 method: "GET",
@@ -27,8 +27,13 @@ export const AdminProvider = (props) => {
             if (!response.ok){
                 setToken(null);
             }
+
+            if (response.ok){
+                setLogin(true);
+            }
             
             localStorage.setItem("AdminToken", token);
+            localStorage.setItem("AdminLogin", login)
         };
 
         fetchAdmin();
@@ -36,7 +41,7 @@ export const AdminProvider = (props) => {
     }, [token]);
 
     return (
-        <AdminContext.Provider value = {[token, setToken]}>
+        <AdminContext.Provider value = {[token, setToken, login, setLogin]}>
             {props.children}
         </AdminContext.Provider>
     )

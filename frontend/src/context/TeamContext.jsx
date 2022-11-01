@@ -8,27 +8,34 @@ export const TeamContext = createContext();
 
 export const TeamProvider = (props) => {
     const [token, setToken] = useState(localStorage.getItem("TeamToken"))
+    const [login, setLogin] = useState(localStorage.getItem("TeamLogin"))
+
 
     useEffect(() => {
         const fetchTeam = async () => {
-            
+
             // Get options
             const requestOptions = {
                 method: "GET",
-                headers:{
+                headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + token,
                 },
             };
-            
+
             // Get response
             const response = await fetch("/api/teams/me", requestOptions);
 
-            if (!response.ok){
+            if (!response.ok) {
                 setToken(null);
             }
-            
+
+            if (response.ok){
+                setLogin(true);
+            }
+
             localStorage.setItem("TeamToken", token);
+            localStorage.setItem("TeamLogin", login)
         };
 
         fetchTeam();
@@ -36,7 +43,7 @@ export const TeamProvider = (props) => {
     }, [token]);
 
     return (
-        <TeamContext.Provider value = {[token, setToken]}>
+        <TeamContext.Provider value={[token, setToken, login, setLogin]}>
             {props.children}
         </TeamContext.Provider>
     )
