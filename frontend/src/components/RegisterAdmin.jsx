@@ -2,12 +2,13 @@
 //
 // @zgr2788
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import ErrorMessage from "./ErrorMessage";
 import SuccessMessage from "./SuccessMessage";
+import { AdminContext } from "../context/AdminContext";
 
-const RegisterAdmin = () => {
+const RegisterAdmin = ({loggedInAdmin}) => {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
@@ -15,6 +16,7 @@ const RegisterAdmin = () => {
     const [confirmationPassword, setConfirmationPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [adminToken,] = useContext(AdminContext)
 
     const submitRegistration = async () => {
         const requestOptions = {
@@ -49,8 +51,9 @@ const RegisterAdmin = () => {
 
 
 
-
-    return (
+   
+    if (loggedInAdmin){
+        return (
         <div className = "column">
             <form className = "box" onSubmit = {handleSubmit}>
                 <h1 className = "title has-text-centered">Register New Admin</h1>
@@ -141,6 +144,9 @@ const RegisterAdmin = () => {
 
 
     );
+    }
+
+    return (null);
 
 };
 

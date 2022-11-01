@@ -8,7 +8,7 @@ import { AdminContext } from "../context/AdminContext";
 import ErrorMessage from "./ErrorMessage";
 import SuccessMessage from "./SuccessMessage";
 
-const DeleteTeamAdmin = () => {
+const DeleteTeamAdmin = ({loggedInAdmin}) => {
     const [name, setName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -42,7 +42,7 @@ const DeleteTeamAdmin = () => {
 
 
 
-
+    if (loggedInAdmin){
     return (
         <div className = "column">
             <form className = "box" onSubmit = {handleSubmit}>
@@ -74,6 +74,9 @@ const DeleteTeamAdmin = () => {
             </form>
         </div>
     );
+    }
+
+    return (null);
 
 };
 

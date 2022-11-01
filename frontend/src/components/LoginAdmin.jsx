@@ -10,7 +10,7 @@ const AdminLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [,setAdminToken] = useContext(AdminContext);
+    const [adminToken,setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
 
     const submitLogin = async () => {
         const requestOptions = {
@@ -27,7 +27,8 @@ const AdminLogin = () => {
         if (!response.ok){
             setErrorMessage(data.detail);
         } else {
-            setAdminToken(data.access_token)
+            setAdminToken(data.access_token);
+            setAdminLogin(true);
         }
     };
 
