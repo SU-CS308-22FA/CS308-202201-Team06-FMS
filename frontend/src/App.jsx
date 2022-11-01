@@ -49,7 +49,7 @@ const App = () => {
         <div className="column m-5 is-two-thirds">
           { loading ? (
           <div className="column"> 
-          Loading - TODO: Place Spinner Here
+          Retrieving API Data - TODO: Place Spinner Here
          
           </div>) : 
             (() => {
