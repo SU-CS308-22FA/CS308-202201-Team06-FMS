@@ -13,10 +13,11 @@ import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
 import { TeamContext } from "./context/TeamContext";
 import TeamLogin from "./components/LoginTeam";
+import Table from "./components/TeamBudgetTable";
 
 
 const App = () => {
-  
+
   // Print welcome message
   const [message,] = useState("");
   const [adminToken,] = useContext(AdminContext);
@@ -24,38 +25,38 @@ const App = () => {
 
   return (
     <>
-      <Header title = {message} />
-      
+      <Header title={message} />
+
       <div className="columns">
         <div className="column"></div>
         <div className="column m-5 is-two-thirds">
           {
             !(adminToken || teamToken) ? (
               <div className="columns">
-              <AdminLogin />
-              <TeamLogin />
+                <AdminLogin />
+                <TeamLogin />
               </div>
-            ) : ( teamToken ? (
+            ) : (teamToken ? (
               <div className="column">
-                Under development...
+                <Table />
               </div>
             ) : (
               <div className="columns">
-              <RegisterAdmin />
-              <RegisterTeamAdmin />
-              <DeleteTeamAdmin />
-              <UpdateTeamAdmin />
+                <RegisterAdmin />
+                <RegisterTeamAdmin />
+                <DeleteTeamAdmin />
+                <UpdateTeamAdmin />
               </div>
             )
             )
-             
+
           }
         </div>
         <div className="column"></div>
       </div>
-    
+
     </>
-  
+
   );
 }
 

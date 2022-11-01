@@ -11,23 +11,23 @@ export const TeamProvider = (props) => {
 
     useEffect(() => {
         const fetchTeam = async () => {
-            
+
             // Get options
             const requestOptions = {
                 method: "GET",
-                headers:{
+                headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + token,
                 },
             };
-            
+
             // Get response
             const response = await fetch("/api/teams/me", requestOptions);
 
-            if (!response.ok){
+            if (!response.ok) {
                 setToken(null);
             }
-            
+
             localStorage.setItem("TeamToken", token);
         };
 
@@ -36,7 +36,7 @@ export const TeamProvider = (props) => {
     }, [token]);
 
     return (
-        <TeamContext.Provider value = {[token, setToken]}>
+        <TeamContext.Provider value={[token, setToken]}>
             {props.children}
         </TeamContext.Provider>
     )
