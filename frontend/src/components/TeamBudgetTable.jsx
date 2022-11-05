@@ -6,7 +6,7 @@ import { TeamContext } from "../context/TeamContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 
-const TeamBudgetTable = ({loggedInTeam}) => {
+const TeamBudgetTable = ({ loggedInTeam }) => {
     const [teamToken,] = useContext(TeamContext);
     const [budgetItems, setBudgetItems] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
@@ -34,6 +34,7 @@ const TeamBudgetTable = ({loggedInTeam}) => {
         }
     };
 
+
     useEffect(() => {
         setChildLoading(true);
         setTimeout(() => {
@@ -44,46 +45,44 @@ const TeamBudgetTable = ({loggedInTeam}) => {
 
 
     if (loggedInTeam) {
-    return (
+        return (
 
-        <>
-            <h1 style={{ allign: "center", fontSize: 30 }}>Team User Interface</h1>
+            <>
+                <h1 style={{ allign: "center", fontSize: 30 }}>Team User Interface</h1>
 
-            <button className="button is-fullwidth mb-5 is-primary">
-                Create New Budget Item
-            </button>
+                <button className="button is-fullwidth mb-5 is-primary">
+                    Create New Budget Item
+                </button>
 
-            <ErrorMessage message={errorMessage} />
-            {!childLoading ? (
-                <table className="table is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th>Team Name</th>
-                            <th>Item Name</th>
-                            <th>Amount Name</th>
-                            <th>Date Created</th>
-                            <th>Date Last Updated</th>
-                            <th>Actions</th>
+                <ErrorMessage message={errorMessage} />
+                {!childLoading ? (
+                    <table className="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Amount Name</th>
+                                <th>Date Created</th>
+                                <th>Date Last Updated</th>
+                                <th>Actions</th>
 
-                        </tr>
-                    </thead>
-                    {/* <tbody>
-                        {budgetItems.map((budgetItem) => (
-                            <tr key={budgetItem.item_name}>
-                                <td>{budgetItem.team_name}</td>
-                                <td>{budgetItem.item_name}</td>
-                                <td>{budgetItem.amount}</td>
-                                <td>{budgetItem.date_created}</td>
-                                <td>{budgetItem.date_last_updated}</td>                            
-                            
                             </tr>
-                        ))}
-                    </tbody> */}
-                </table>
-            ) : (<p>Loading</p>)}
+                        </thead>
+                        <tbody>
+                            {budgetItems.map((budgetItem) => (
+                                <tr key={budgetItem.item_name}>
+                                    <td>{budgetItem.item_name}</td>
+                                    <td>{budgetItem.amount}</td>
+                                    <td>{budgetItem.date_created}</td>
+                                    <td>{budgetItem.date_last_updated}</td>
 
-        </>
-    );
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (<p>Loading</p>)}
+
+            </>
+        );
     }
 
     return (null);
