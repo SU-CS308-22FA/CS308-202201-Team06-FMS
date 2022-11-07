@@ -249,10 +249,6 @@ async def get_team_by_name(name: str, db: _orm.Session):
 async def get_team_by_email(email: str, db: _orm.Session):
     return db.query(_models.Team).filter(_models.Team.email == email).first()
 
-# Get all Teams
-async def get_teams(db:_orm.Session):
-    return await db.query(_models.Team).all()
-
 # Update Team budget
 async def update_team_budget(name: str, change: float, db: _orm.Session):
     return db.query(_models.Team).filter(_models.Team.name == name).update({'budget_alloc' : _models.Team.budget_alloc + change})
