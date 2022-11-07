@@ -189,6 +189,11 @@ async def admin_update_item(team_name : str, item_name : str, budgetItem: _schem
 async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
     return team
 
+# Get all teams
+@app.get("/api/teams", response_model= List[_schemas.Team])
+async def get_all_teams(db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_teams(db = db)
+
 # Create budget item - Team
 @app.post("/api/teams/createitem", response_model=_schemas.BudgetItem)
 async def team_create_item(
