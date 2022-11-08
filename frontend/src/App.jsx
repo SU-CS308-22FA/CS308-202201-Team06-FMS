@@ -22,15 +22,13 @@ const App = () => {
   const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
   const [teamToken,setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
-  //const [loggedInTeam, setLoggedInTeam] = useState(false);
-  //const [loggedInAdmin, setLoggedInAdmin] = useState(false);
 
 
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 3000)
+    }, 1000)
 }, [setAdminToken, setTeamToken, setAdminLogin, setTeamLogin])
 
 

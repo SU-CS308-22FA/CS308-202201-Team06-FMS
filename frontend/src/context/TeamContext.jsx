@@ -28,10 +28,7 @@ export const TeamProvider = (props) => {
 
             if (!response.ok) {
                 setToken(null);
-            }
-
-            if (response.ok){
-                setLogin(true);
+                setLogin(false);
             }
 
             localStorage.setItem("TeamToken", token);

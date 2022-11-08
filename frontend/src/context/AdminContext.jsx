@@ -26,10 +26,7 @@ export const AdminProvider = (props) => {
 
             if (!response.ok){
                 setToken(null);
-            }
-
-            if (response.ok){
-                setLogin(true);
+                setLogin(false);
             }
             
             localStorage.setItem("AdminToken", token);
