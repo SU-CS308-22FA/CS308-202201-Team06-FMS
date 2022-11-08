@@ -31,13 +31,6 @@ const App = () => {
     }, 1000)
 }, [setAdminToken, setTeamToken, setAdminLogin, setTeamLogin])
 
-  window.addEventListener("beforeunload", (ev) => 
-  {  
-    ev.preventDefault();
-    return ev.returnValue = 'Are you sure you want to close?';
-  });
-
-
 
 
   return (
