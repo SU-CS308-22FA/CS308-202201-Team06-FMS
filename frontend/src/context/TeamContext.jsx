@@ -7,8 +7,8 @@ import React, { createContext, useEffect, useState } from "react";
 export const TeamContext = createContext();
 
 export const TeamProvider = (props) => {
-    const [token, setToken] = useState(localStorage.getItem("TeamToken"))
-    const [login, setLogin] = useState(localStorage.getItem("TeamLogin"))
+    const [token, setToken] = useState(sessionStorage.getItem("TeamToken"))
+    const [login, setLogin] = useState(sessionStorage.getItem("TeamLogin"))
 
 
     useEffect(() => {
@@ -28,14 +28,11 @@ export const TeamProvider = (props) => {
 
             if (!response.ok) {
                 setToken(null);
+                setLogin(false);
             }
 
-            if (response.ok){
-                setLogin(true);
-            }
-
-            localStorage.setItem("TeamToken", token);
-            localStorage.setItem("TeamLogin", login);
+            sessionStorage.setItem("TeamToken", token);
+            sessionStorage.setItem("TeamLogin", login);
         };
 
         fetchTeam();
