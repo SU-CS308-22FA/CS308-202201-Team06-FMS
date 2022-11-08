@@ -7,8 +7,8 @@ import React, { createContext, useEffect, useState } from "react";
 export const AdminContext = createContext();
 
 export const AdminProvider = (props) => {
-    const [token, setToken] = useState(localStorage.getItem("AdminToken"))
-    const [login, setLogin] = useState(localStorage.getItem("AdminLogin"))
+    const [token, setToken] = useState(sessionStorage.getItem("AdminToken"))
+    const [login, setLogin] = useState(sessionStorage.getItem("AdminLogin"))
 
     useEffect(() => {
         const fetchAdmin = async () => {
@@ -28,9 +28,9 @@ export const AdminProvider = (props) => {
                 setToken(null);
                 setLogin(false);
             }
-            
-            localStorage.setItem("AdminToken", token);
-            localStorage.setItem("AdminLogin", login);
+
+            sessionStorage.setItem("AdminToken", token);
+            sessionStorage.setItem("AdminLogin", login);
         };
 
         fetchAdmin();
