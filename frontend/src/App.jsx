@@ -29,10 +29,6 @@ const App = () => {
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
-      setAdminToken(null);
-      setTeamToken(null);
-      setAdminLogin(false);
-      setTeamLogin(false);
       setLoading(false);
     }, 3000)
 }, [setAdminToken, setTeamToken, setAdminLogin, setTeamLogin])
