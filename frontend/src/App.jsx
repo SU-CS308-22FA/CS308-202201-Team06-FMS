@@ -3,7 +3,7 @@
 // @zgr2788
 
 
-import React, { useContext, useState, useEffect} from "react";
+import React, { useContext, useState, useEffect } from "react";
 import RegisterAdmin from "./components/RegisterAdmin";
 import RegisterTeamAdmin from "./components/RegisterTeamAdmin";
 import DeleteTeamAdmin from "./components/DeleteTeamAdmin";
@@ -20,7 +20,7 @@ const App = () => {
 
   // Print welcome message
   const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
-  const [teamToken,setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
+  const [teamToken, setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
   //const [loggedInTeam, setLoggedInTeam] = useState(false);
   //const [loggedInAdmin, setLoggedInAdmin] = useState(false);
@@ -29,9 +29,9 @@ const App = () => {
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
-        setLoading(false);
+      setLoading(false);
     }, 3000)
-}, []);
+  }, []);
 
 
 
@@ -44,31 +44,31 @@ const App = () => {
       <div className="columns">
         <div className="column"></div>
         <div className="column m-5 is-two-thirds">
-          { loading ? (
-          <div className="column"> 
-          Loading - TODO: Place Spinner Here
-          </div>) : 
+          {loading ? (
+            <div className="column">
+              Loading - TODO: Place Spinner Here
+            </div>) :
             (() => {
-            
-              if (!adminToken && !teamToken) {  
+
+              if (!adminToken && !teamToken) {
                 return <div className="columns">
-                <AdminLogin />
-                <TeamLogin />
+                  <AdminLogin />
+                  <TeamLogin />
                 </div>
               }
-            
+
               else if (adminToken) {
-                  return <div className="columns">
-                  <RegisterAdmin loggedInAdmin={adminLogin}/>
-                  <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
-                  <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
-                  <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
-                  </div>
+                return <div className="columns">
+                  <RegisterAdmin loggedInAdmin={adminLogin} />
+                  <RegisterTeamAdmin loggedInAdmin={adminLogin} />
+                  <DeleteTeamAdmin loggedInAdmin={adminLogin} />
+                  <UpdateTeamAdmin loggedInAdmin={adminLogin} />
+                </div>
               }
-            
+
               else if (teamToken) {
-                return <div className="column"> 
-                <Table loggedInTeam={teamLogin}/> 
+                return <div className="column">
+                  <Table loggedInTeam={teamLogin} />
                 </div>
               }
             })()
