@@ -65,6 +65,7 @@ class BudgetItem(_database.Base):
     team_name = _sql.Column(_sql.String, _sql.ForeignKey("teams.name"), primary_key = True)                                       # Team name
     item_name = _sql.Column(_sql.String, primary_key = True, index = True)                                                        # Budget item name
     amount = _sql.Column(_sql.Float)                                                                                              # Amount of the item
+    support_docs = _sql.Column(_sql.LargeBinary, nullable=True)                                                                  # Supporting documents
     date_created = _sql.Column(_sql.DateTime, default = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone))      # Date of entry creation
     date_last_updated = _sql.Column(_sql.DateTime, default = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)) # Date of last entry update
 

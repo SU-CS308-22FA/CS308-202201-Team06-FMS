@@ -182,8 +182,12 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
 
 # Get Items - Admin
 async def get_items_admin(teamname: str, db: _orm.Session):
-    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
+    team_db = await get_team_by_name(teamname, db)
 
+    if not team_db:
+        raise _fastapi.HTTPException(status_code = 404, detail="Team does not exist in database!")
+
+    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
     return list(map(_schemas.BudgetItem.from_orm, items))
 
 # Item selector - Admin
