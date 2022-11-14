@@ -18,8 +18,9 @@ import fastapi as _fastapi
 import fastapi.security as _security
 import datetime as _dt
 from dateutil import tz as _tz
-import pickle as _pickle
+import PyPDF2 as _pdf
 from ast import literal_eval
+import os
 
 
 
@@ -369,16 +370,36 @@ async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase,
 async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schemas.Team, db: _orm.Session):
         
         item = await _item_selector(item_name=item_name, team=team, db=db)
+        filename_temp = "supportfiles/" + team.name + "_" + item_name + "_temp.pdf"
+        filename = "supportfiles/" + team.name + "_" + item_name + ".pdf"
         
+        # Try upload
         try:
-            filename = "supportfiles/" + team.name + "_" + item_name + ".pdf"
             contents = file.file.read()
-            with open(filename, 'wb') as f:
+            with open(filename_temp, 'wb') as f:
                 f.write(contents)
 
         except:
-            "There was an error during file upload. Please try again..."
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
         
+        # Check if pdf is valid
+        try:
+            _pdf.PdfFileReader(open(filename_temp, "rb"))
+        
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=406, detail= "The uploaded file is not a valid pdf file!")
+
+        
+        # If so, replace file
+        if os.path.isfile(filename):
+            os.remove(filename)
+        
+        os.rename(filename_temp, filename)
+        
+
+
         item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
         item.support_docs = filename
 
