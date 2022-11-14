@@ -69,8 +69,8 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                             <tr key={budgetItem.item_name}>
                                 <td>{budgetItem.item_name}</td>
                                 <td>{budgetItem.amount}</td>
-                                <td>{budgetItem.date_created}</td>
-                                <td>{budgetItem.date_last_updated}</td>
+                                <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
+                                <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
 
                             </tr>
                         ))}
