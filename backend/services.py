@@ -366,11 +366,21 @@ async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase,
     return _schemas.BudgetItem.from_orm(item)
 
 # Add docs - Team
-async def add_docs_team(item_name: str, file: bytes, team: _schemas.Team, db: _orm.Session):
+async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schemas.Team, db: _orm.Session):
         
         item = await _item_selector(item_name=item_name, team=team, db=db)
-        item.support_docs = repr(file)
+        
+        try:
+            filename = team.name + "_" + item_name + ".pdf"
+            contents = file.file.read()
+            with open(filename, 'wb') as f:
+                f.write(contents)
+
+        except:
+            "There was an error during file upload. Please try again..."
+        
         item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+        item.support_docs = filename
 
         db.commit()
         db.refresh(item)

@@ -253,6 +253,6 @@ async def team_update_item(item_name : str, budgetItem: _schemas._BudgetItemBase
 
 # Upload supporting docs for a specific budget item - Team
 @app.post("/api/teams/docs/{item_name}")
-async def team_add_docs(item_name : str, file : bytes = _fastapi.File(), team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+async def team_add_docs(item_name : str, file : _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.add_docs_team(item_name = item_name, file = file, team = team, db = db)
 
