@@ -36,8 +36,6 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
 
     useEffect(() => {
-        setChildLoading(true);
-        setTimeout(() => {
             getBudgetItems();
             setChildLoading(false);
         }, 100)
