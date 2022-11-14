@@ -371,7 +371,7 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
         item = await _item_selector(item_name=item_name, team=team, db=db)
         
         try:
-            filename = team.name + "_" + item_name + ".pdf"
+            filename = "supportfiles/" + team.name + "_" + item_name + ".pdf"
             contents = file.file.read()
             with open(filename, 'wb') as f:
                 f.write(contents)
