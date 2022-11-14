@@ -18,6 +18,9 @@ import fastapi as _fastapi
 import fastapi.security as _security
 import datetime as _dt
 from dateutil import tz as _tz
+import pickle as _pickle
+from ast import literal_eval
+
 
 
 # Define timezones
@@ -362,6 +365,18 @@ async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase,
 
     return _schemas.BudgetItem.from_orm(item)
 
+# Add docs - Team
+async def add_docs_team(item_name: str, file: bytes, team: _schemas.Team, db: _orm.Session):
+        
+        item = await _item_selector(item_name=item_name, team=team, db=db)
+        item.support_docs = repr(file)
+        item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+
+        db.commit()
+        db.refresh(item)
+
+        return _schemas.BudgetItem.from_orm(item)
+    
 
 #*************************
 #       BUDGET

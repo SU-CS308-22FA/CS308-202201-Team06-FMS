@@ -251,5 +251,8 @@ async def team_delete_item(item_name : str, team: _schemas.Team = _fastapi.Depen
 async def team_update_item(item_name : str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_team(item_name = item_name, budgetItem = budgetItem, team = team, db = db)
 
-
+# Upload supporting docs for a specific budget item - Team
+@app.post("/api/teams/docs/{item_name}")
+async def team_add_docs(item_name : str, file : bytes = _fastapi.File(), team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.add_docs_team(item_name = item_name, file = file, team = team, db = db)
 
