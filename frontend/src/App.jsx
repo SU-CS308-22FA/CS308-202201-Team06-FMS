@@ -13,7 +13,7 @@ import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
 import { TeamContext } from "./context/TeamContext";
 import TeamLogin from "./components/LoginTeam";
-import Table from "./components/TeamBudgetTable";
+import TeamBudgetTable from "./components/TeamBudgetTable";
 
 
 const App = () => {
@@ -68,7 +68,7 @@ const App = () => {
 
               else if (teamToken) {
                 return <div className="column">
-                  <Table loggedInTeam={teamLogin} />
+                  <TeamBudgetTable loggedInTeam={teamLogin} />
                 </div>
               }
             })()
