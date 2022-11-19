@@ -9,6 +9,7 @@ export const TeamContext = createContext();
 export const TeamProvider = (props) => {
     const [token, setToken] = useState(sessionStorage.getItem("TeamToken"))
     const [login, setLogin] = useState(sessionStorage.getItem("TeamLogin"))
+    const [userName, setUserName] = useState(sessionStorage.getItem("TeamUserName"))
 
 
     useEffect(() => {
@@ -29,18 +30,23 @@ export const TeamProvider = (props) => {
             if (!response.ok) {
                 setToken(null);
                 setLogin(false);
+                setUserName("");
             }
+            else {
+                const data = await response.json();
 
-            sessionStorage.setItem("TeamToken", token);
-            sessionStorage.setItem("TeamLogin", login);
+                sessionStorage.setItem("TeamToken", token);
+                sessionStorage.setItem("TeamLogin", login);
+                sessionStorage.setItem("TeamUserName", data.name);
+            }
         };
 
         fetchTeam();
 
-    }, [token, login]);
+    }, [token, login, userName]);
 
     return (
-        <TeamContext.Provider value={[token, setToken, login, setLogin]}>
+        <TeamContext.Provider value={[token, setToken, login, setLogin, userName, setUserName]}>
             {props.children}
         </TeamContext.Provider>
     )

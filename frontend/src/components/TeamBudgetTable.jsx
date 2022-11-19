@@ -8,13 +8,32 @@ import { useState, useEffect } from "react";
 import BudgetItemModal from "./BudgetItemModal";
 
 const TeamBudgetTable = ({ loggedInTeam }) => {
-    const [teamToken] = useContext(TeamContext);
     const [budgetItems, setBudgetItems] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
     const [itemName, setItemName] = useState(null);
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
+
+    const handleDelete = async (item_name) => {
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + teamToken,
+            },
+        };
+
+        const response = await fetch(`/api/teams/deleteitem/${item_name}`, requestOptions);
+
+        if (!response) {
+            setErrorMessage("Failed to delete lead");
+        }
+
+        getBudgetItems();
+    }
+
 
     const getBudgetItems = async () => {
         const requestOptions = {
@@ -55,11 +74,8 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             <BudgetItemModal
                 active={activeModal}
                 handleModal={handleModal}
-                token={teamToken}
-                itemName={itemName}
-                setErrorMessage={setErrorMessage}
             />
-            <h1 style={{ allign: "center", fontSize: 30 }}>Team User Interface</h1>
+            <h1 style={{ allign: "center", fontSize: 30 }}>{teamName} Budget Table</h1>
 
             <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
                 Create New Budget Item

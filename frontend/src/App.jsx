@@ -20,7 +20,7 @@ const App = () => {
 
   // Print welcome message
   const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
-  const [teamToken, setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
+  const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
 
 
@@ -29,7 +29,7 @@ const App = () => {
     setTimeout(() => {
       setLoading(false);
     }, 1000)
-}, [setAdminToken, setTeamToken, setAdminLogin, setTeamLogin])
+  }, [setAdminToken, setTeamToken, setAdminLogin, setTeamLogin])
 
 
 
@@ -40,11 +40,11 @@ const App = () => {
       <div className="columns">
         <div className="column"></div>
         <div className="column m-5 is-two-thirds">
-          { loading ? (
-          <div className="column"> 
-          Retrieving API Data - TODO: Place Spinner Here
-         
-          </div>) : 
+          {loading ? (
+            <div className="column">
+              Retrieving API Data - TODO: Place Spinner Here
+
+            </div>) :
             (() => {
 
               if (!adminToken && !teamToken) {
@@ -55,15 +55,15 @@ const App = () => {
               }
 
               else if (adminToken) {
-                  return <div className="column">
+                return <div className="column">
                   <Header />
                   <div className="columns">
-                  <RegisterAdmin loggedInAdmin={adminLogin}/>
-                  <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
-                  <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
-                  <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
-                  </div>   
+                    <RegisterAdmin loggedInAdmin={adminLogin} />
+                    <RegisterTeamAdmin loggedInAdmin={adminLogin} />
+                    <DeleteTeamAdmin loggedInAdmin={adminLogin} />
+                    <UpdateTeamAdmin loggedInAdmin={adminLogin} />
                   </div>
+                </div>
               }
 
               else if (teamToken) {

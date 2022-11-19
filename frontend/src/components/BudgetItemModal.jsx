@@ -1,9 +1,15 @@
 import React from "react";
+import { useContext } from "react";
 import { useState } from "react";
+import { TeamContext } from "../context/TeamContext";
+import ErrorMessage from "./ErrorMessage";
 
-const BudgetItemModal = ({ active, handleModal, teamToken, itemName, setErrorMessage }) => {
-    const [, setItemName] = useState("");
+const BudgetItemModal = ({ active, handleModal }) => {
+    const [itemName, setItemName] = useState("");
     const [amount, setAmount] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
 
     const cleanFormData = () => {
         setItemName("");
@@ -21,14 +27,16 @@ const BudgetItemModal = ({ active, handleModal, teamToken, itemName, setErrorMes
             body: JSON.stringify({
                 item_name: itemName,
                 amount: amount,
-                team_name: "fb"
+                team_name: teamName
             })
 
         };
 
         const response = await fetch("/api/teams/createitem", requestOptions);
-        if (!response) {
-            setErrorMessage("Something went wrong while creating the lead.")
+        const data = await response.json();
+
+        if (!response.ok) {
+            setErrorMessage(data.detail);
         } else {
             cleanFormData();
             handleModal();
@@ -41,7 +49,7 @@ const BudgetItemModal = ({ active, handleModal, teamToken, itemName, setErrorMes
             <div className="modal-card">
                 <header className="modal-card-head has-background-primary-light">
                     <h1 className="modal-card-title">
-                        {itemName ? "Update Budget Item" : "Create Budget Item"}
+                        Create Budget Item
                     </h1>
                 </header>
                 <section className="modal-card-body">
@@ -78,13 +86,13 @@ const BudgetItemModal = ({ active, handleModal, teamToken, itemName, setErrorMes
                     </form>
                 </section>
                 <footer className="modal-card-foot has-background-primary-light">
-                    {itemName ? (
-                        <button className="button is-info">Update</button>
-                    ) : (
-                        <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
-                    )}
+
+                    <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
                     <button className="button " onClick={handleModal}>Cancel</button>
+                    <ErrorMessage message={errorMessage} />
                 </footer>
+
+
             </div>
         </div>
     )
