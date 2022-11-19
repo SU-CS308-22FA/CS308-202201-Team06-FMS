@@ -1,7 +1,7 @@
 // Team login component
 //
 // @zgr2788
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import ErrorMessage from "./ErrorMessage";
 import { TeamContext } from "../context/TeamContext";
@@ -36,6 +36,13 @@ const TeamLogin = () => {
         e.preventDefault();
         submitLogin();
     }
+    
+    useEffect(() => {
+        setTimeout(() => {
+            setErrorMessage("")
+        },3000)
+    }, [errorMessage]
+    )
 
     return (
         <div className="column">
