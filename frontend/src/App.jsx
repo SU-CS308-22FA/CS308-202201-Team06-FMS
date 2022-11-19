@@ -68,6 +68,8 @@ const App = () => {
 
               else if (teamToken) {
                 return <div className="column">
+                  <Header />
+
                   <TeamBudgetTable loggedInTeam={teamLogin} />
                 </div>
               }

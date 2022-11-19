@@ -27,8 +27,8 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
         const response = await fetch(`/api/teams/deleteitem/${item_name}`, requestOptions);
 
-        if (!response) {
-            setErrorMessage("Failed to delete lead");
+        if (!response.ok) {
+            setErrorMessage("Failed to delete item");
         }
 
         getBudgetItems();
@@ -46,7 +46,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
         const response = await fetch("/api/teams/getitems", requestOptions);
         if (!response.ok) {
-            setErrorMessage("Ooops, budget table could not be loaded! Contact the system admins for more detail.");
+            setErrorMessage("Ooops, budget table could not be loaded! Refresh the page and try again.");
         }
         else {
             const data = await response.json();
@@ -64,6 +64,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setActiveModal(!activeModal);
         getBudgetItems();
         setItemName(null);
+        setErrorMessage(null);
     }
 
 
@@ -75,7 +76,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 active={activeModal}
                 handleModal={handleModal}
             />
-            <h1 style={{ allign: "center", fontSize: 30 }}>{teamName} Budget Table</h1>
+            <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
 
             <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
                 Create New Budget Item
@@ -105,7 +106,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                     <button className="button mr-2 is-info is-light">
                                         Update
                                     </button>
-                                    <button className="button mr-2 is-danger is-light">
+                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(itemName)}>
                                         Delete
                                     </button>
                                     <button className="button mr-2 is-warning is-light">

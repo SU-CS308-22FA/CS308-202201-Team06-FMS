@@ -34,11 +34,13 @@ export const TeamProvider = (props) => {
             }
             else {
                 const data = await response.json();
-
-                sessionStorage.setItem("TeamToken", token);
-                sessionStorage.setItem("TeamLogin", login);
-                sessionStorage.setItem("TeamUserName", data.name);
+                setUserName(data.name)
             }
+
+
+            sessionStorage.setItem("TeamToken", token);
+            sessionStorage.setItem("TeamLogin", login);
+            sessionStorage.setItem("TeamUserName", userName);
         };
 
         fetchTeam();
