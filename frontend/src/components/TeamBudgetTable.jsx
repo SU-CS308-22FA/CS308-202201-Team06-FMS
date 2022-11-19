@@ -5,6 +5,7 @@ import SuccessMessage from "./SuccessMessage";
 import { TeamContext } from "../context/TeamContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
+import BudgetItemModal from "./BudgetItemModal";
 
 const TeamBudgetTable = ({ loggedInTeam }) => {
     const [teamToken] = useContext(TeamContext);
@@ -40,14 +41,27 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         getBudgetItems();
     }, []);
 
+    const handleModal = () => {
+        setActiveModal(!activeModal);
+        getBudgetItems();
+        setItemName(null);
+    }
+
 
 
     return (
 
         <>
+            <BudgetItemModal
+                active={activeModal}
+                handleModal={handleModal}
+                token={teamToken}
+                itemName={itemName}
+                setErrorMessage={setErrorMessage}
+            />
             <h1 style={{ allign: "center", fontSize: 30 }}>Team User Interface</h1>
 
-            <button className="button is-fullwidth mb-5 is-primary">
+            <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
                 Create New Budget Item
             </button>
 

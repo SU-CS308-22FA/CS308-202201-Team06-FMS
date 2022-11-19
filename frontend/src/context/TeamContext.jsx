@@ -9,6 +9,7 @@ export const TeamContext = createContext();
 export const TeamProvider = (props) => {
     const [token, setToken] = useState(localStorage.getItem("TeamToken"))
     const [login, setLogin] = useState(localStorage.getItem("TeamLogin"))
+    const [userName, setUserName] = useState("");
 
 
     useEffect(() => {
