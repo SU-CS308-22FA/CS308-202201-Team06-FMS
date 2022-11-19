@@ -5,9 +5,10 @@ import SuccessMessage from "./SuccessMessage";
 import { TeamContext } from "../context/TeamContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
+import BudgetItemModal from "./BudgetItemModal";
 
-const TeamBudgetTable = ({loggedInTeam}) => {
-    const [teamToken,] = useContext(TeamContext);
+const TeamBudgetTable = ({ loggedInTeam }) => {
+    const [teamToken] = useContext(TeamContext);
     const [budgetItems, setBudgetItems] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -31,34 +32,44 @@ const TeamBudgetTable = ({loggedInTeam}) => {
         else {
             const data = await response.json();
             setBudgetItems(data);
+            setChildLoading(true);
         }
     };
 
+
     useEffect(() => {
-        setChildLoading(true);
-        setTimeout(() => {
-            getBudgetItems();
-            setChildLoading(false);
-        }, 100)
+        getBudgetItems();
     }, []);
 
+    const handleModal = () => {
+        setActiveModal(!activeModal);
+        getBudgetItems();
+        setItemName(null);
+    }
 
-    if (loggedInTeam) {
+
+
     return (
 
         <>
+            <BudgetItemModal
+                active={activeModal}
+                handleModal={handleModal}
+                token={teamToken}
+                itemName={itemName}
+                setErrorMessage={setErrorMessage}
+            />
             <h1 style={{ allign: "center", fontSize: 30 }}>Team User Interface</h1>
 
-            <button className="button is-fullwidth mb-5 is-primary">
+            <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
                 Create New Budget Item
             </button>
 
             <ErrorMessage message={errorMessage} />
-            {!childLoading ? (
+            {childLoading ? (
                 <table className="table is-fullwidth">
                     <thead>
                         <tr>
-                            <th>Team Name</th>
                             <th>Item Name</th>
                             <th>Amount Name</th>
                             <th>Date Created</th>
@@ -67,26 +78,37 @@ const TeamBudgetTable = ({loggedInTeam}) => {
 
                         </tr>
                     </thead>
-                    {/* <tbody>
+                    <tbody>
                         {budgetItems.map((budgetItem) => (
                             <tr key={budgetItem.item_name}>
-                                <td>{budgetItem.team_name}</td>
                                 <td>{budgetItem.item_name}</td>
                                 <td>{budgetItem.amount}</td>
-                                <td>{budgetItem.date_created}</td>
-                                <td>{budgetItem.date_last_updated}</td>                            
-                            
+                                <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
+                                <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
+                                <td>
+                                    <button className="button mr-2 is-info is-light">
+                                        Update
+                                    </button>
+                                    <button className="button mr-2 is-danger is-light">
+                                        Delete
+                                    </button>
+                                    <button className="button mr-2 is-warning is-light">
+                                        Add Documents
+                                    </button>
+
+                                </td>
+
                             </tr>
                         ))}
-                    </tbody> */}
+                    </tbody>
                 </table>
             ) : (<p>Loading</p>)}
 
         </>
     );
-    }
 
-    return (null);
+
+
 
 
 }

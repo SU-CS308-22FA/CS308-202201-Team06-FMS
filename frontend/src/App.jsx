@@ -3,7 +3,7 @@
 // @zgr2788
 
 
-import React, { useContext, useState, useEffect} from "react";
+import React, { useContext, useState, useEffect } from "react";
 import RegisterAdmin from "./components/RegisterAdmin";
 import RegisterTeamAdmin from "./components/RegisterTeamAdmin";
 import DeleteTeamAdmin from "./components/DeleteTeamAdmin";
@@ -13,14 +13,14 @@ import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
 import { TeamContext } from "./context/TeamContext";
 import TeamLogin from "./components/LoginTeam";
-import Table from "./components/TeamBudgetTable";
+import TeamBudgetTable from "./components/TeamBudgetTable";
 
 
 const App = () => {
 
   // Print welcome message
   const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
-  const [teamToken,setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
+  const [teamToken, setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
 
 
@@ -46,14 +46,14 @@ const App = () => {
          
           </div>) : 
             (() => {
-            
-              if (!adminToken && !teamToken) {  
+
+              if (!adminToken && !teamToken) {
                 return <div className="columns">
-                <AdminLogin />
-                <TeamLogin />
+                  <AdminLogin />
+                  <TeamLogin />
                 </div>
               }
-            
+
               else if (adminToken) {
                   return <div className="column">
                   <Header />
@@ -64,18 +64,12 @@ const App = () => {
                   <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
                   </div>   
                   </div>
-
-                  
               }
-            
+
               else if (teamToken) {
                 return <div className="column">
-                <Header />
-                <div className="column">
-                <Table loggedInTeam={teamLogin}/> 
-                </div> 
-                </div> 
-
+                  <TeamBudgetTable loggedInTeam={teamLogin} />
+                </div>
               }
             })()
           }
