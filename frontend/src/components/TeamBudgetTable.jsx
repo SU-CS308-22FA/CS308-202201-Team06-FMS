@@ -71,6 +71,18 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <td>{budgetItem.amount}</td>
                                 <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
                                 <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
+                                <td>
+                                    <button className="button mr-2 is-info is-light">
+                                        Update
+                                    </button>
+                                    <button className="button mr-2 is-danger is-light">
+                                        Delete
+                                    </button>
+                                    <button className="button mr-2 is-warning is-light">
+                                        Add Documents
+                                    </button>
+
+                                </td>
 
                             </tr>
                         ))}
