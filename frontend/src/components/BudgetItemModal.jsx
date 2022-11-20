@@ -6,8 +6,8 @@ import { TeamContext } from "../context/TeamContext";
 import ErrorMessage from "./ErrorMessage";
 import handleUpdate from "./TeamBudgetTable";
 
-const BudgetItemModal = ({ itemname, active, handleModal }) => {
-    const [itemName, setItemName] = useState(itemname);
+const BudgetItemModal = ({ id, active, handleModal }) => {
+    const [itemName, setItemName] = useState("");
     const [amount, setAmount] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
@@ -26,7 +26,7 @@ const BudgetItemModal = ({ itemname, active, handleModal }) => {
                     Authorization: "Bearer " + teamToken,
                 },
             };
-            const response = await fetch(`/api/teams/getspecificitem` + itemName, requestOptions);
+            const response = await fetch(`/api/teams/getspecificitembyid/` + teamName + `/` + id, requestOptions);
 
             if (!response.ok) {
                 setErrorMessage("Could not get the item");
@@ -39,10 +39,10 @@ const BudgetItemModal = ({ itemname, active, handleModal }) => {
 
         }
 
-        if (itemName) {
+        if (id) {
             getBudgetItem();
         }
-    }, [itemName, teamToken]);
+    }, [id, teamToken]);
 
     const handleCreateBudgetItem = async (e) => {
         e.preventDefault();
@@ -80,10 +80,11 @@ const BudgetItemModal = ({ itemname, active, handleModal }) => {
                 Authorization: "Bearer " + teamToken,
             },
             body: JSON.stringify({
+                item_name: itemName,
                 amount: amount
             })
         };
-        const response = await fetch(`/api/teams/updateitem` + itemName, requestOptions);
+        const response = await fetch(`/api/teams/updateitembyid/` + teamName + `/` + id, requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Update error");
@@ -99,7 +100,7 @@ const BudgetItemModal = ({ itemname, active, handleModal }) => {
             <div className="modal-card">
                 <header className="modal-card-head has-background-primary-light">
                     <h1 className="modal-card-title">
-                        Create Budget Item
+                        {id ? "Update Item" : "Create Budget Item"}
                     </h1>
                 </header>
                 <section className="modal-card-body">
@@ -137,12 +138,10 @@ const BudgetItemModal = ({ itemname, active, handleModal }) => {
                 </section>
                 <footer className="modal-card-foot has-background-primary-light">
 
-                    {(itemname !== itemName) || (itemName === "") ? (
-                        <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
-
-                    ) : (
+                    {id ? (
                         <button className="button is-info" onClick={handleUpdateBudgetItem}>Update</button>
-
+                    ) : (
+                        <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
 
                     )}
                     < button className="button " onClick={handleModal}>Cancel</button>
