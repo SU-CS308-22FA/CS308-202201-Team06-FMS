@@ -1,7 +1,7 @@
 // Admin login component
 //
 // @zgr2788
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import ErrorMessage from "./ErrorMessage";
 import { AdminContext } from "../context/AdminContext";
@@ -10,7 +10,7 @@ const AdminLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [adminToken,setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
+    const [,setAdminToken, , setAdminLogin] = useContext(AdminContext);
 
     const submitLogin = async () => {
         const requestOptions = {
@@ -36,6 +36,14 @@ const AdminLogin = () => {
         e.preventDefault();
         submitLogin();
     }
+
+    
+    useEffect(() => {
+        setTimeout(() => {
+            setErrorMessage("")
+        },3000)
+    }, [errorMessage]
+    )
 
     return (
         <div className = "column">

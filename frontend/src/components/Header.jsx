@@ -7,7 +7,7 @@ import { AdminContext } from "../context/AdminContext";
 import { TeamContext } from "../context/TeamContext";
 
 const Header = () => {
-    const [teamToken, setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
     const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
 
     const handleLogout = () => {
@@ -15,17 +15,24 @@ const Header = () => {
         setTeamToken(null);
         setAdminLogin(false);
         setTeamLogin(false);
+        setTeamName(null);
     }
-        if (adminLogin || teamLogin)
+
+    if (adminLogin || teamLogin)
         return (
-            <div className="has-text-centered m-6">
-                <button className="button" onClick = {handleLogout}>
-                    Logout
-                </button>
+            <div>
+
+                <div className="has-text-centered m-6">
+                    <button className="button" onClick={handleLogout}>
+                        Logout
+                    </button>
+                </div>
+
             </div>
+
         );
 
-        return(null);
+    return (null);
 
 };
 
