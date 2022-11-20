@@ -116,7 +116,6 @@ async def update_team_admin(team_name : str, team : _schemas.TeamCreate, db : _o
 
     # Now update the team
     team_db = await get_team_by_name(name = team_name, db = db)
-    print(team_db)
 
 
     if team_db is None:
@@ -185,14 +184,10 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
     return _schemas.Admin.from_orm(admin)
 
 # Get Items - Admin
-async def get_items_admin(teamname: str, db: _orm.Session):
-    team_db = await get_team_by_name(teamname, db)
-
-    if not team_db:
-        raise _fastapi.HTTPException(status_code = 404, detail="Team does not exist in database!")
-
-    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
+async def get_all_items(db: _orm.Session,  skip: int= 0, limit: int = 100):
+    items = db.query(_models.BudgetItem).all()
     return list(map(_schemas.BudgetItem.from_orm, items))
+
 
 # Item selector - Admin
 async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
@@ -309,6 +304,11 @@ async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: 
         raise _fastapi.HTTPException(status_code = 401, detail = "Your account is not authorized for this action!")
 
     return _schemas.Team.from_orm(team)
+
+#Get all teams
+async def get_all_teams(db: _orm.Session = _fastapi.Depends(get_db), skip: int= 0, limit: int = 100):
+    teams = db.query(_models.Team).all()
+    return list(map(_schemas.Team.from_orm,teams))
 
 # Get Items - Team
 async def get_items_team(team: _schemas.Team, db: _orm.Session):
