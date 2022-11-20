@@ -5,14 +5,15 @@ import { useState, useEffect } from "react";
 
 
 const TeamBalance = ({ loggedInTeam }) => {
-    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName, total, setTotal, rem, setRem, alloc, setAlloc] = useContext(TeamContext);
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName, rem, setRem, alloc, setAlloc] = useContext(TeamContext);
 
     if (teamLogin)
         return (
-            <div>
-                Total : {total}
-                Allocated : {alloc}
-                Remaining : {rem} 
+            <div className="rows">
+                <div className=""> Allocated : {alloc} </div>
+                <div className=""> Remaining : {rem}  </div>
+                
+              
             
 
             </div>
@@ -22,3 +23,5 @@ const TeamBalance = ({ loggedInTeam }) => {
     return (null);
 
 }
+
+export default TeamBalance;
