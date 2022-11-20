@@ -75,10 +75,14 @@ class Admin(_AdminBase):
 class _BudgetItemBase(_pydantic.BaseModel):
     item_name: str
     amount: float
+    team_name: str
+
 
 # Budget create model - inherits BudgetItemBase
 class BudgetItemCreate(_BudgetItemBase):
-    team_name: str
+
+    class Config:
+        orm_mode = True
 
 class BudgetItem(_BudgetItemBase):
     date_created: _dt.datetime
