@@ -236,23 +236,23 @@ async def team_get_items(db:_orm.Session = _fastapi.Depends(_services.get_db), t
     return await _services.get_items_team(team = team, db = db)
 
 # Get a specific budget item - Team
-@app.get("/api/teams/getspecificitem/{item_name}", status_code=200)
+@app.get("/api/teams/getspecificitem/{team_name}/{item_name}", status_code=200)
 async def team_get_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_team(item_name = item_name, team = team, db = db)
 
 # Delete a specific budget item - Team
-@app.delete("/api/teams/deleteitem/{item_name}", status_code = 204)
-async def team_delete_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+@app.delete("/api/teams/deleteitem/{team_name}/{item_name}", status_code = 204)
+async def team_delete_item(item_name : str, team_name: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_item_team(item_name = item_name, team = team, db = db)
     return {"message" : "Successfully Deleted"}
 
 # Update a specific budget item - Team
-@app.put("/api/teams/updateitem/{item_name}", status_code = 200)
-async def team_update_item(item_name : str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+@app.put("/api/teams/updateitem/{team_name}/{item_name}", status_code = 200)
+async def team_update_item(item_name : str, team_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_team(item_name = item_name, budgetItem = budgetItem, team = team, db = db)
 
 # Upload supporting docs for a specific budget item - Team
-@app.post("/api/teams/docs/{item_name}")
-async def team_add_docs(item_name : str, file : _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+@app.post("/api/teams/docs/{team_name}/{item_name}")
+async def team_add_docs(item_name : str, team_name : str, file : _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.add_docs_team(item_name = item_name, file = file, team = team, db = db)
 

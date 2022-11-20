@@ -6,6 +6,7 @@ import { TeamContext } from "../context/TeamContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 import BudgetItemModal from "./BudgetItemModal";
+import FileUploadModal from "./FileUploadModal";
 
 const TeamBudgetTable = ({ loggedInTeam }) => {
     const [budgetItems, setBudgetItems] = useState(null);
@@ -13,7 +14,11 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const [successMessage, setSuccessMessage] = useState("");
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
+    const [activeUpload, setActiveUpload] = useState(false);
     const [itemName, setItemName] = useState(null);
+    const [file, setFile] = useState(null);
+    const [selected, setSelected] = useState("");
+    const [uploadStatus, setUploadStatus] = useState(""); 
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
 
     const handleDelete = async (item_name) => {
@@ -25,7 +30,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch(`/api/teams/deleteitem/${item_name}`, requestOptions);
+        const response = await fetch(`/api/teams/deleteitem/` + item_name, requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Failed to delete item");
@@ -67,6 +72,12 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setErrorMessage(null);
     }
 
+    const handleUpload = () => {
+        setActiveUpload(!activeUpload);
+        getBudgetItems();
+        setSelected(null);
+    }
+
 
 
     return (
@@ -75,6 +86,13 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             <BudgetItemModal
                 active={activeModal}
                 handleModal={handleModal}
+            />
+
+            <FileUploadModal
+                active={activeUpload}
+                handleUpload={handleUpload}
+                itemName={selected}
+                uploadStatus={uploadStatus}
             />
             <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
 
@@ -106,12 +124,20 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                     <button className="button mr-2 is-info is-light">
                                         Update
                                     </button>
-                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(itemName)}>
+                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(budgetItem.item_name)}>
                                         Delete
                                     </button>
-                                    <button className="button mr-2 is-warning is-light">
-                                        Add Documents
+                                    {budgetItem.support_docs ? (
+                                    <button className="button mr-2 is-success is-light" onClick = {() => {setSelected(budgetItem.item_name); setUploadStatus("Update"); setActiveUpload(true)}}>
+                                        Update Documents
                                     </button>
+                                    ) : (                                  
+                                    <button className="button mr-2 is-warning is-light" onClick = {() => {setSelected(budgetItem.item_name); setUploadStatus("Add"); setActiveUpload(true)}}>
+                                        Add Documents
+                                    </button>)
+  
+                                    }
+
 
                                 </td>
 
