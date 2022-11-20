@@ -5,15 +5,50 @@ import SuccessMessage from "./SuccessMessage";
 import { TeamContext } from "../context/TeamContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
+import BudgetItemModal from "./BudgetItemModal";
+import FileUploadModal from "./FileUploadModal";
 
-const TeamBudgetTable = ({loggedInTeam}) => {
-    const [teamToken,] = useContext(TeamContext);
+const TeamBudgetTable = ({ loggedInTeam }) => {
     const [budgetItems, setBudgetItems] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
+    const [activeUpload, setActiveUpload] = useState(false);
     const [itemName, setItemName] = useState(null);
+    const [id, setId] = useState(null);
+    const [file, setFile] = useState(null);
+    const [selected, setSelected] = useState("");
+    const [uploadStatus, setUploadStatus] = useState("");
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
+
+    const handleDelete = async (item_name) => {
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + teamToken,
+            },
+        };
+
+
+        const response = await fetch(`/api/teams/deleteitem/` + teamName + "/" + item_name, requestOptions);
+
+
+        if (!response.ok) {
+            setErrorMessage("Failed to delete item");
+        }
+        else {
+            setErrorMessage("");
+        }
+
+        getBudgetItems();
+    }
+
+    const handleUpdate = async (id) => {
+        setId(id);
+        setActiveModal(true);
+    }
 
     const getBudgetItems = async () => {
         const requestOptions = {
@@ -26,39 +61,61 @@ const TeamBudgetTable = ({loggedInTeam}) => {
 
         const response = await fetch("/api/teams/getitems", requestOptions);
         if (!response.ok) {
-            setErrorMessage("Ooops, budget table could not be loaded! Contact the system admins for more detail.");
+            setErrorMessage("Ooops, budget table could not be loaded! Refresh the page and try again.");
         }
         else {
             const data = await response.json();
             setBudgetItems(data);
+            setChildLoading(true);
         }
     };
 
+
     useEffect(() => {
-        setChildLoading(true);
-        setTimeout(() => {
-            getBudgetItems();
-            setChildLoading(false);
-        }, 100)
+        getBudgetItems();
     }, []);
 
+    const handleModal = () => {
+        setActiveModal(!activeModal);
+        getBudgetItems();
+        setId(null);
+        setErrorMessage(null);
+    }
 
-    if (loggedInTeam) {
+    const handleUpload = () => {
+        setActiveUpload(!activeUpload);
+        getBudgetItems();
+        setSelected(null);
+    }
+
+
+
     return (
 
         <>
-            <h1 style={{ allign: "center", fontSize: 30 }}>Team User Interface</h1>
+            <BudgetItemModal
+                id={id}
+                active={activeModal}
+                handleModal={handleModal}
+            />
 
-            <button className="button is-fullwidth mb-5 is-primary">
+            <FileUploadModal
+                active={activeUpload}
+                handleUpload={handleUpload}
+                itemName={selected}
+                uploadStatus={uploadStatus}
+            />
+            <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
+
+            <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
                 Create New Budget Item
             </button>
 
             <ErrorMessage message={errorMessage} />
-            {!childLoading ? (
+            {childLoading ? (
                 <table className="table is-fullwidth">
                     <thead>
                         <tr>
-                            <th>Team Name</th>
                             <th>Item Name</th>
                             <th>Amount Name</th>
                             <th>Date Created</th>
@@ -67,26 +124,45 @@ const TeamBudgetTable = ({loggedInTeam}) => {
 
                         </tr>
                     </thead>
-                    {/* <tbody>
+                    <tbody>
                         {budgetItems.map((budgetItem) => (
-                            <tr key={budgetItem.item_name}>
-                                <td>{budgetItem.team_name}</td>
+                            <tr key={budgetItem.id}>
                                 <td>{budgetItem.item_name}</td>
                                 <td>{budgetItem.amount}</td>
-                                <td>{budgetItem.date_created}</td>
-                                <td>{budgetItem.date_last_updated}</td>                            
-                            
+                                <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
+                                <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
+                                <td>
+                                    <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
+                                        Update
+                                    </button>
+                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(budgetItem.item_name)}>
+                                        Delete
+                                    </button>
+                                    {budgetItem.support_docs ? (
+                                        <button className="button mr-2 is-success is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Update"); setActiveUpload(true) }}>
+                                            Update Documents
+                                        </button>
+                                    ) : (
+                                        <button className="button mr-2 is-warning is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Add"); setActiveUpload(true) }}>
+                                            Add Documents
+                                        </button>)
+
+                                    }
+
+
+                                </td>
+
                             </tr>
                         ))}
-                    </tbody> */}
+                    </tbody>
                 </table>
             ) : (<p>Loading</p>)}
 
         </>
     );
-    }
 
-    return (null);
+
+
 
 
 }

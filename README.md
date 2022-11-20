@@ -8,4 +8,4 @@ Team Members:
 Supervisor: Hasan Kemik
 
 # Deployment
-Find the current working copy by following **[this link](https://finms-frontend.herokuapp.com/)**.
+Find the current working copy by following **[this link](https://finms.onrender.com/)**.
