@@ -30,7 +30,9 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
+
         const response = await fetch(`/api/teams/deleteitem/` + teamName + "/" + item_name, requestOptions);
+
 
         if (!response.ok) {
             setErrorMessage("Failed to delete item");
@@ -42,6 +44,10 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         getBudgetItems();
     }
 
+    const handleUpdate = async (item_name) => {
+        setItemName(item_name);
+        setActiveModal(true);
+    }
 
     const getBudgetItems = async () => {
         const requestOptions = {
@@ -87,6 +93,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
         <>
             <BudgetItemModal
+                itemName = {itemName}
                 active={activeModal}
                 handleModal={handleModal}
             />
@@ -124,7 +131,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
                                 <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
                                 <td>
-                                    <button className="button mr-2 is-info is-light">
+                                    <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.item_name)}>
                                         Update
                                     </button>
                                     <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(budgetItem.item_name)}>
