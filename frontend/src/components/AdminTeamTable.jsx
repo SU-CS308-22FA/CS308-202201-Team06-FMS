@@ -24,7 +24,7 @@ const AdminTeamTable = ({loggedInAdmin}) => {
             },
         };
 
-        const response = await fetch("/api/admins/getteams/", requestOptions);
+        const response = await fetch("/api/admins/getallitems/", requestOptions);
         if (!response.ok) {
             setErrorMessage(response.status);
         }
