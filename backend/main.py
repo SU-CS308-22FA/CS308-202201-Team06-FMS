@@ -113,6 +113,11 @@ async def create_team(
 async def admin_get_team(team_name: str, admin : _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_team_admin(team_name = team_name, db = db)
 
+@app.get("/api/admins/getteams/", status_code=200)
+async def get_teams(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_all_teams(db=db)
+
+
 # Update Team user
 @app.put("/api/admins/updateteam/{team_name}", status_code = 200)
 async def admin_update_team(team_name : str, team: _schemas.TeamCreate, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
