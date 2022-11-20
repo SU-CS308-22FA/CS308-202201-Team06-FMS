@@ -1,20 +1,48 @@
 import React from "react";
 import { useContext } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { TeamContext } from "../context/TeamContext";
 import ErrorMessage from "./ErrorMessage";
+import handleUpdate from "./TeamBudgetTable";
 
-const BudgetItemModal = ({ active, handleModal }) => {
-    const [itemName, setItemName] = useState("");
+const BudgetItemModal = ({ itemname, active, handleModal }) => {
+    const [itemName, setItemName] = useState(itemname);
     const [amount, setAmount] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
 
     const cleanFormData = () => {
         setItemName("");
         setAmount("");
     }
+
+    useEffect(() => {
+        const getBudgetItem = async () => {
+            const requestOptions = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + teamToken,
+                },
+            };
+            const response = await fetch(`/api/teams/getspecificitem` + itemName, requestOptions);
+
+            if (!response.ok) {
+                setErrorMessage("Could not get the item");
+            } else {
+                const data = await response.json;
+                setItemName(data.item_name);
+                setAmount(data.amount);
+            }
+
+
+        }
+
+        if (itemName) {
+            getBudgetItem();
+        }
+    }, [itemName, teamToken]);
 
     const handleCreateBudgetItem = async (e) => {
         e.preventDefault();
@@ -37,6 +65,28 @@ const BudgetItemModal = ({ active, handleModal }) => {
 
         if (!response.ok) {
             setErrorMessage(data.detail);
+        } else {
+            cleanFormData();
+            handleModal();
+        }
+    }
+
+    const handleUpdateBudgetItem = async (e) => {
+        e.preventDefault();
+        const requestOptions = {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + teamToken,
+            },
+            body: JSON.stringify({
+                amount: amount
+            })
+        };
+        const response = await fetch(`/api/teams/updateitem` + itemName, requestOptions);
+
+        if (!response.ok) {
+            setErrorMessage("Update error");
         } else {
             cleanFormData();
             handleModal();
@@ -73,7 +123,7 @@ const BudgetItemModal = ({ active, handleModal }) => {
                             <label className="label">Amount</label>
                             <div className="control">
                                 <input
-                                    type="text"
+                                    type="number"
                                     placeholder="Enter the Amount"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
@@ -87,14 +137,21 @@ const BudgetItemModal = ({ active, handleModal }) => {
                 </section>
                 <footer className="modal-card-foot has-background-primary-light">
 
-                    <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
-                    <button className="button " onClick={handleModal}>Cancel</button>
+                    {(itemname !== itemName) || (itemName === "") ? (
+                        <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
+
+                    ) : (
+                        <button className="button is-info" onClick={handleUpdateBudgetItem}>Update</button>
+
+
+                    )}
+                    < button className="button " onClick={handleModal}>Cancel</button>
                     <ErrorMessage message={errorMessage} />
                 </footer>
 
 
             </div>
-        </div>
+        </div >
     )
 }
 
