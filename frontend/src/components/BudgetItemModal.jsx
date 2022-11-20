@@ -1,21 +1,22 @@
 import React from "react";
 import { useContext } from "react";
-import { useEffect } from "react";
 import { useState } from "react";
 import { TeamContext } from "../context/TeamContext";
 import ErrorMessage from "./ErrorMessage";
-import handleUpdate from "./TeamBudgetTable";
+
 
 const BudgetItemModal = ({ id, active, handleModal }) => {
     const [itemName, setItemName] = useState("");
     const [amount, setAmount] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
 
     const cleanFormData = () => {
         setItemName("");
         setAmount("");
     }
+
 
     useEffect(() => {
         const getBudgetItem = async () => {
@@ -72,6 +73,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
         }
     }
 
+
     const handleUpdateBudgetItem = async (e) => {
         e.preventDefault();
         const requestOptions = {
@@ -126,7 +128,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
                             <label className="label">Amount</label>
                             <div className="control">
                                 <input
-                                    type="number"
+                                    type="text"
                                     placeholder="Enter the Amount"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
@@ -152,7 +154,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
 
 
             </div>
-        </div >
+        </div>
     )
 }
 
