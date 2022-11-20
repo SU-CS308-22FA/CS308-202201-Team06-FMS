@@ -331,6 +331,21 @@ async def _item_selector(item_name: str, team: _schemas.Team, db: _orm.Session):
     
     return item
 
+# Item selector by id - Team
+async def _item_selector_id(id: int, team: _schemas.Team, db: _orm.Session):
+    item = (
+
+        db.query(_models.BudgetItem)
+        .filter_by(team_name = team.name)
+        .filter(_models.BudgetItem.id == id)
+        .first()
+    )
+
+    if item is None:
+        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
+    
+    return item
+
 # Get item - Team
 async def get_item_team(item_name: str, team: _schemas.Team, db: _orm.Session):
     item = await _item_selector(item_name = item_name, team = team, db = db)
@@ -350,6 +365,25 @@ async def delete_item_team(item_name: str, team: _schemas.Team, db: _orm.Session
 # Update item - Team
 async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team, db: _orm.Session):
     item = await _item_selector(item_name = item_name, team = team, db = db)
+
+    item.item_name = budgetItem.item_name
+    change = budgetItem.amount - item.amount 
+    item.amount = budgetItem.amount
+    item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+
+    # Update team budget as well
+    await update_team_budget(name = team.name, change = change, db = db)
+
+
+
+    db.commit()
+    db.refresh(item)
+
+    return _schemas.BudgetItem.from_orm(item)
+
+# Update item by id - Team
+async def update_item_id(id : int, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector_id(id = id, team = team, db = db)
 
     item.item_name = budgetItem.item_name
     change = budgetItem.amount - item.amount 
