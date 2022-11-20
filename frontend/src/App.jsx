@@ -17,6 +17,7 @@ import AdminTeamTable from "./components/AdminTeamTable";
 import FAQ from "./components/FrequentlyAskedQs";
 import TeamBudgetTable from "./components/TeamBudgetTable";
 import TeamBalance from "./components/TeamBalance";
+import AdminItemTable from "./components/AdminItemTable";
 
 const App = () => {
 
@@ -62,7 +63,10 @@ const App = () => {
                 return <div className="column">
                   <Header />
                   <div className= "rows">
+                    <div className="columns">
                     <AdminTeamTable loggedInAdmin={adminLogin}/>
+                    <AdminItemTable loggedInAdmin={adminLogin}/>
+                    </div>
                     <div className="columns">
                     <RegisterAdmin loggedInAdmin={adminLogin}/>
                     <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
