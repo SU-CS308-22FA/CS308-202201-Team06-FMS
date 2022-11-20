@@ -65,6 +65,7 @@ const App = () => {
                   <div className= "rows">
                     <div className="columns">
                     <AdminTeamTable loggedInAdmin={adminLogin}/>
+                    <div className="column"></div>
                     <AdminItemTable loggedInAdmin={adminLogin}/>
                     </div>
                     <div className="columns">
