@@ -18,6 +18,10 @@ import fastapi as _fastapi
 import fastapi.security as _security
 import datetime as _dt
 from dateutil import tz as _tz
+import PyPDF2 as _pdf
+from ast import literal_eval
+import os
+
 
 
 # Define timezones
@@ -182,8 +186,12 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
 
 # Get Items - Admin
 async def get_items_admin(teamname: str, db: _orm.Session):
-    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
+    team_db = await get_team_by_name(teamname, db)
 
+    if not team_db:
+        raise _fastapi.HTTPException(status_code = 404, detail="Team does not exist in database!")
+
+    items = db.query(_models.BudgetItem).filter_by(team_name=teamname)
     return list(map(_schemas.BudgetItem.from_orm, items))
 
 # Item selector - Admin
@@ -358,6 +366,48 @@ async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase,
 
     return _schemas.BudgetItem.from_orm(item)
 
+# Add docs - Team
+async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schemas.Team, db: _orm.Session):
+        
+        item = await _item_selector(item_name=item_name, team=team, db=db)
+        filename_temp = "supportfiles/" + team.name + "_" + item_name + "_temp.pdf"
+        filename = "supportfiles/" + team.name + "_" + item_name + ".pdf"
+        
+        # Try upload
+        try:
+            contents = file.file.read()
+            with open(filename_temp, 'wb') as f:
+                f.write(contents)
+
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
+        
+        # Check if pdf is valid
+        try:
+            _pdf.PdfFileReader(open(filename_temp, "rb"))
+        
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=406, detail= "The uploaded file is not a valid pdf file!")
+
+        
+        # If so, replace file
+        if os.path.isfile(filename):
+            os.remove(filename)
+        
+        os.rename(filename_temp, filename)
+        
+
+
+        item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+        item.support_docs = filename
+
+        db.commit()
+        db.refresh(item)
+
+        return _schemas.BudgetItem.from_orm(item)
+    
 
 #*************************
 #       BUDGET
