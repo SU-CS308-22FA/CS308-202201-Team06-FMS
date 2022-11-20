@@ -25,7 +25,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch(`/api/teams/deleteitem/${item_name}`, requestOptions);
+        const response = await fetch(`/api/teams/deleteitem/` + item_name, requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Failed to delete item");
@@ -106,7 +106,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                     <button className="button mr-2 is-info is-light">
                                         Update
                                     </button>
-                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(itemName)}>
+                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(budgetItem.item_name)}>
                                         Delete
                                     </button>
                                     <button className="button mr-2 is-warning is-light">
