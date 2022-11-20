@@ -29,7 +29,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
             const response = await fetch(`/api/teams/getspecificitembyid/` + teamName + `/` + id, requestOptions);
 
             if (!response.ok) {
-                setErrorMessage("Could not get the item");
+                setErrorMessage("Could not get the item!");
             } else {
                 const data = await response.json;
                 setItemName(data.item_name);
@@ -67,6 +67,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
             setErrorMessage(data.detail);
         } else {
             cleanFormData();
+            setErrorMessage(null);
             handleModal();
         }
     }
@@ -87,9 +88,10 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
         const response = await fetch(`/api/teams/updateitembyid/` + teamName + `/` + id, requestOptions);
 
         if (!response.ok) {
-            setErrorMessage("Update error");
+            setErrorMessage("Item names must be unique!");
         } else {
             cleanFormData();
+            setErrorMessage(null);
             handleModal();
         }
     }
@@ -144,7 +146,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
                         <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
 
                     )}
-                    < button className="button " onClick={handleModal}>Cancel</button>
+                    < button className="button " onClick={() => {setErrorMessage(null);handleModal();}}>Cancel</button>
                     <ErrorMessage message={errorMessage} />
                 </footer>
 

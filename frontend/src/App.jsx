@@ -16,7 +16,7 @@ import TeamLogin from "./components/LoginTeam";
 import AdminTeamTable from "./components/AdminTeamTable";
 import FAQ from "./components/FrequentlyAskedQs";
 import TeamBudgetTable from "./components/TeamBudgetTable";
-
+import TeamBalance from "./components/TeamBalance";
 
 const App = () => {
 
@@ -76,8 +76,9 @@ const App = () => {
               else if (teamToken) {
                 return <div className="column">
                   <Header />
-
+                  <TeamBalance loggedInTeam={teamLogin} />
                   <TeamBudgetTable loggedInTeam={teamLogin} />
+                  
                 </div>
               }
             })()

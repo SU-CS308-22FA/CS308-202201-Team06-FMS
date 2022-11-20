@@ -20,7 +20,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const [file, setFile] = useState(null);
     const [selected, setSelected] = useState("");
     const [uploadStatus, setUploadStatus] = useState("");
-    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
+    const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName, rem, setRem, alloc, setAlloc] = useContext(TeamContext);
 
     const handleDelete = async (item_name) => {
         const requestOptions = {
@@ -67,6 +67,8 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             const data = await response.json();
             setBudgetItems(data);
             setChildLoading(true);
+            setAlloc(null);
+            setRem(null);
         }
     };
 
