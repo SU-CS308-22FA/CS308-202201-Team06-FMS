@@ -38,7 +38,6 @@ export const TeamProvider = (props) => {
             }
             else {
                 const data = await response.json();
-                const tot = alloc + rem; 
                 setUserName(data.name);
                 setAlloc(data.budget_alloc);
                 setRem(data.budget_rem);
