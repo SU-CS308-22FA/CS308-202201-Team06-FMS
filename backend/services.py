@@ -310,6 +310,11 @@ async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: 
 
     return _schemas.Team.from_orm(team)
 
+#Get all teams
+async def get_all_teams(db: _orm.Session = _fastapi.Depends(get_db), skip: int= 0, limit: int = 100):
+    teams = db.query(_models.Team).all()
+    return list(map(_schemas.Team.from_orm,teams))
+
 # Get Items - Team
 async def get_items_team(team: _schemas.Team, db: _orm.Session):
     items = db.query(_models.BudgetItem).filter_by(team_name=team.name)

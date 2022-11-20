@@ -13,6 +13,8 @@ import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
 import { TeamContext } from "./context/TeamContext";
 import TeamLogin from "./components/LoginTeam";
+import AdminTeamTable from "./components/AdminTeamTable";
+import FAQ from "./components/FrequentlyAskedQs";
 import TeamBudgetTable from "./components/TeamBudgetTable";
 
 
@@ -47,23 +49,28 @@ const App = () => {
             </div>) :
             (() => {
 
+
               if (!adminToken && !teamToken) {
                 return <div className="columns">
                   <AdminLogin />
                   <TeamLogin />
-                </div>
+                  <FAQ />
+                  </div>
               }
 
               else if (adminToken) {
                 return <div className="column">
                   <Header />
-                  <div className="columns">
-                    <RegisterAdmin loggedInAdmin={adminLogin} />
-                    <RegisterTeamAdmin loggedInAdmin={adminLogin} />
-                    <DeleteTeamAdmin loggedInAdmin={adminLogin} />
-                    <UpdateTeamAdmin loggedInAdmin={adminLogin} />
+                  <div className= "rows">
+                    <AdminTeamTable loggedInAdmin={adminLogin}/>
+                    <div className="columns">
+                    <RegisterAdmin loggedInAdmin={adminLogin}/>
+                    <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
+                    <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
+                    <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
+                    </div>   
                   </div>
-                </div>
+                  </div>
               }
 
               else if (teamToken) {
