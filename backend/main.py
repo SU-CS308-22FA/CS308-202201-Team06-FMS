@@ -237,7 +237,7 @@ async def team_get_items(db:_orm.Session = _fastapi.Depends(_services.get_db), t
 
 # Get a specific budget item - Team
 @app.get("/api/teams/getspecificitem/{team_name}/{item_name}", status_code=200)
-async def team_get_item(item_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+async def team_get_item(item_name : str, team_name: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_team(item_name = item_name, team = team, db = db)
 
 # Delete a specific budget item - Team
