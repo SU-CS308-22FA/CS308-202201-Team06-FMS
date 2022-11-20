@@ -417,6 +417,16 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
 async def get_budget_item(team_name: str, item_name: str, db: _orm.Session):
     return db.query(_models.BudgetItem).filter(_models.BudgetItem.team_name == team_name, _models.BudgetItem.item_name == item_name).first()
 
+# Get Budget through id
+async def get_item_id(team : _schemas.Team, id : int, db : _orm.Session):
+    db_item = db.query(_models.BudgetItem).filter(_models.BudgetItem.id == id, _models.BudgetItem.team_name == team.name).first()
+
+    if db_item is None:
+        raise _fastapi.HTTPException(status_code=404, detail= "Budget item does not exist!")
+    
+    else:
+        return db_item
+
 # Create new BudgetItem
 async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):
     
