@@ -76,8 +76,9 @@ const App = () => {
               else if (teamToken) {
                 return <div className="column">
                   <Header />
-
+                  Add balance component here
                   <TeamBudgetTable loggedInTeam={teamLogin} />
+                  
                 </div>
               }
             })()
