@@ -30,10 +30,13 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch(`/api/teams/deleteitem/` + item_name, requestOptions);
+        const response = await fetch(`/api/teams/deleteitem/` + teamName + "/" + item_name, requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Failed to delete item");
+        }
+        else{
+            setErrorMessage("");
         }
 
         getBudgetItems();
