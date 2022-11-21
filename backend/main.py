@@ -162,9 +162,9 @@ async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Sessi
     return await _services.create_budget_item(budgetItem, db)
 
 # Get all budget items - Admin
-@app.get("/api/admins/getitems/{team_name}", status_code=200)
-async def admin_get_items(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
-    return await _services.get_items_admin(teamname = team_name, db = db)
+@app.get("/api/admins/getallitems/", status_code=200)
+async def get_all_items(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_all_items(db = db)
 
 # Get a specific budget item - Admin
 @app.get("/api/admins/getspecificitem/{team_name}/{item_name}", status_code=200)
