@@ -47,6 +47,11 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
 
     const handleCreateBudgetItem = async (e) => {
         e.preventDefault();
+        if (!itemName || !amount) {
+            setErrorMessage("Inputs cannot be empty!")
+            return
+        }
+
         const requestOptions = {
             method: "POST",
             headers: {
@@ -76,6 +81,12 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
 
     const handleUpdateBudgetItem = async (e) => {
         e.preventDefault();
+
+        if (!itemName || !amount) {
+            setErrorMessage("Inputs cannot be empty!")
+            return
+        }
+        
         const requestOptions = {
             method: "PUT",
             headers: {
@@ -84,9 +95,11 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
             },
             body: JSON.stringify({
                 item_name: itemName,
-                amount: amount
+                amount: amount,
+                team_name: teamName
             })
         };
+        console.log(itemName, amount, teamName)
         const response = await fetch(`/api/teams/updateitembyid/` + teamName + `/` + id, requestOptions);
 
         if (!response.ok) {
@@ -128,7 +141,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
                             <label className="label">Amount</label>
                             <div className="control">
                                 <input
-                                    type="text"
+                                    type="number"
                                     placeholder="Enter the Amount"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
@@ -148,7 +161,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
                         <button className="button is-primary" onClick={handleCreateBudgetItem}>Create</button>
 
                     )}
-                    < button className="button " onClick={() => {setErrorMessage(null);handleModal();}}>Cancel</button>
+                    < button className="button " onClick={() => {cleanFormData();setErrorMessage(null);handleModal();}}>Cancel</button>
                     <ErrorMessage message={errorMessage} />
                 </footer>
 

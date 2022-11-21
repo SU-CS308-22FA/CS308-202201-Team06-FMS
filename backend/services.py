@@ -364,6 +364,7 @@ async def delete_item_team(item_name: str, team: _schemas.Team, db: _orm.Session
 
 # Update item - Team
 async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team, db: _orm.Session):
+    
     item = await _item_selector(item_name = item_name, team = team, db = db)
 
     item.item_name = budgetItem.item_name
@@ -375,10 +376,13 @@ async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase,
     await update_team_budget(name = team.name, change = change, db = db)
 
 
+    try:
+        db.commit()
+        db.refresh(item)
 
-    db.commit()
-    db.refresh(item)
-
+    except:
+        raise _fastapi.HTTPException(status_code=401, detail= "Item names must be unique for teams!")
+    
     return _schemas.BudgetItem.from_orm(item)
 
 # Update item by id - Team
@@ -394,9 +398,13 @@ async def update_item_id(id : int, budgetItem: _schemas._BudgetItemBase, team: _
     await update_team_budget(name = team.name, change = change, db = db)
 
 
+    try:
+        db.commit()
+        db.refresh(item)
+    
+    except:
+        raise _fastapi.HTTPException(status_code=401, detail= "Item names must be unique for teams!")
 
-    db.commit()
-    db.refresh(item)
 
     return _schemas.BudgetItem.from_orm(item)
 

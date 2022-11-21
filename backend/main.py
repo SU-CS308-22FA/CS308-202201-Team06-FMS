@@ -23,10 +23,10 @@ _services.create_database()
 async def startup():
     # Add the superadmin account that can add others
     superAdmin = _models.Admin(
-        email = "admin@admin.com", 
+        email = "a@a", 
         first_name = "admin", 
         last_name = "admin", 
-        pass_hash = _hash.bcrypt.hash("admin123")
+        pass_hash = _hash.bcrypt.hash("123")
     )
 
     if not await _services.get_admin_by_email(superAdmin.email, _database.SessionLocal()):
@@ -264,7 +264,6 @@ async def team_add_docs(item_name : str, team_name : str, file : _fastapi.Upload
 # Get specific budget item by id - Team
 @app.get("/api/teams/getspecificitembyid/{team_name}/{id}", status_code=200)
 async def team_get_item_id(team_name : str, id: int, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
-    print(id, )
     return await _services.get_item_id(team = team, id = id, db = db)
 
 # Update specific budget item by id - Team
