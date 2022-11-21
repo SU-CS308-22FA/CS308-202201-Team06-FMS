@@ -16,6 +16,10 @@ const FileUploadModal = ({ active, handleUpload, itemName, uploadStatus }) => {
 
     const handleFileUpload = async (e) => {
         e.preventDefault();
+        if (!file) {
+            setErrorMessage("File upload cannot be left empty!");
+            return
+        }
         const formData = new FormData();
         formData.append("file", file, file.name);
         
