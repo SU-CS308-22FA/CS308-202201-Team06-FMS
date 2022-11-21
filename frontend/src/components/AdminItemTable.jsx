@@ -21,7 +21,7 @@ const AdminItemTable = ({loggedInAdmin}) => {
             },
         };
 
-        const response = await fetch("/api/admins/getteams/", requestOptions);
+        const response = await fetch("/api/admins/getallitems/", requestOptions);
         if (!response.ok) {
             setErrorMessage(response.status);
         }
@@ -47,7 +47,11 @@ const AdminItemTable = ({loggedInAdmin}) => {
 
             <ErrorMessage message={errorMessage} />
             {!childLoading ? (
-                <table className="table is-fullwidth">
+                <div className="rows">
+                    <button className="button is-fullwidth mb-5 is-info" onClick={() => getItems()}>
+                        Refresh Info
+                    </button>
+                    <table className="table is-fullwidth">
                     <thead>
                         <tr>
                             <th>Team Name</th>
@@ -59,7 +63,7 @@ const AdminItemTable = ({loggedInAdmin}) => {
                     </thead>
                     <tbody>
                         {itemList.map((item) => (
-                            <tr>
+                            <tr key={item.id}>
                                 <td>{item.team_name}</td>
                                 <td>{item.item_name}</td>
                                 <td>{item.amount}</td>
@@ -67,7 +71,9 @@ const AdminItemTable = ({loggedInAdmin}) => {
                             </tr>
                         ))}
                         </tbody>
-                </table>
+                    </table>
+                </div>
+                
             ) : (<p>Loading</p>)}
 
         </>

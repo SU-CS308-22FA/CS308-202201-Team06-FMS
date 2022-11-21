@@ -10,10 +10,8 @@ const AdminTeamTable = ({loggedInAdmin}) => {
     const [adminToken] = useContext(AdminContext);
     const [errorMessage, setErrorMessage] = useState("");
     const [teamsList, setTeamsList] = useState([]);
-    const [successMessage, setSuccessMessage] = useState("");
     const [childLoading, setChildLoading] = useState(false);
-    const [activeModal, setActiveModal] = useState(false);
-    const [itemName, setItemName] = useState(null);
+
 
     const getTeams = async () => {
         const requestOptions = {
@@ -24,13 +22,14 @@ const AdminTeamTable = ({loggedInAdmin}) => {
             },
         };
 
-        const response = await fetch("/api/admins/getallitems/", requestOptions);
+        const response = await fetch("/api/admins/getteams/", requestOptions);
         if (!response.ok) {
             setErrorMessage(response.status);
         }
         else {
             const data = await response.json();
             setTeamsList(data);
+            console.log(data);
         }
     };
 
@@ -50,7 +49,11 @@ const AdminTeamTable = ({loggedInAdmin}) => {
 
             <ErrorMessage message={errorMessage} />
             {!childLoading ? (
-                <table className="table is-fullwidth">
+                <div className="rows">
+                    <button className="button is-fullwidth mb-5 is-info" onClick={() => getTeams()}>
+                        Refresh Info
+                    </button>
+                    <table className="table is-fullwidth">
                     <thead>
                         <tr>
                             <th>Team Id</th>
@@ -62,7 +65,7 @@ const AdminTeamTable = ({loggedInAdmin}) => {
                     </thead>
                     <tbody>
                         {teamsList.map((team) => (
-                            <tr>
+                            <tr key={team.id}>
                                 <td>{team.id}</td>
                                 <td>{team.name}</td>
                                 <td>{team.budget_alloc}</td>
@@ -70,7 +73,9 @@ const AdminTeamTable = ({loggedInAdmin}) => {
                             </tr>
                         ))}
                         </tbody>
-                </table>
+                    </table>
+                </div>
+                
             ) : (<p>Loading</p>)}
 
         </>
