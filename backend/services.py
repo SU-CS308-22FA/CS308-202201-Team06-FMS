@@ -243,6 +243,12 @@ async def update_item_admin(team_name : str, item_name: str, budgetItem: _schema
     # Update team budget as well
     await update_team_budget(name = team_name, change = change, db = db)
 
+    # Update item info
+    if item.support_docs:
+        newFileName = "supportfiles/" + team_name + "_" + budgetItem.item_name + ".pdf"
+        os.rename(item.support_docs, newFileName)
+        item.support_docs = newFileName
+
 
 
     db.commit()
@@ -387,6 +393,12 @@ async def update_item_team(item_name: str, budgetItem: _schemas._BudgetItemBase,
     # Update team budget as well
     await update_team_budget(name = team.name, change = change, db = db)
 
+    # Update item info
+    if item.support_docs:
+        newFileName = "supportfiles/" + team.name + "_" + budgetItem.item_name + ".pdf"
+        os.rename(item.support_docs, newFileName)
+        item.support_docs = newFileName
+
 
     try:
         db.commit()
@@ -408,6 +420,14 @@ async def update_item_id(id : int, budgetItem: _schemas._BudgetItemBase, team: _
 
     # Update team budget as well
     await update_team_budget(name = team.name, change = change, db = db)
+
+    # Update item info
+    if item.support_docs:
+        newFileName = "supportfiles/" + team.name + "_" + budgetItem.item_name + ".pdf"
+        os.rename(item.support_docs, newFileName)
+        item.support_docs = newFileName
+
+
 
 
     try:
