@@ -111,6 +111,13 @@ async def update_team_admin(team_name : str, team : _schemas.TeamCreate, db : _o
     for item in items:
         item.team_name = team.name
         item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+
+        # File update
+        if item.support_docs:
+            newFileName = "supportfiles/" + team.name + "_" + item.item_name + ".pdf"
+            os.rename(item.support_docs, newFileName)
+            item.support_docs = newFileName 
+
         db.commit()
         db.refresh(item)
 
@@ -139,6 +146,11 @@ async def delete_team_admin(team_name : str, db : _orm.Session):
 
     for item in items:
         await update_team_budget(name = team_name, change = -item.amount, db = db)
+
+        # Delete docs
+        if item.support_docs:
+            os.remove(item.support_docs)
+
         db.delete(item)
         db.commit()
     
