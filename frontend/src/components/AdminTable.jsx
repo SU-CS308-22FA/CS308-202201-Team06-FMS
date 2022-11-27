@@ -6,7 +6,7 @@ import { AdminContext } from "../context/AdminContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 
-const AdminTable = ({loggedInAdmin}) => {
+const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
     const [errorMessage, setErrorMessage] = useState("");
     const [teamsList, setTeamsList] = useState([]);
@@ -71,68 +71,68 @@ const AdminTable = ({loggedInAdmin}) => {
 
 
     if (loggedInAdmin) {
-    return (
+        return (
 
-        <>
+            <>
 
-            <ErrorMessage message={errorMessage} />
-            {!childLoading ? (
-                <div className="rows">
-                    <button className="button is-fullwidth mb-5 is-info" onClick={() => {getItems();getTeams();}}>
-                        Refresh Info
-                    </button>
-                    <div className="columns">
-                        <div className="column">
-                            <table className="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>Team Id</th>
-                                        <th>Team Name</th>
-                                        <th>Budget_Allocated</th>
-                                        <th>Budget_Remaining</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {teamsList.map((team) => (
-                                        <tr key={team.id}>
-                                            <td>{team.id}</td>
-                                            <td>{team.name}</td>
-                                            <td>{team.budget_alloc}</td>
-                                            <td>{team.budget_rem}</td>
+                <ErrorMessage message={errorMessage} />
+                {!childLoading ? (
+                    <div className="rows">
+                        <button className="button is-fullwidth mb-5 is-info" onClick={() => { getItems(); getTeams(); }}>
+                            Refresh Info
+                        </button>
+                        <div className="columns">
+                            <div className="column">
+                                <table className="table table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th>Team Id</th>
+                                            <th>Team Name</th>
+                                            <th>Budget_Allocated</th>
+                                            <th>Budget_Remaining</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>                        <div className="column">
-                            <table className="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>Team Name</th>
-                                        <th>Item Name</th>
-                                        <th>Amount</th>
-                                        <th>Documents</th>
+                                    </thead>
+                                    <tbody>
+                                        {teamsList.map((team) => (
+                                            <tr key={team.id}>
+                                                <td>{team.id}</td>
+                                                <td>{team.name}</td>
+                                                <td>{team.budget_alloc}</td>
+                                                <td>{team.budget_rem}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>                        <div className="column">
+                                <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th>Team Name</th>
+                                            <th>Item Name</th>
+                                            <th>Amount</th>
+                                            <th>Documents</th>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {itemList.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>{item.team_name}</td>
-                                            <td>{item.item_name}</td>
-                                            <td>{item.amount}</td>
-                                            <td>{item.support_docs}</td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {itemList.map((item) => (
+                                            <tr key={item.id}>
+                                                <td>{item.team_name}</td>
+                                                <td>{item.item_name}</td>
+                                                <td>{item.amount}</td>
+                                                <td>{item.support_docs}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-            ) : (<p>Loading</p>)}
 
-        </>
-    );
+                ) : (<p>Loading</p>)}
+
+            </>
+        );
     }
 
     return (null);

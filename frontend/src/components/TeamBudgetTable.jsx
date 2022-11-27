@@ -113,7 +113,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
             <ErrorMessage message={errorMessage} />
             {childLoading ? (
-                <table className="table is-fullwidth">
+                <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                     <thead>
                         <tr>
                             <th>Item Name</th>
