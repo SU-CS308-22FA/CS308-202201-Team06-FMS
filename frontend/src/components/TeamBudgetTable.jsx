@@ -132,7 +132,13 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     }, [errorMessage, successMessage]
     )
 
-
+    const VerifyMessage = ({isVerified}) => {
+        if (isVerified){
+            return <p className="has-text-weight-bold has-text-success">Verified</p> 
+        }
+        
+        return <p className="has-text-weight-bold has-text-warning-dark">Pending</p>
+    }
 
     return (
 
@@ -183,7 +189,9 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <td>{budgetItem.amount}</td>
                                 <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
                                 <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
-                                <td>{!budgetItem.doc_verified ? (<p className="has-text-weight-bold has-text-warning-dark">Pending</p>) : (<p className="has-text-weight-bold has-text-success">Verified</p>)}</td> 
+                                <td>
+                                    {!budgetItem.doc_rejected ? (<VerifyMessage isVerified={budgetItem.doc_verified} />) : (<p className="has-text-weight-bold has-text-danger-dark">Rejected</p>)}
+                                </td> 
                                 <td>
                                     <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
                                         Update

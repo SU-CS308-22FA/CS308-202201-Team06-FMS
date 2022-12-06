@@ -282,6 +282,19 @@ async def verify_docs_admin(item_name : str, team_name : str, db : _orm.Session)
 
     return {"detail" : "Item " + item_name +  " for team " + team_name + " was verified successfully."}
 
+async def reject_docs_admin(item_name : str, team_name : str, db : _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
+
+    # Mark item as rejected, forces replace
+    item.doc_rejected = True
+
+    # Commit
+    db.commit()
+    db.refresh(item)
+
+    return {"detail" : "Item " + item_name +  " for team " + team_name + " was rejected successfully."}
+
+
 #*************************
 #       TEAM
 #*************************
@@ -501,6 +514,7 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
         item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
         item.support_docs = filename
         item.doc_verified = False
+        item.doc_rejected = False
 
         db.commit()
         db.refresh(item)

@@ -88,7 +88,29 @@ const AdminTable = ({ loggedInAdmin }) => {
     }
 
     const handleReject = async (teamName, itemName) => {
-        console.log("lol")
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/rejectdocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getItems();
+    }
+
+    const NoDocMessage = ({isRejected}) => {
+        if (isRejected){
+            return null
+        }
+        
+        return <p className = "has-text-weight-bold has-text-warning-dark">No docs</p>
     }
 
     const VerifyButton = ({itemName, teamName, isVerified}) => {
@@ -153,16 +175,18 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{item.item_name}</td>
                                                 <td>{item.amount}</td>
                                                 <td>
-                                                    {(item.support_docs) ? (
+                                                    {(item.support_docs && !item.doc_rejected) ? (
                                                     <VerifyButton 
                                                         itemName={item.item_name} 
                                                         teamName={item.team_name}
                                                         isVerified={item.doc_verified}
                                                     />) : 
                                                     
-                                                    (<p className = "has-text-weight-bold has-text-danger">No docs!</p>)
+                                                    (<NoDocMessage isRejected={item.doc_rejected} />)
                                                     }
-                                                    {(item.support_docs) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (<br></br>)}    
+                                                    {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<p>Implement download button here</p>) : (null)}
+                                                    {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
                                                 </td>
                                             </tr>
                                         ))}

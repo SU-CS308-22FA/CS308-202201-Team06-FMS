@@ -90,6 +90,7 @@ class BudgetItem(_BudgetItemBase):
     support_docs: Optional[str]
     id: int
     doc_verified: bool
+    doc_rejected: bool
 
     class Config:
         orm_mode = True

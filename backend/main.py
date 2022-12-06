@@ -192,6 +192,11 @@ async def admin_get_docs(item_name : str, team_name : str, admin: _schemas.Admin
 async def admin_verify_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.verify_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
+# Reject item - Admin
+@app.put("/api/admins/rejectdocs/{team_name}/{item_name}")
+async def admin_reject_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.reject_docs_admin(item_name = item_name, team_name = team_name, db = db)
+
 #*************************
 #       TEAM
 #*************************
