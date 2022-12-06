@@ -88,6 +88,26 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setSelected(null);
     }
 
+    const handleDownload = async (itemName) => {
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + teamToken,
+            },
+        };
+
+        console.log("Entered here")
+
+        const response = await fetch("/api/teams/getdocs/" + teamName + "/" + itemName, requestOptions);
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+        else {
+            setSuccessMessage("Downloading data for " + itemName + "...")
+        }
+    }
+
 
 
     return (
@@ -112,6 +132,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             </button>
 
             <ErrorMessage message={errorMessage} />
+            <SuccessMessage message={successMessage} />
             {childLoading ? (
                 <table className="table is-fullwidth">
                     <thead>
@@ -142,12 +163,23 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                         <button className="button mr-2 is-success is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Update"); setActiveUpload(true) }}>
                                             Update Documents
                                         </button>
+
                                     ) : (
                                         <button className="button mr-2 is-warning is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Add"); setActiveUpload(true) }}>
                                             Add Documents
                                         </button>)
 
                                     }
+
+                                    {budgetItem.support_docs ? (
+                                        <button className="button mr-2 is-info is-light" onClick={() => { handleDownload(budgetItem.item_name)}}>
+                                            Download Documents
+                                        </button>
+                                    ) : (
+                                        <br></br>
+                                    )
+                                    }
+
 
 
                                 </td>
