@@ -89,6 +89,7 @@ class BudgetItem(_BudgetItemBase):
     date_last_updated: _dt.datetime
     support_docs: Optional[str]
     id: int
+    doc_verified: bool
 
     class Config:
         orm_mode = True

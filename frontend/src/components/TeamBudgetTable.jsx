@@ -168,9 +168,10 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                     <thead>
                         <tr>
                             <th>Item Name</th>
-                            <th>Amount Name</th>
+                            <th>Amount</th>
                             <th>Date Created</th>
                             <th>Date Last Updated</th>
+                            <th>Verification Status</th>
                             <th>Actions</th>
 
                         </tr>
@@ -182,6 +183,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <td>{budgetItem.amount}</td>
                                 <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
                                 <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
+                                <td>{!budgetItem.doc_verified ? (<p className="has-text-weight-bold has-text-warning-dark">Pending</p>) : (<p className="has-text-weight-bold has-text-success">Verified</p>)}</td> 
                                 <td>
                                     <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
                                         Update

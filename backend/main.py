@@ -182,7 +182,15 @@ async def admin_delete_item(team_name: str, item_name : str, admin: _schemas.Adm
 async def admin_update_item(team_name : str, item_name : str, budgetItem: _schemas._BudgetItemBase, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_admin(team_name = team_name, item_name = item_name, budgetItem = budgetItem, db = db)
 
+# Download item - Admin
+@app.get("/api/admins/getdocs/{team_name}/{item_name}")
+async def admin_get_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
+# Verify item - Admin
+@app.put("/api/admins/verifydocs/{team_name}/{item_name}")
+async def admin_verify_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.verify_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
 #*************************
 #       TEAM
