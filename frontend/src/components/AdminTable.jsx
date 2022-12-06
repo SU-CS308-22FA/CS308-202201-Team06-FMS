@@ -91,6 +91,17 @@ const AdminTable = ({ loggedInAdmin }) => {
         console.log("lol")
     }
 
+    const VerifyButton = ({itemName, teamName, isVerified}) => {
+        if (isVerified){
+            return <button className="button mr-2 is-danger is-light" onClick={() => handleVerify(teamName, itemName)}>Revoke</button> 
+        }
+        return <button className="button mr-2 is-success is-light" onClick={() => handleVerify(teamName, itemName)}>Verify</button> 
+    }
+
+    const RejectButton = ({itemName, teamName}) => {
+        return <button className="button mr-2 is-danger" onClick={() => handleReject(teamName, itemName)}>Reject</button>
+    }
+
     if (loggedInAdmin) {
         return (
 
@@ -142,16 +153,16 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{item.item_name}</td>
                                                 <td>{item.amount}</td>
                                                 <td>
-                                                    {(!item.doc_verified && item.support_docs) ? (<button className="button mr-2 is-success is-light" onClick={() => handleVerify(item.team_name, item.item_name)}>Verify</button>) : (<button className="button mr-2 is-danger is-light" onClick={() => handleVerify(item.team_name, item.item_name)}>Revoke</button>)}
-                                                    {(!item.doc_verified && item.support_docs) ? (
-                                                         <button className="button mr-2 is-light is-danger" onClick={() => { handleReject(item.team_name, item.item_name)}}>
-                                                            Reject
-                                                         </button>
-                                                     ) : (
-                                                         <br></br>
-                                                     )
-                                                     }    
+                                                    {(item.support_docs) ? (
+                                                    <VerifyButton 
+                                                        itemName={item.item_name} 
+                                                        teamName={item.team_name}
+                                                        isVerified={item.doc_verified}
+                                                    />) : 
                                                     
+                                                    (<p className = "has-text-weight-bold has-text-danger">No docs!</p>)
+                                                    }
+                                                    {(item.support_docs) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (<br></br>)}    
                                                 </td>
                                             </tr>
                                         ))}
