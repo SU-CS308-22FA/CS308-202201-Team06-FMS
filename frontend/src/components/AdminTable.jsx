@@ -69,6 +69,60 @@ const AdminTable = ({ loggedInAdmin }) => {
         }, 100)
     }, []);
 
+    const handleVerify = async (teamName, itemName) => {
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/verifydocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getItems();
+    }
+
+    const handleReject = async (teamName, itemName) => {
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/rejectdocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getItems();
+    }
+
+    const NoDocMessage = ({isRejected}) => {
+        if (isRejected){
+            return null
+        }
+        
+        return <p className = "has-text-weight-bold has-text-warning-dark">No docs</p>
+    }
+
+    const VerifyButton = ({itemName, teamName, isVerified}) => {
+        if (isVerified){
+            return <button className="button mr-2 is-danger is-light" onClick={() => handleVerify(teamName, itemName)}>Revoke</button> 
+        }
+        return <button className="button mr-2 is-success is-light" onClick={() => handleVerify(teamName, itemName)}>Verify</button> 
+    }
+
+    const RejectButton = ({itemName, teamName}) => {
+        return <button className="button mr-2 is-danger" onClick={() => handleReject(teamName, itemName)}>Reject</button>
+    }
 
     if (loggedInAdmin) {
         return (
@@ -120,7 +174,20 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{item.team_name}</td>
                                                 <td>{item.item_name}</td>
                                                 <td>{item.amount}</td>
-                                                <td>{item.support_docs}</td>
+                                                <td>
+                                                    {(item.support_docs && !item.doc_rejected) ? (
+                                                    <VerifyButton 
+                                                        itemName={item.item_name} 
+                                                        teamName={item.team_name}
+                                                        isVerified={item.doc_verified}
+                                                    />) : 
+                                                    
+                                                    (<NoDocMessage isRejected={item.doc_rejected} />)
+                                                    }
+                                                    {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<p>Implement download button here</p>) : (null)}
+                                                    {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

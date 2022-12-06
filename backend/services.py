@@ -257,6 +257,42 @@ async def update_item_admin(team_name : str, item_name: str, budgetItem: _schema
 
     return _schemas.BudgetItem.from_orm(item)
 
+# Admin download item docs
+async def get_docs_admin(item_name : str, team_name : str, db: _orm.Session):
+    # Filename format is supportfiles/team_name/item_name.pdf
+    filepath = "supportfiles/" + team_name + "_" + item_name + ".pdf"
+    filename = team_name + "_" + item_name + ".pdf"
+
+    # Make sure the doc exists
+    if not os.path.exists(filepath):
+        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
+    
+    return _resp.FileResponse(path=filepath, filename=filename, media_type='application/pdf')
+
+# Admin verify item docs
+async def verify_docs_admin(item_name : str, team_name : str, db : _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
+
+    # Verify / unverify the item
+    item.doc_verified = not item.doc_verified
+
+    # Commit
+    db.commit()
+    db.refresh(item)
+
+    return {"detail" : "Item " + item_name +  " for team " + team_name + " was verified successfully."}
+
+async def reject_docs_admin(item_name : str, team_name : str, db : _orm.Session):
+    item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
+
+    # Mark item as rejected, forces replace
+    item.doc_rejected = True
+
+    # Commit
+    db.commit()
+    db.refresh(item)
+
+    return {"detail" : "Item " + item_name +  " for team " + team_name + " was rejected successfully."}
 
 
 #*************************
@@ -477,6 +513,8 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
 
         item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
         item.support_docs = filename
+        item.doc_verified = False
+        item.doc_rejected = False
 
         db.commit()
         db.refresh(item)
