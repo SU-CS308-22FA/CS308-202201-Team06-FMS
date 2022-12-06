@@ -16,6 +16,7 @@ import jwt as _jwt
 import json as _json
 import fastapi as _fastapi
 import fastapi.security as _security
+import fastapi.responses as _resp
 import datetime as _dt
 from dateutil import tz as _tz
 import PyPDF2 as _pdf
@@ -440,7 +441,7 @@ async def update_item_id(id : int, budgetItem: _schemas._BudgetItemBase, team: _
 
     return _schemas.BudgetItem.from_orm(item)
 
-# Add docs - Team
+# Add docs - Team - Check security later
 async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schemas.Team, db: _orm.Session):
         
         item = await _item_selector(item_name=item_name, team=team, db=db)
@@ -463,7 +464,7 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
         
         except:
             os.remove(filename_temp)
-            raise _fastapi.HTTPException(status_code=406, detail= "The uploaded file is not a valid pdf file!")
+            raise _fastapi.HTTPException(status_code=415, detail= "The uploaded file is not a valid pdf file!")
 
         
         # If so, replace file
@@ -481,7 +482,19 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
         db.refresh(item)
 
         return _schemas.BudgetItem.from_orm(item)
+
+# Get docs - Team - Check security later
+async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
+        
+    # Filename format is supportfiles/team_name/item_name.pdf
+    filepath = "supportfiles/" + team.name + "_" + item_name + ".pdf"
+    filename = team.name + "_" + item_name + ".pdf"
+
+    # Make sure the doc exists
+    if not os.path.exists(filepath):
+        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
     
+    return _resp.FileResponse(path=filepath, filename=filename, media_type='application/pdf')
 
 #*************************
 #       BUDGET
