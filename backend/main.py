@@ -182,7 +182,20 @@ async def admin_delete_item(team_name: str, item_name : str, admin: _schemas.Adm
 async def admin_update_item(team_name : str, item_name : str, budgetItem: _schemas._BudgetItemBase, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_admin(team_name = team_name, item_name = item_name, budgetItem = budgetItem, db = db)
 
+# Download item - Admin
+@app.get("/api/admins/getdocs/{team_name}/{item_name}")
+async def admin_get_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
+# Verify item - Admin
+@app.put("/api/admins/verifydocs/{team_name}/{item_name}")
+async def admin_verify_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.verify_docs_admin(item_name = item_name, team_name = team_name, db = db)
+
+# Reject item - Admin
+@app.put("/api/admins/rejectdocs/{team_name}/{item_name}")
+async def admin_reject_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.reject_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
 #*************************
 #       TEAM
@@ -260,6 +273,11 @@ async def team_update_item(item_name : str, team_name: str, budgetItem: _schemas
 @app.post("/api/teams/docs/{team_name}/{item_name}")
 async def team_add_docs(item_name : str, team_name : str, file : _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.add_docs_team(item_name = item_name, file = file, team = team, db = db)
+
+# Download supporting docs for a specific budget item - Team
+@app.get("/api/teams/getdocs/{team_name}/{item_name}")
+async def team_get_docs(item_name : str, team_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_docs_team(item_name = item_name, team = team, db = db)
 
 # Get specific budget item by id - Team
 @app.get("/api/teams/getspecificitembyid/{team_name}/{id}", status_code=200)

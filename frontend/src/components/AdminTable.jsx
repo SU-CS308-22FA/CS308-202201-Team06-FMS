@@ -6,7 +6,7 @@ import { AdminContext } from "../context/AdminContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 
-const AdminTable = ({loggedInAdmin}) => {
+const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
     const [errorMessage, setErrorMessage] = useState("");
     const [teamsList, setTeamsList] = useState([]);
@@ -69,70 +69,137 @@ const AdminTable = ({loggedInAdmin}) => {
         }, 100)
     }, []);
 
+    const handleVerify = async (teamName, itemName) => {
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/verifydocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getItems();
+    }
+
+    const handleReject = async (teamName, itemName) => {
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/rejectdocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getItems();
+    }
+
+    const NoDocMessage = ({isRejected}) => {
+        if (isRejected){
+            return null
+        }
+        
+        return <p className = "has-text-weight-bold has-text-warning-dark">No docs</p>
+    }
+
+    const VerifyButton = ({itemName, teamName, isVerified}) => {
+        if (isVerified){
+            return <button className="button mr-2 is-danger is-light" onClick={() => handleVerify(teamName, itemName)}>Revoke</button> 
+        }
+        return <button className="button mr-2 is-success is-light" onClick={() => handleVerify(teamName, itemName)}>Verify</button> 
+    }
+
+    const RejectButton = ({itemName, teamName}) => {
+        return <button className="button mr-2 is-danger" onClick={() => handleReject(teamName, itemName)}>Reject</button>
+    }
 
     if (loggedInAdmin) {
-    return (
+        return (
 
-        <>
+            <>
 
-            <ErrorMessage message={errorMessage} />
-            {!childLoading ? (
-                <div className="rows">
-                    <button className="button is-fullwidth mb-5 is-info" onClick={() => {getItems();getTeams();}}>
-                        Refresh Info
-                    </button>
-                    <div className="columns">
-                        <div className="column">
-                            <table className="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>Team Id</th>
-                                        <th>Team Name</th>
-                                        <th>Budget_Allocated</th>
-                                        <th>Budget_Remaining</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {teamsList.map((team) => (
-                                        <tr key={team.id}>
-                                            <td>{team.id}</td>
-                                            <td>{team.name}</td>
-                                            <td>{team.budget_alloc}</td>
-                                            <td>{team.budget_rem}</td>
+                <ErrorMessage message={errorMessage} />
+                {!childLoading ? (
+                    <div className="rows">
+                        <button className="button is-fullwidth mb-5 is-info" onClick={() => { getItems(); getTeams(); }}>
+                            Refresh Info
+                        </button>
+                        <div className="columns">
+                            <div className="column">
+                                <table className="table table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th>Team Id</th>
+                                            <th>Team Name</th>
+                                            <th>Budget_Allocated</th>
+                                            <th>Budget_Remaining</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>                        <div className="column">
-                            <table className="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>Team Name</th>
-                                        <th>Item Name</th>
-                                        <th>Amount</th>
-                                        <th>Documents</th>
+                                    </thead>
+                                    <tbody>
+                                        {teamsList.map((team) => (
+                                            <tr key={team.id}>
+                                                <td>{team.id}</td>
+                                                <td>{team.name}</td>
+                                                <td>{team.budget_alloc}</td>
+                                                <td>{team.budget_rem}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>                        <div className="column">
+                                <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th>Team Name</th>
+                                            <th>Item Name</th>
+                                            <th>Amount</th>
+                                            <th>Documents</th>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {itemList.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>{item.team_name}</td>
-                                            <td>{item.item_name}</td>
-                                            <td>{item.amount}</td>
-                                            <td>{item.support_docs}</td>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {itemList.map((item) => (
+                                            <tr key={item.id}>
+                                                <td>{item.team_name}</td>
+                                                <td>{item.item_name}</td>
+                                                <td>{item.amount}</td>
+                                                <td>
+                                                    {(item.support_docs && !item.doc_rejected) ? (
+                                                    <VerifyButton 
+                                                        itemName={item.item_name} 
+                                                        teamName={item.team_name}
+                                                        isVerified={item.doc_verified}
+                                                    />) : 
+                                                    
+                                                    (<NoDocMessage isRejected={item.doc_rejected} />)
+                                                    }
+                                                    {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<p>Implement download button here</p>) : (null)}
+                                                    {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-            ) : (<p>Loading</p>)}
 
-        </>
-    );
+                ) : (<p>Loading</p>)}
+
+            </>
+        );
     }
 
     return (null);

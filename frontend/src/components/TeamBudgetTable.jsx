@@ -88,7 +88,57 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setSelected(null);
     }
 
+    const handleDownload = async (itemName) => {
+        const requestOptions = {
+            method: "GET",    
+            headers: {
+                Authorization: "Bearer " + teamToken
+            },
+        };
 
+        const response = await fetch("/api/teams/getdocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+        else {
+            setSuccessMessage("Downloading data for " + itemName + "...")
+
+            const disposition = response.headers.get('Content-Disposition');
+            var filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+            if (filename.toLowerCase().startsWith("utf-8''"))
+                filename = decodeURIComponent(filename.replace("utf-8''", ''));
+            else
+                filename = filename.replace(/['"]/g, '');
+
+        response.arrayBuffer().then(function(buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", filename); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        });
+
+        }
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            setErrorMessage("");
+            setSuccessMessage("");
+        },3000)
+    }, [errorMessage, successMessage]
+    )
+
+    const VerifyMessage = ({isVerified}) => {
+        if (isVerified){
+            return <p className="has-text-weight-bold has-text-success">Verified</p> 
+        }
+        
+        return <p className="has-text-weight-bold has-text-warning-dark">Pending</p>
+    }
 
     return (
 
@@ -105,21 +155,29 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 itemName={selected}
                 uploadStatus={uploadStatus}
             />
-            <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
+            <div className="columns">
+                <div className="column">
+                <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
+                </div>
+                <div className="column">
+                    {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
+                </div>
+            </div>
 
             <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
                 Create New Budget Item
             </button>
 
-            <ErrorMessage message={errorMessage} />
+
             {childLoading ? (
-                <table className="table is-fullwidth">
+                <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                     <thead>
                         <tr>
                             <th>Item Name</th>
-                            <th>Amount Name</th>
+                            <th>Amount</th>
                             <th>Date Created</th>
                             <th>Date Last Updated</th>
+                            <th>Verification Status</th>
                             <th>Actions</th>
 
                         </tr>
@@ -132,6 +190,9 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
                                 <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
                                 <td>
+                                    {!budgetItem.doc_rejected ? (<VerifyMessage isVerified={budgetItem.doc_verified} />) : (<p className="has-text-weight-bold has-text-danger-dark">Rejected</p>)}
+                                </td> 
+                                <td>
                                     <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
                                         Update
                                     </button>
@@ -142,12 +203,23 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                         <button className="button mr-2 is-success is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Update"); setActiveUpload(true) }}>
                                             Update Documents
                                         </button>
+
                                     ) : (
                                         <button className="button mr-2 is-warning is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Add"); setActiveUpload(true) }}>
                                             Add Documents
                                         </button>)
 
                                     }
+
+                                    {budgetItem.support_docs ? (
+                                        <button className="button mr-2 is-info is-light" onClick={() => { handleDownload(budgetItem.item_name)}}>
+                                            Download Documents
+                                        </button>
+                                    ) : (
+                                        <br></br>
+                                    )
+                                    }
+
 
 
                                 </td>
