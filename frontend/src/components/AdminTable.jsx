@@ -13,6 +13,9 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [teamsList, setTeamsList] = useState([]);
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
+    const [activeModal, setActiveModal] = useState(false);
+    const [teamName, setTeamName] = useState("");
+    const [itemName, setItemName] = useState("");
 
 
     const getTeams = async () => {
@@ -106,8 +109,8 @@ const AdminTable = ({ loggedInAdmin }) => {
         getItems();
     }
 
-    const handlePreview = ({teamName, itemName}) => {
-        console.log("place")
+    const handlePreview = async (teamName, itemName) => {
+
     }
 
     const NoDocMessage = ({isRejected}) => {
