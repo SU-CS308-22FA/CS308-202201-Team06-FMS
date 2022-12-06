@@ -5,6 +5,7 @@ import SuccessMessage from "./SuccessMessage";
 import { AdminContext } from "../context/AdminContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
+import { Document, Page } from "react-pdf";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -105,6 +106,10 @@ const AdminTable = ({ loggedInAdmin }) => {
         getItems();
     }
 
+    const handlePreview = ({teamName, itemName}) => {
+        console.log("place")
+    }
+
     const NoDocMessage = ({isRejected}) => {
         if (isRejected){
             return null
@@ -122,6 +127,10 @@ const AdminTable = ({ loggedInAdmin }) => {
 
     const RejectButton = ({itemName, teamName}) => {
         return <button className="button mr-2 is-danger" onClick={() => handleReject(teamName, itemName)}>Reject</button>
+    }
+
+    const PreviewButton = ({itemName, teamName}) => {
+        return <button className="button mr-2 is-info" onClick={() => handlePreview(teamName, itemName)}>Preview</button>
     }
 
     if (loggedInAdmin) {
@@ -186,6 +195,7 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                     }
                                                     {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
                                                     {(item.support_docs && !item.doc_rejected) ? (<p>Implement download button here</p>) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<PreviewButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
                                                     {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
                                                 </td>
                                             </tr>
