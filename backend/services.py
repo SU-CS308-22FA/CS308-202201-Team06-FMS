@@ -273,8 +273,8 @@ async def get_docs_admin(item_name : str, team_name : str, db: _orm.Session):
 async def verify_docs_admin(item_name : str, team_name : str, db : _orm.Session):
     item = await _item_selector_admin(item_name = item_name, team_name = team_name, db = db)
 
-    # Verify the item
-    item.doc_verified = True
+    # Verify / unverify the item
+    item.doc_verified = not item.doc_verified
 
     # Commit
     db.commit()

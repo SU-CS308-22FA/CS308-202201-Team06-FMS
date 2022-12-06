@@ -69,6 +69,27 @@ const AdminTable = ({ loggedInAdmin }) => {
         }, 100)
     }, []);
 
+    const handleVerify = async (teamName, itemName) => {
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/verifydocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getItems();
+    }
+
+    const handleReject = async (teamName, itemName) => {
+        console.log("lol")
+    }
 
     if (loggedInAdmin) {
         return (
@@ -120,7 +141,18 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{item.team_name}</td>
                                                 <td>{item.item_name}</td>
                                                 <td>{item.amount}</td>
-                                                <td>{item.support_docs}</td>
+                                                <td>
+                                                    {(!item.doc_verified && item.support_docs) ? (<button className="button mr-2 is-success is-light" onClick={() => handleVerify(item.team_name, item.item_name)}>Verify</button>) : (<button className="button mr-2 is-danger is-light" onClick={() => handleVerify(item.team_name, item.item_name)}>Revoke</button>)}
+                                                    {(!item.doc_verified && item.support_docs) ? (
+                                                         <button className="button mr-2 is-light is-danger" onClick={() => { handleReject(item.team_name, item.item_name)}}>
+                                                            Reject
+                                                         </button>
+                                                     ) : (
+                                                         <br></br>
+                                                     )
+                                                     }    
+                                                    
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
