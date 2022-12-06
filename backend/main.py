@@ -261,6 +261,11 @@ async def team_update_item(item_name : str, team_name: str, budgetItem: _schemas
 async def team_add_docs(item_name : str, team_name : str, file : _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.add_docs_team(item_name = item_name, file = file, team = team, db = db)
 
+# Download supporting docs for a specific budget item - Team
+@app.get("/api/teams/getdocs/{team_name}/{item_name}")
+async def team_get_docs(item_name : str, team_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.get_docs_team(item_name = item_name, team = team, db = db)
+
 # Get specific budget item by id - Team
 @app.get("/api/teams/getspecificitembyid/{team_name}/{id}", status_code=200)
 async def team_get_item_id(team_name : str, id: int, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
