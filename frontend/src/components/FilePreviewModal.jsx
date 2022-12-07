@@ -23,7 +23,11 @@ const FilePreviewModal = ({teamName, itemName, active, handleModal}) => {
         Open: () => <></>,
         Download: () => <></>,
         SwitchTheme: () => <></>,
-        Print:() => <></>
+        Print:() => <></>,
+        SwitchScrollModeMenuItem:() => <></>,
+        RotateBackwardMenuItem: () => <></>,
+        RotateForwardMenuItem: () => <></>,
+        ShowPropertiesMenuItem: () => <></>
     });
 
     const [filename, setFilename] = useState(null);
