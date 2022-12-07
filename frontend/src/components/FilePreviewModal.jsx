@@ -1,102 +1,76 @@
 import React from "react";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
-import { AdminContext } from "../context/TeamContext";
-import { ErrorMessage } from "../components/ErrorMessage";
+import { AdminContext } from "../context/AdminContext";
+import ErrorMessage from "./ErrorMessage";
+import { Worker } from '@react-pdf-viewer/core';
+import { Viewer } from '@react-pdf-viewer/core';
+import { toolbarPlugin, ToolbarSlot, TransformToolbarSlot } from '@react-pdf-viewer/toolbar';
+import '@react-pdf-viewer/toolbar/lib/styles/index.css';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 
 
 
 
 const FilePreviewModal = ({teamName, itemName, active, handleModal}) => {
-    const [file, setFile] = useState(null);
-    const [admintoken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
-    const [errorMessage, setErrorMessage] = useState("");
-
-    useEffect(() => {
-        const getPdf = async () => {
-            const requestOptions = {
-                method: "GET",    
-                headers: {
-                    Authorization: "Bearer " + adminToken
-                },
-            };
     
-            const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName, requestOptions);
-    
-            if (!response.ok) {
-                const data = await response.json();
-                setErrorMessage(data.detail);
-            }
-            else {
-                setFile(response);
-            }
+    const toolbarPluginInstance = toolbarPlugin();
+    const { renderDefaultToolbar, Toolbar } = toolbarPluginInstance;
 
-        }}, []);
+    const transform: TransformToolbarSlot = (slot: ToolbarSlot) => ({
+        ...slot,
+        // These slots will be empty
+        Open: () => <></>,
+        Download: () => <></>,
+        SwitchTheme: () => <></>,
+        Print:() => <></>
+    });
 
-    const handleCreateBudgetItem = async (e) => {
-        e.preventDefault();
-        if (!itemName || !amount) {
-            setErrorMessage("Inputs cannot be empty!")
-            return
-        }
+    const [filename, setFilename] = useState(null);
+    const [buf, setBuf] = useState(null);
+    const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
 
+    const getPdf = async () => {
         const requestOptions = {
-            method: "POST",
+            method: "GET",    
             headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + teamToken,
+                Authorization: "Bearer " + adminToken
             },
-            body: JSON.stringify({
-                item_name: itemName,
-                amount: amount,
-                team_name: teamName
-            })
-
         };
 
-        const response = await fetch("/api/teams/createitem", requestOptions);
-        const data = await response.json();
+        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName, requestOptions);
 
-        if (!response.ok) {
-            setErrorMessage(data.detail);
-        } else {
-            cleanFormData();
-            setErrorMessage(null);
-            handleModal();
+        if (response.ok) {
+
+            const disposition = response.headers.get('Content-Disposition');
+            var filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+            if (filename.toLowerCase().startsWith("utf-8''"))
+                setFilename(decodeURIComponent(filename.replace("utf-8''", '')));
+            else
+                setFilename(filename = filename.replace(/['"]/g, ''));
+
+            response.arrayBuffer().then(function(buf) 
+                {
+                    var uint8View = new Uint8Array(buf);
+                    setBuf(uint8View);
+                }
+            )
         }
     }
 
-
-    const handleUpdateBudgetItem = async (e) => {
-        e.preventDefault();
-
-        if (!itemName || !amount) {
-            setErrorMessage("Inputs cannot be empty!")
-            return
+    useEffect(() => {        
+        if (itemName && teamName) {
+            getPdf();
         }
-        
-        const requestOptions = {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + teamToken,
-            },
-            body: JSON.stringify({
-                item_name: itemName,
-                amount: amount,
-                team_name: teamName
-            })
-        };
-        console.log(itemName, amount, teamName)
-        const response = await fetch(`/api/teams/updateitembyid/` + teamName + `/` + id, requestOptions);
+    }, [teamName, itemName, adminToken]);
 
-        if (!response.ok) {
-            setErrorMessage("Item names must be unique!");
-        } else {
-            cleanFormData();
-            setErrorMessage(null);
-            handleModal();
-        }
+
+    const PdfView = ({buf}) => {
+        return <Viewer fileUrl={buf} plugins={[toolbarPluginInstance]}/>
+    }
+
+    if (!active || !buf){
+        return null;
     }
 
     return (
@@ -109,11 +83,29 @@ const FilePreviewModal = ({teamName, itemName, active, handleModal}) => {
                     </h1>
                 </header>
                 <section className="modal-card-body">
-                        Pdf Displayed Here
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.1.81/build/pdf.worker.min.js">
+                    <div
+                        style={{
+                            height: '100%',
+                        }}
+                    >
+                                <div
+                                    style={{
+                                        alignItems: 'center',
+                                        backgroundColor: '#eeeeee',
+                                        borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                                        display: 'flex',
+                                        padding: '4px',
+                                    }}
+                                >
+                                    <Toolbar>{renderDefaultToolbar(transform)}</Toolbar>
+                                </div>
+                        <PdfView buf={buf} />
+                    </div>
+                </Worker>
                 </section>
                 <footer className="modal-card-foot has-background-primary-light">
                     < button className="button " onClick={() => {handleModal();}}>Close</button>
-                    <ErrorMessage message={errorMessage} />
                 </footer>
             </div>
         </div>

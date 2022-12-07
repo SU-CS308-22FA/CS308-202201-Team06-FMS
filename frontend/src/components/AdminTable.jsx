@@ -6,6 +6,7 @@ import { AdminContext } from "../context/AdminContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf";
+import FilePreviewModal from "./FilePreviewModal";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -109,8 +110,17 @@ const AdminTable = ({ loggedInAdmin }) => {
         getItems();
     }
 
-    const handlePreview = async (teamName, itemName) => {
 
+    const handlePreview = async (itemName, teamName) => {
+        setItemName(itemName);
+        setTeamName(teamName);
+        setActiveModal(true);
+    }
+
+    const handleModal = async () => {
+        setActiveModal(!activeModal);
+        setTeamName(null);
+        setItemName(null);
     }
 
     const NoDocMessage = ({isRejected}) => {
@@ -133,13 +143,19 @@ const AdminTable = ({ loggedInAdmin }) => {
     }
 
     const PreviewButton = ({itemName, teamName}) => {
-        return <button className="button mr-2 is-info" onClick={() => handlePreview(teamName, itemName)}>Preview</button>
+        return <button className="button mr-2 is-info" onClick={() => {handlePreview(itemName, teamName)}}>Preview</button>
     }
 
     if (loggedInAdmin) {
         return (
 
             <>
+                <FilePreviewModal 
+                teamName={teamName}
+                itemName={itemName}
+                active={activeModal}
+                handleModal={handleModal}
+                />
 
                 <ErrorMessage message={errorMessage} />
                 {!childLoading ? (
