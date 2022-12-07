@@ -83,7 +83,7 @@ const FilePreviewModal = ({teamName, itemName, active, handleModal}) => {
             <div className="modal-card">
                 <header className="modal-card-head has-background-primary-light">
                     <h1 className="modal-card-title">
-                        Preview Pdf
+                        Preview {filename}
                     </h1>
                 </header>
                 <section className="modal-card-body">
