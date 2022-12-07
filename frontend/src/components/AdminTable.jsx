@@ -5,6 +5,8 @@ import SuccessMessage from "./SuccessMessage";
 import { AdminContext } from "../context/AdminContext";
 import { useContext } from "react";
 import { useState, useEffect } from "react";
+import { Document, Page } from "react-pdf";
+import FilePreviewModal from "./FilePreviewModal";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -12,6 +14,9 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [teamsList, setTeamsList] = useState([]);
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
+    const [activeModal, setActiveModal] = useState(false);
+    const [teamName, setTeamName] = useState("");
+    const [itemName, setItemName] = useState("");
 
 
     const getTeams = async () => {
@@ -105,6 +110,19 @@ const AdminTable = ({ loggedInAdmin }) => {
         getItems();
     }
 
+
+    const handlePreview = async (itemName, teamName) => {
+        setItemName(itemName);
+        setTeamName(teamName);
+        setActiveModal(true);
+    }
+
+    const handleModal = async () => {
+        setActiveModal(!activeModal);
+        setTeamName(null);
+        setItemName(null);
+    }
+
     const NoDocMessage = ({isRejected}) => {
         if (isRejected){
             return null
@@ -124,10 +142,20 @@ const AdminTable = ({ loggedInAdmin }) => {
         return <button className="button mr-2 is-danger" onClick={() => handleReject(teamName, itemName)}>Reject</button>
     }
 
+    const PreviewButton = ({itemName, teamName}) => {
+        return <button className="button mr-2 is-info" onClick={() => {handlePreview(itemName, teamName)}}>Preview</button>
+    }
+
     if (loggedInAdmin) {
         return (
 
             <>
+                <FilePreviewModal 
+                teamName={teamName}
+                itemName={itemName}
+                active={activeModal}
+                handleModal={handleModal}
+                />
 
                 <ErrorMessage message={errorMessage} />
                 {!childLoading ? (
@@ -186,6 +214,7 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                     }
                                                     {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
                                                     {(item.support_docs && !item.doc_rejected) ? (<p>Implement download button here</p>) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<PreviewButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
                                                     {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
                                                 </td>
                                             </tr>
