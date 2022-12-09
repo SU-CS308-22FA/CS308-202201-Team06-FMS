@@ -1,18 +1,18 @@
 # Financial Management System (FMS)
 
 ## Table of Contents
-- **[Description](#Desc)**
+- **[Description](#description)**
 
 - **For Users:**
-    - [Current Deploy](#Dep)
-    - [Local Install & Run](#Ins)
-    - [Report Bugs](#BugRep)
-    - [Known Bugs](#BugKnw)
+    - [Current Deploy](#current-deploy)
+    - [Local Install & Run](#local-install--run)
+    - [Report Bugs](#report-bugs)
+    - [Known Bugs](#known-bugs)
 
 - **For Developers:**
-    - [Source Code](#Dev)
-    - [Directory & Branch Layout](#Dir)
-    - [Local Build & Deploy](#DepLoc)
+    - [Source Code](#source-code)
+    - [Directory & Branch Layout](#directory--branch-layout)
+    - [Local Build & Deploy](#local-build--deploy)
 
 ## <a name="Desc"></a>Description
 Financial Management System is a pilot application to answer the need of tracking team budgets by the Turkish Football Federation. It hopes to provide a user-friendly interface where system admins can track current Financial Fair-Play limits set forth by the federation with ease. 
@@ -21,7 +21,7 @@ Financial Management System is a pilot application to answer the need of trackin
 Find the current working copy by following **[this link](https://finms.onrender.com/)**.
 
 ## <a name="Ins"></a>Local Install & Run
-Please refer to the [Local Build & Deploy](#Dev) section and use the **main** branch for local installation of the software. 
+Please refer to the [Local Build & Deploy](#local-build--deploy) section and use the **main** branch for local installation of the software. 
 
 ## <a name="BugRep"></a>Report Bugs
 - Use the [Issues](https://github.com/SU-CS308-22FA/CS308-202201-Team06-FMS/issues) tab for bug reports. Please specify which bug concerns which sprint if you can pinpoint the issue.
