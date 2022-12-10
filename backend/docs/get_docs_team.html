@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>get_docs_team.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>get_docs_team.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Fetches the uploaded document from the database belonging
+to the provided team and the supplied item id.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">schemas</span> <span class="k">as</span> <span class="nn">_schemas</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="k">as</span> <span class="nn">_orm</span>
+<span class="kn">import</span> <span class="nn">fastapi</span> <span class="k">as</span> <span class="nn">_fastapi</span>
+<span class="kn">import</span> <span class="nn">os</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h3><span id="args:" href="args:"> Args: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">async</span> <span class="k">def</span> <span class="nf">get_docs_team</span><span class="p">(</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>item_name</strong> : The item name for the supporting document. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">item_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong>team</strong> : The team object calling for which the uploaded file belongs to.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">team</span><span class="p">:</span> <span class="n">_schemas</span><span class="o">.</span><span class="n">Team</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong>db</strong> : The current database session.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">db</span><span class="p">:</span> <span class="n">_orm</span><span class="o">.</span><span class="n">Session</span> 
+    
+    <span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h3><span id="comments" href="comments"> Comments </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Filename format is <strong>supportfiles/team_name/item_name.pdf</strong></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">filepath</span> <span class="o">=</span> <span class="s2">&quot;supportfiles/&quot;</span> <span class="o">+</span> <span class="n">team</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">item_name</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">item_name</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Make sure the doc exists</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">_fastapi</span><span class="o">.</span><span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span> <span class="s2">&quot;No supporting document exists for this item!&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <h3><span id="returns:" href="returns:"> Returns: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p><strong>file</strong> : A binary stream belonging to the seeked file. The stream can then be cast into different formats for viewing / downloading.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">_resp</span><span class="o">.</span><span class="n">FileResponse</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="s1">&#39;application/pdf&#39;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

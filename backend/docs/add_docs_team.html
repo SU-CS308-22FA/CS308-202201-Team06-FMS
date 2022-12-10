@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>add_docs_team.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>add_docs_team.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Writes the uploaded document from clients to the backend
+filesystem. Keeps a naming convention to ensure there
+are no collisions.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">schemas</span> <span class="k">as</span> <span class="nn">_schemas</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="k">as</span> <span class="nn">_orm</span>
+<span class="kn">import</span> <span class="nn">fastapi</span> <span class="k">as</span> <span class="nn">_fastapi</span>
+<span class="kn">import</span> <span class="nn">PyPDF2</span> <span class="k">as</span> <span class="nn">_pdf</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">_dt</span>
+<span class="kn">import</span> <span class="nn">os</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h3><span id="args:" href="args:"> Args: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">async</span> <span class="k">def</span> <span class="nf">add_docs_team</span><span class="p">(</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>item_name</strong> : The item name for the supporting document. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">item_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong>file</strong> : The binary file object which will be uploaded.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">file</span><span class="p">:</span> <span class="n">_fastapi</span><span class="o">.</span><span class="n">UploadFile</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong>team</strong> : The team object calling for which the uploaded file belongs to.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">team</span><span class="p">:</span> <span class="n">_schemas</span><span class="o">.</span><span class="n">Team</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p><strong>db</strong> : The current database session.    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">db</span><span class="p">:</span> <span class="n">_orm</span><span class="o">.</span><span class="n">Session</span>
+    
+    <span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <h3><span id="comments:" href="comments:"> Comments: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">item</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_item_selector</span><span class="p">(</span><span class="n">item_name</span><span class="o">=</span><span class="n">item_name</span><span class="p">,</span> <span class="n">team</span><span class="o">=</span><span class="n">team</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+        <span class="n">filename_temp</span> <span class="o">=</span> <span class="s2">&quot;supportfiles/&quot;</span> <span class="o">+</span> <span class="n">team</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">item_name</span> <span class="o">+</span> <span class="s2">&quot;_temp.pdf&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;supportfiles/&quot;</span> <span class="o">+</span> <span class="n">team</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">item_name</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Try upload</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">try</span><span class="p">:</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename_temp</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename_temp</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">_fastapi</span><span class="o">.</span><span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span> <span class="s2">&quot;There was an error during file upload, please try again...&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Check if pdf is valid</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_pdf</span><span class="o">.</span><span class="n">PdfFileReader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename_temp</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
+        
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename_temp</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">_fastapi</span><span class="o">.</span><span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">415</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span> <span class="s2">&quot;The uploaded file is not a valid pdf file!&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>If so, replace file</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filename_temp</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        
+        <span class="n">item</span><span class="o">.</span><span class="n">date_last_updated</span> <span class="o">=</span> <span class="n">_dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">from_zone</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">to_zone</span><span class="p">)</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">support_docs</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">doc_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">doc_rejected</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <h3><span id="returns:" href="returns:"> Returns: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p><strong>item</strong> : The item database instance which is now associated with the supporting documents file through filename.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">return</span> <span class="n">_schemas</span><span class="o">.</span><span class="n">BudgetItem</span><span class="o">.</span><span class="n">from_orm</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
