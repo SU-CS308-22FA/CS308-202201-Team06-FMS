@@ -145,6 +145,7 @@ const BalanceDashboard = ({loggedInAdmin}) => {
         }
         else {
             const data = await response.json();
+            data.reverse();
             setItemList(data);
         }
     };
@@ -205,7 +206,8 @@ Dashboard
 </div>
 </div>
 <div className="text-center d-block p-3 card-footer row">
-<div class="container">
+{    
+ (teamsList.length > 0) ? <div class="container">
   <div class="row">
     <div class="col-sm">
     {
@@ -234,7 +236,7 @@ Dashboard
             </thead>
             <tbody>
                 {
-                    itemList.map((item) => (
+                    itemList.slice(0,3).map((item) => (
                         <tr>
                             <td>{item.team_name}</td>
                             <td>{item.item_name}</td>
@@ -249,6 +251,9 @@ Dashboard
     </div>
   </div>
 </div>
+: <div>No team registered</div>
+}
+
 
 </div>
 </div>);
