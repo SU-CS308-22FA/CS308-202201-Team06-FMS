@@ -1,10 +1,12 @@
 .answer {
     font-size: 12px;
 }
-.popup-header{
+
+.popup-header {
     justify-content: space-between;
 }
-.popup{
+
+.popup {
     padding: 16px;
     width: auto;
     height: 80vh;

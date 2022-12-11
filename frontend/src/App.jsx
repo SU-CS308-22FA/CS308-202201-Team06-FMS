@@ -3,7 +3,7 @@
 // @zgr2788
 
 
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, CSSProperties } from "react";
 import RegisterAdmin from "./components/RegisterAdmin";
 import RegisterTeamAdmin from "./components/RegisterTeamAdmin";
 import DeleteTeamAdmin from "./components/DeleteTeamAdmin";
@@ -17,6 +17,9 @@ import AdminTable from "./components/AdminTable";
 import FAQ from "./components/FrequentlyAskedQs";
 import TeamBudgetTable from "./components/TeamBudgetTable";
 import TeamBalance from "./components/TeamBalance";
+import BounceLoader from "react-spinners/BounceLoader";
+
+
 
 const App = () => {
 
@@ -24,6 +27,7 @@ const App = () => {
   const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
   const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
+
 
 
   useEffect(() => {
@@ -44,7 +48,8 @@ const App = () => {
         <div className="column m-5 is-two-thirds">
           {loading ? (
             <div className="column">
-              Retrieving API Data - TODO: Place Spinner Here
+
+              <BounceLoader color="#00d1b2" style={{ display: "flex", alignSelf: "center", justifyContent: "center" }} />
 
             </div>) :
             (() => {
@@ -55,22 +60,22 @@ const App = () => {
                   <AdminLogin />
                   <TeamLogin />
                   <FAQ />
-                  </div>
+                </div>
               }
 
               else if (adminToken) {
                 return <div className="column">
                   <Header />
-                  <div className= "rows">
-                    <AdminTable loggedInAdmin={adminLogin}/>
+                  <div className="rows">
+                    <AdminTable loggedInAdmin={adminLogin} />
                     <div className="columns">
-                    <RegisterAdmin loggedInAdmin={adminLogin}/>
-                    <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
-                    <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
-                    <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
-                    </div>   
+                      <RegisterAdmin loggedInAdmin={adminLogin} />
+                      <RegisterTeamAdmin loggedInAdmin={adminLogin} />
+                      <DeleteTeamAdmin loggedInAdmin={adminLogin} />
+                      <UpdateTeamAdmin loggedInAdmin={adminLogin} />
+                    </div>
                   </div>
-                  </div>
+                </div>
               }
 
               else if (teamToken) {
@@ -78,7 +83,7 @@ const App = () => {
                   <Header />
                   <TeamBalance loggedInTeam={teamLogin} />
                   <TeamBudgetTable loggedInTeam={teamLogin} />
-                  
+
                 </div>
               }
             })()
