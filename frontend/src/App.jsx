@@ -47,9 +47,24 @@ const App = () => {
         <div className="column"></div>
         <div className="column m-5 is-two-thirds">
           {loading ? (
-            <div className="column">
+            <div className="column" style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100vh',
+            }}>
+              <div className="rows">
 
-              <BounceLoader color="#00d1b2" style={{ display: "flex", alignSelf: "center", justifyContent: "center" }} />
+                <div className="row">
+                  <BounceLoader color="#00d1b2" size="250" />
+                </div>
+                <div className="row">&nbsp;</div>
+                <div className="row">&nbsp;</div>
+
+                <div className="row" style={{ fontSize: "25px" }}>&nbsp;Loading Login Screen</div>
+
+              </div>
+
 
             </div>) :
             (() => {
