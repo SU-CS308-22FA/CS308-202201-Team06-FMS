@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 // Put any other imports below so that CSS from your
 // components takes precedence over default styles.
 import React from "react";
+import moment from "moment";
 import ErrorMessage from "./ErrorMessage";
 import SuccessMessage from "./SuccessMessage";
 import { AdminContext } from "../context/AdminContext";
@@ -129,14 +130,39 @@ const BalanceDashboard = ({loggedInAdmin}) => {
         }, 200)
     }, [teamsList]);
 
+    const getItems = async () => {
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + adminToken,
+            },
+        };
 
+        const response = await fetch("/api/admins/getallitems/", requestOptions);
+        if (!response.ok) {
+            setErrorMessage(response.status);
+        }
+        else {
+            const data = await response.json();
+            setItemList(data);
+        }
+    };
+
+    useEffect(() => {
+        setChildLoading(true);
+        setTimeout(() => {
+            getItems();
+            setChildLoading(false);
+        }, 100)
+    }, [itemList]);
 
 return (
 <div className="mb-3 card">
 <div className="card-header-tab card-header">
 <div className="card-header-title font-size-lg text-capitalize font-weight-normal">
 <i className="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
-Total Balance
+Dashboard
 </div>
 </div>
 <div className="no-gutters row">
@@ -191,12 +217,35 @@ Total Balance
     <div class="col-sm">
     {
     haveData ?
-    <div className='col-sm'><Bar data = {chartData2} /></div>
+    <div className='col-sm'><Bar data = {chartData2} options={{plugins: {legend: {display: false}}}} /></div>
     : <div>Loading...</div>
     }
     </div>
     <div class="col-sm">
-    <div className='col-sm'>LAST ACTIVITIES</div>
+    <div className='col-sm'>LAST ACTIVITIES
+        <table>
+            <thead>
+                <tr>
+                    <th>Team Name</th>
+                    <th>Item Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {
+                    itemList.map((item) => (
+                        <tr>
+                            <td>{item.team_name}</td>
+                            <td>{item.item_name}</td>
+                            <td>{item.amount}</td>
+                            <td>{moment(item.date_created).format("MMM Do YY")}</td>
+                        </tr>
+                    ))
+                }
+            </tbody>
+        </table>
+    </div>
     </div>
   </div>
 </div>
