@@ -132,7 +132,7 @@ const AdminTable = ({ loggedInAdmin }) => {
             },
         };
 
-        const response = await fetch("/api/teams/getdocs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName, requestOptions);
 
         if (!response.ok) {
             const data = await response.json();
