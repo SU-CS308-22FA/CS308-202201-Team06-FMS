@@ -184,7 +184,7 @@ const AdminTable = ({ loggedInAdmin }) => {
     }
 
     const DownloadButton = ({itemName, teamName}) => {
-        return <button className="button mr-2 is-info" onClick={() => {handleDownload(itemName, teamName)}}>Download</button>
+        return <button className="button mr-2 is-success" onClick={() => {handleDownload(itemName, teamName)}}>Download</button>
     }
 
     if (loggedInAdmin) {
