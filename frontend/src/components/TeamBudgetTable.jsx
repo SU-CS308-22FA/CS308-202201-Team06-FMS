@@ -21,6 +21,8 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const [selected, setSelected] = useState("");
     const [uploadStatus, setUploadStatus] = useState("");
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName, rem, setRem, alloc, setAlloc] = useContext(TeamContext);
+    const [q, setQ] = useState("");
+    const [searchParam] = useState("Itemname");
 
     const handleDelete = async (item_name) => {
         const requestOptions = {
@@ -90,7 +92,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
     const handleDownload = async (itemName) => {
         const requestOptions = {
-            method: "GET",    
+            method: "GET",
             headers: {
                 Authorization: "Bearer " + teamToken
             },
@@ -112,14 +114,14 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             else
                 filename = filename.replace(/['"]/g, '');
 
-        response.arrayBuffer().then(function(buffer) {
-          const url = window.URL.createObjectURL(new Blob([buffer]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", filename); //or any other extension
-          document.body.appendChild(link);
-          link.click();
-        });
+            response.arrayBuffer().then(function (buffer) {
+                const url = window.URL.createObjectURL(new Blob([buffer]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", filename); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+            });
 
         }
     }
@@ -128,15 +130,15 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setTimeout(() => {
             setErrorMessage("");
             setSuccessMessage("");
-        },3000)
+        }, 3000)
     }, [errorMessage, successMessage]
     )
 
-    const VerifyMessage = ({isVerified}) => {
-        if (isVerified){
-            return <p className="has-text-weight-bold has-text-success">Verified</p> 
+    const VerifyMessage = ({ isVerified }) => {
+        if (isVerified) {
+            return <p className="has-text-weight-bold has-text-success">Verified</p>
         }
-        
+
         return <p className="has-text-weight-bold has-text-warning-dark">Pending</p>
     }
 
@@ -157,7 +159,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             />
             <div className="columns">
                 <div className="column">
-                <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
+                    <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
                 </div>
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
@@ -168,6 +170,20 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 Create New Budget Item
             </button>
 
+            <div className="search-wrapper">
+                <label htmlFor="search-form">
+                    <input
+                        type="search"
+                        name="search-form"
+                        id="search-form"
+                        className="search-input"
+                        placeholder="Search for..."
+                        value={q}
+                        onChange={(e) => setQ(e.target.value)}
+                    />
+                    <span className="sr-only">Search for budget items here</span>
+                </label>
+            </div>
 
             {childLoading ? (
                 <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
@@ -191,7 +207,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
                                 <td>
                                     {!budgetItem.doc_rejected ? (<VerifyMessage isVerified={budgetItem.doc_verified} />) : (<p className="has-text-weight-bold has-text-danger-dark">Rejected</p>)}
-                                </td> 
+                                </td>
                                 <td>
                                     <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
                                         Update
@@ -212,7 +228,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                     }
 
                                     {budgetItem.support_docs ? (
-                                        <button className="button mr-2 is-info is-light" onClick={() => { handleDownload(budgetItem.item_name)}}>
+                                        <button className="button mr-2 is-info is-light" onClick={() => { handleDownload(budgetItem.item_name) }}>
                                             Download Documents
                                         </button>
                                     ) : (
