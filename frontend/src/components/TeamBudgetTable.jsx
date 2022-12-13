@@ -227,7 +227,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
                 </div>
-                <div className="column">&nbsp;&nbsp;<DownloadButton teamName={teamName}/></div>
+                <div className="column"><DownloadButton teamName={teamName}/></div>
             </div>
 
             <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
