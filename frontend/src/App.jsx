@@ -3,7 +3,7 @@
 // @zgr2788
 
 
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, CSSProperties } from "react";
 import RegisterAdmin from "./components/RegisterAdmin";
 import RegisterTeamAdmin from "./components/RegisterTeamAdmin";
 import DeleteTeamAdmin from "./components/DeleteTeamAdmin";
@@ -17,7 +17,9 @@ import AdminTable from "./components/AdminTable";
 import FAQ from "./components/FrequentlyAskedQs";
 import TeamBudgetTable from "./components/TeamBudgetTable";
 import TeamBalance from "./components/TeamBalance";
+import BounceLoader from "react-spinners/BounceLoader";
 import BalanceDashboard from "./components/BalanceDashboard";
+
 
 const App = () => {
 
@@ -25,6 +27,7 @@ const App = () => {
   const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
   const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
   const [loading, setLoading] = useState(false);
+
 
 
   useEffect(() => {
@@ -44,8 +47,24 @@ const App = () => {
         <div className="column"></div>
         <div className="column m-5 is-two-thirds">
           {loading ? (
-            <div className="column">
-              Retrieving API Data - TODO: Place Spinner Here
+            <div className="column" style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100vh',
+            }}>
+              <div className="rows">
+
+                <div className="row">
+                  <BounceLoader color="#00d1b2" size="250" />
+                </div>
+                <div className="row">&nbsp;</div>
+                <div className="row">&nbsp;</div>
+
+                <div className="row" style={{ fontSize: "25px" }}>&nbsp;Loading Login Screen</div>
+
+              </div>
+
 
             </div>) :
             (() => {
@@ -56,23 +75,24 @@ const App = () => {
                   <AdminLogin />
                   <TeamLogin />
                   <FAQ />
-                  </div>
+                </div>
               }
 
               else if (adminToken) {
                 return <div className="column">
                   <Header />
+
                   <div className= "rows">
                     <BalanceDashboard loggedInAdmin={adminLogin}/>
                     <AdminTable loggedInAdmin={adminLogin}/>
                     <div className="columns">
-                    <RegisterAdmin loggedInAdmin={adminLogin}/>
-                    <RegisterTeamAdmin loggedInAdmin={adminLogin}/>
-                    <DeleteTeamAdmin loggedInAdmin={adminLogin}/>
-                    <UpdateTeamAdmin loggedInAdmin={adminLogin}/>
-                    </div>   
+                      <RegisterAdmin loggedInAdmin={adminLogin} />
+                      <RegisterTeamAdmin loggedInAdmin={adminLogin} />
+                      <DeleteTeamAdmin loggedInAdmin={adminLogin} />
+                      <UpdateTeamAdmin loggedInAdmin={adminLogin} />
+                    </div>
                   </div>
-                  </div>
+                </div>
               }
 
               else if (teamToken) {
@@ -80,7 +100,7 @@ const App = () => {
                   <Header />
                   <TeamBalance loggedInTeam={teamLogin} />
                   <TeamBudgetTable loggedInTeam={teamLogin} />
-                  
+
                 </div>
               }
             })()
