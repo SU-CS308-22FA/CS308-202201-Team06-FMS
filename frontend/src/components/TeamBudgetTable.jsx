@@ -21,8 +21,21 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const [selected, setSelected] = useState("");
     const [uploadStatus, setUploadStatus] = useState("");
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName, rem, setRem, alloc, setAlloc] = useContext(TeamContext);
-    const [q, setQ] = useState("");
-    const [searchParam] = useState("Itemname");
+    const [filteredItems, setFilteredItems] = useState(budgetItems);
+
+    const handleSearchChange = (event) => {
+        // Get the search query from the input element
+        const searchQuery = event.target.value;
+
+        // Filter the table data based on the search query
+        const filteredItems = budgetItems.filter((budgetItem) =>
+            budgetItem.item_name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        // Update the state with the filtered data
+        setFilteredItems(filteredItems);
+    };
+
 
     const handleDelete = async (item_name) => {
         const requestOptions = {
@@ -66,6 +79,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         else {
             const data = await response.json();
             setBudgetItems(data);
+            setFilteredItems(data);
             setChildLoading(true);
             setAlloc(null);
             setRem(null);
@@ -126,6 +140,10 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         }
     }
 
+
+
+
+
     useEffect(() => {
         setTimeout(() => {
             setErrorMessage("");
@@ -141,6 +159,9 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
         return <p className="has-text-weight-bold has-text-warning-dark">Pending</p>
     }
+
+
+
 
     return (
 
@@ -170,80 +191,69 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 Create New Budget Item
             </button>
 
-            <div className="search-wrapper">
-                <label htmlFor="search-form">
-                    <input
-                        type="search"
-                        name="search-form"
-                        id="search-form"
-                        className="search-input"
-                        placeholder="Search for..."
-                        value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                    />
-                    <span className="sr-only">Search for budget items here</span>
-                </label>
-            </div>
-
             {childLoading ? (
-                <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Amount</th>
-                            <th>Date Created</th>
-                            <th>Date Last Updated</th>
-                            <th>Verification Status</th>
-                            <th>Actions</th>
+                <div>
+                    <input type="text" placeholder="Search..." onChange={handleSearchChange} />
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {budgetItems.map((budgetItem) => (
-                            <tr key={budgetItem.id}>
-                                <td>{budgetItem.item_name}</td>
-                                <td>{budgetItem.amount}</td>
-                                <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
-                                <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
-                                <td>
-                                    {!budgetItem.doc_rejected ? (<VerifyMessage isVerified={budgetItem.doc_verified} />) : (<p className="has-text-weight-bold has-text-danger-dark">Rejected</p>)}
-                                </td>
-                                <td>
-                                    <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
-                                        Update
-                                    </button>
-                                    <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(budgetItem.item_name)}>
-                                        Delete
-                                    </button>
-                                    {budgetItem.support_docs ? (
-                                        <button className="button mr-2 is-success is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Update"); setActiveUpload(true) }}>
-                                            Update Documents
-                                        </button>
-
-                                    ) : (
-                                        <button className="button mr-2 is-warning is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Add"); setActiveUpload(true) }}>
-                                            Add Documents
-                                        </button>)
-
-                                    }
-
-                                    {budgetItem.support_docs ? (
-                                        <button className="button mr-2 is-info is-light" onClick={() => { handleDownload(budgetItem.item_name) }}>
-                                            Download Documents
-                                        </button>
-                                    ) : (
-                                        <br></br>
-                                    )
-                                    }
-
-
-
-                                </td>
+                    <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Amount</th>
+                                <th>Date Created</th>
+                                <th>Date Last Updated</th>
+                                <th>Verification Status</th>
+                                <th>Actions</th>
 
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredItems.map((budgetItem) => (
+                                <tr key={budgetItem.id}>
+                                    <td>{budgetItem.item_name}</td>
+                                    <td>{budgetItem.amount}</td>
+                                    <td>{moment(budgetItem.date_created).format("MMM Do YY")}</td>
+                                    <td>{moment(budgetItem.date_last_updated).format("MMM Do YY")}</td>
+                                    <td>
+                                        {!budgetItem.doc_rejected ? (<VerifyMessage isVerified={budgetItem.doc_verified} />) : (<p className="has-text-weight-bold has-text-danger-dark">Rejected</p>)}
+                                    </td>
+                                    <td>
+                                        <button className="button mr-2 is-info is-light" onClick={() => handleUpdate(budgetItem.id)}>
+                                            Update
+                                        </button>
+                                        <button className="button mr-2 is-danger is-light" onClick={() => handleDelete(budgetItem.item_name)}>
+                                            Delete
+                                        </button>
+                                        {budgetItem.support_docs ? (
+                                            <button className="button mr-2 is-success is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Update"); setActiveUpload(true) }}>
+                                                Update Documents
+                                            </button>
+
+                                        ) : (
+                                            <button className="button mr-2 is-warning is-light" onClick={() => { setSelected(budgetItem.item_name); setUploadStatus("Add"); setActiveUpload(true) }}>
+                                                Add Documents
+                                            </button>)
+
+                                        }
+
+                                        {budgetItem.support_docs ? (
+                                            <button className="button mr-2 is-info is-light" onClick={() => { handleDownload(budgetItem.item_name) }}>
+                                                Download Documents
+                                            </button>
+                                        ) : (
+                                            <br></br>
+                                        )
+                                        }
+
+
+
+                                    </td>
+
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             ) : (<p>Loading</p>)}
 
         </>
