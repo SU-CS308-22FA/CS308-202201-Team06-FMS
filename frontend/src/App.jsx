@@ -18,7 +18,7 @@ import FAQ from "./components/FrequentlyAskedQs";
 import TeamBudgetTable from "./components/TeamBudgetTable";
 import TeamBalance from "./components/TeamBalance";
 import BounceLoader from "react-spinners/BounceLoader";
-
+import BalanceDashboard from "./components/BalanceDashboard";
 
 
 const App = () => {
@@ -81,8 +81,10 @@ const App = () => {
               else if (adminToken) {
                 return <div className="column">
                   <Header />
-                  <div className="rows">
-                    <AdminTable loggedInAdmin={adminLogin} />
+
+                  <div className= "rows">
+                    <BalanceDashboard loggedInAdmin={adminLogin}/>
+                    <AdminTable loggedInAdmin={adminLogin}/>
                     <div className="columns">
                       <RegisterAdmin loggedInAdmin={adminLogin} />
                       <RegisterTeamAdmin loggedInAdmin={adminLogin} />

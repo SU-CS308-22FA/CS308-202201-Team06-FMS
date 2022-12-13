@@ -11,6 +11,7 @@ import FilePreviewModal from "./FilePreviewModal";
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
     const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const [teamsList, setTeamsList] = useState([]);
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
@@ -123,6 +124,42 @@ const AdminTable = ({ loggedInAdmin }) => {
         setItemName(null);
     }
 
+    const handleDownload = async (itemName,teamName) => {
+        const requestOptions = {
+            method: "GET",    
+            headers: {
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+        else {
+            setSuccessMessage("Downloading data for " + itemName + "...")
+
+            const disposition = response.headers.get('Content-Disposition');
+            var filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+            if (filename.toLowerCase().startsWith("utf-8''"))
+                filename = decodeURIComponent(filename.replace("utf-8''", ''));
+            else
+                filename = filename.replace(/['"]/g, '');
+
+        response.arrayBuffer().then(function(buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", filename); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        });
+
+        }
+    }
+
     const NoDocMessage = ({isRejected}) => {
         if (isRejected){
             return null
@@ -144,6 +181,10 @@ const AdminTable = ({ loggedInAdmin }) => {
 
     const PreviewButton = ({itemName, teamName}) => {
         return <button className="button mr-2 is-info" onClick={() => {handlePreview(itemName, teamName)}}>Preview</button>
+    }
+
+    const DownloadButton = ({itemName, teamName}) => {
+        return <button className="button mr-2 is-success" onClick={() => {handleDownload(itemName, teamName)}}>Download</button>
     }
 
     if (loggedInAdmin) {
@@ -213,7 +254,7 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                     (<NoDocMessage isRejected={item.doc_rejected} />)
                                                     }
                                                     {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
-                                                    {(item.support_docs && !item.doc_rejected) ? (<p>Implement download button here</p>) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<DownloadButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
                                                     {(item.support_docs && !item.doc_rejected) ? (<PreviewButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
                                                     {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
                                                 </td>
