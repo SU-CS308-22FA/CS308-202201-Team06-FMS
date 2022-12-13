@@ -289,3 +289,8 @@ async def team_get_item_id(team_name : str, id: int, team: _schemas.Team = _fast
 @app.put("/api/teams/updateitembyid/{team_name}/{id}", status_code = 200)
 async def team_update_item_id(id : int, team_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_id(id = id, budgetItem = budgetItem, team = team, db = db)
+
+# Export table - Team
+@app.get("/api/teams/exporttable/{team_name}")
+async def team_export_table(team_name : str, team : _schemas.Team = _fastapi.Depends(_services.get_current_team), db : _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.export_table_team(team = team, db = db)

@@ -160,6 +160,48 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         return <p className="has-text-weight-bold has-text-warning-dark">Pending</p>
     }
 
+    const handleExport = async (teamName) => {
+        const requestOptions = {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + teamToken
+            },
+        };
+
+        const response = await fetch("/api/teams/exporttable/" + teamName , requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+        else {
+            setSuccessMessage("Exporting table...")
+
+            const disposition = response.headers.get('Content-Disposition');
+            var filename = disposition.split(/;(.+)/)[1].split(/=(.+)/)[1];
+            if (filename.toLowerCase().startsWith("utf-8''"))
+                filename = decodeURIComponent(filename.replace("utf-8''", ''));
+            else
+                filename = filename.replace(/['"]/g, '');
+
+            response.arrayBuffer().then(function (buffer) {
+                const url = window.URL.createObjectURL(new Blob([buffer]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", filename); 
+                document.body.appendChild(link);
+                link.click();
+            });
+
+        }
+    }
+
+    const DownloadButton = ({teamName}) => {
+        return <button className="button mr-2 is-success is-pulled-right" onClick={() => {handleExport(teamName)}}>Export Table</button>
+    }
+
+    
+
 
 
 
@@ -185,6 +227,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
                 </div>
+                <div className="column"><DownloadButton teamName={teamName}/></div>
             </div>
 
             <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
