@@ -19,6 +19,7 @@ import fastapi.security as _security
 import fastapi.responses as _resp
 import datetime as _dt
 from dateutil import tz as _tz
+import pandas as _pd
 import PyPDF2 as _pdf
 from ast import literal_eval
 import os
@@ -575,8 +576,32 @@ async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
     return _resp.FileResponse(path=filepath, filename=filename, media_type='application/pdf')
 
 # Export team table - Team
-    async def export_table_team( team: _schemas.Team, db: _orm.Session):
-        pass
+async def export_table_team( team: _schemas.Team, db: _orm.Session):
+    items = db.query(_models.BudgetItem.filter_by(team_name = team.name))
+    items = list(map(_schemas.BudgetItem.from_orm, items))
+
+    count = 0
+
+    exportDict = {}
+
+    for item in items:
+        count += 1
+        item_name = item.item_name
+        amount = item.amount
+        date_created = item.date_created.strftime("%d/%m/%Y")
+        date_last_updated = item.date_last_updated("%d/%m/%Y")
+        doc_verified = item.doc_verified
+        exportDict[str(count)] = [item_name, amount, date_created, date_last_updated, doc_verified]
+
+    df = _pd.DataFrame.from_dict(exportDict, orient='index')
+    df.columns = ['Item Name', 'Amount', 'Date Created', 'Date Last Updated', 'Verified?']
+
+    filepath = "exporttables/" + team.name + "_budget_table.xlsx"
+    filename = team.name + "_budget_table.xlsx"
+
+    df.to_excel(filepath) # Create excel
+
+    return _resp.FileResponse(path=filepath, filename=filename, media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')    
 
 #*************************
 #       BUDGET
