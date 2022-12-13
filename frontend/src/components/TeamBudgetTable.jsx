@@ -160,6 +160,16 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         return <p className="has-text-weight-bold has-text-warning-dark">Pending</p>
     }
 
+    const handleTableDownload = async (teamName) => {
+        console.log(teamName)
+    }
+
+    const DownloadButton = ({teamName}) => {
+        return <button className="button mr-2 is-success is-pulled-right" onClick={() => {handleTableDownload(teamName)}}>Export Table</button>
+    }
+
+    
+
 
 
 
@@ -185,6 +195,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
                 </div>
+                <div className="column">&nbsp;&nbsp;<DownloadButton teamName={teamName}/></div>
             </div>
 
             <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveModal(true)}>
