@@ -577,7 +577,7 @@ async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
 
 # Export team table - Team
 async def export_table_team( team: _schemas.Team, db: _orm.Session):
-    items = db.query(_models.BudgetItem.filter_by(team_name = team.name))
+    items = db.query(_models.BudgetItem).filter_by(team_name = team.name)
     items = list(map(_schemas.BudgetItem.from_orm, items))
 
     count = 0
@@ -589,7 +589,7 @@ async def export_table_team( team: _schemas.Team, db: _orm.Session):
         item_name = item.item_name
         amount = item.amount
         date_created = item.date_created.strftime("%d/%m/%Y")
-        date_last_updated = item.date_last_updated("%d/%m/%Y")
+        date_last_updated = item.date_last_updated.strftime("%d/%m/%Y")
         doc_verified = item.doc_verified
         exportDict[str(count)] = [item_name, amount, date_created, date_last_updated, doc_verified]
 
