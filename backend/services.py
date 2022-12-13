@@ -574,6 +574,10 @@ async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
     
     return _resp.FileResponse(path=filepath, filename=filename, media_type='application/pdf')
 
+# Export team table - Team
+    async def export_table_team( team: _schemas.Team, db: _orm.Session):
+        pass
+
 #*************************
 #       BUDGET
 #*************************
