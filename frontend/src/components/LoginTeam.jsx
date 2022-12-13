@@ -5,12 +5,17 @@ import React, { useContext, useState, useEffect } from "react";
 
 import ErrorMessage from "./ErrorMessage";
 import { TeamContext } from "../context/TeamContext";
+import BounceLoader from "react-spinners/BounceLoader";
+
 
 const TeamLogin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [teamToken, setTeamToken, teamLogin, setTeamLogin] = useContext(TeamContext);
+    const [buttonText, setButtonText] = useState('Login');
+
+
 
     const submitLogin = async () => {
         const requestOptions = {
@@ -26,10 +31,11 @@ const TeamLogin = () => {
 
         if (!response.ok) {
             setErrorMessage(data.detail);
+            setButtonText('Login');
         } else {
             setTeamToken(data.access_token);
             setTeamLogin(true);
-
+            setButtonText('Login');
         }
     };
 
@@ -41,6 +47,7 @@ const TeamLogin = () => {
     useEffect(() => {
         setTimeout(() => {
             setErrorMessage("")
+
         }, 3000)
     }, [errorMessage]
     )
@@ -85,12 +92,13 @@ const TeamLogin = () => {
                 <br />
                 <br />
 
-                <button className="button is-primary" type="submit">
-                    Login
+                <button className="button is-primary" type="submit" onClick={() => setButtonText('Logging in...')}>
+                    {buttonText}
                 </button>
 
+
             </form>
-        </div>
+        </div >
     );
 
 };

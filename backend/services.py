@@ -479,7 +479,30 @@ async def update_item_id(id : int, budgetItem: _schemas._BudgetItemBase, team: _
 
 # Add docs - Team - Check security later
 async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schemas.Team, db: _orm.Session):
-        
+        """ Writes the uploaded document from clients to the backend
+            filesystem. Keeps a naming convention to ensure there
+            are no collisions.
+
+        Args:
+            item_name::[str]
+                The item name for which the uploaded file is a 
+                supporting document.
+            file::[UploadFile]
+                The binary file object which will be uploaded.
+                FastAPI provides a multifunctional class that is
+                easier to handle then standard binary.
+            team::[Team]
+                The team object calling for which the uploaded file
+                belongs to.
+            db::[Session]
+                The current database session.
+            
+        returns:
+            item::BudgetItem
+            The item database instance which is now associated with 
+            the supporting documents file through filename.
+            
+            """
         item = await _item_selector(item_name=item_name, team=team, db=db)
         filename_temp = "supportfiles/" + team.name + "_" + item_name + "_temp.pdf"
         filename = "supportfiles/" + team.name + "_" + item_name + ".pdf"
@@ -523,7 +546,24 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
 
 # Get docs - Team - Check security later
 async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
+    """ Fetches the uploaded document from the database belonging
+        to the provided team and the supplied item id.
+    Args:
+        item_name::[str]
+            The item name for which the uploaded file is a 
+            supporting document.
+        team::[Team]
+            The team object calling for which the uploaded file
+            belongs to.
+        db::[Session]
+            The current database session.
         
+    returns:
+        file::FileResponse
+        A binary stream belonging to the seeked file. The stream can
+        then be cast into different formats for viewing / downloading.
+        
+        """
     # Filename format is supportfiles/team_name/item_name.pdf
     filepath = "supportfiles/" + team.name + "_" + item_name + ".pdf"
     filename = team.name + "_" + item_name + ".pdf"
