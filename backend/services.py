@@ -354,6 +354,39 @@ async def create_team_token(team: _models.Team):
 
 # Get current Team user
 async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: str = _fastapi.Depends(oauth2scheme)):
+    """ Gets the current team. This team is required to login
+        to system in order to have a team token. Otherwise,
+        there will be an exception.
+
+    Parameters
+    ----------
+
+    db: {list of tables}
+        An instance of the current database. The instance required
+        for reaching particular data tuple in a table. 
+        It can be empty instance. If any value is not given, default value is taken
+        from get_db function.
+
+    token: {string}
+        A string variable which are unique for each team indicating
+        login session of the team. Each token is given after an succesful
+        login. If any value is not given, the default value will be taken 
+        according to oauth2scheme.
+
+    Returns
+    -------
+    team: {Team Object}
+        A schema of a particular team representing corresponding
+        values for a team object.
+    
+    Raises
+    ------
+    Exception: {HTTP Exception}
+        If this function called by a unauthenticated user, an error
+        will raise stating the situtation with a 401 http status code
+    """
+
+    # tries to decode given token according to jwt code
     try:
         payload = _jwt.decode(token, JWT_SECRET_TEAM, algorithms=["HS256"])
         team = db.query(_models.Team).get(payload["id"])
@@ -364,7 +397,32 @@ async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: 
 
 #Get all teams
 async def get_all_teams(db: _orm.Session = _fastapi.Depends(get_db), skip: int= 0, limit: int = 100):
-    teams = db.query(_models.Team).all()
+    """Get all teams which are registered to database by a query.
+
+    Parameters
+    ----------
+    db: {list of tables} 
+        An instance of the current database. The instance required
+        for reaching particular data tuple in a table. 
+        It can be empty instance. If any value given, default value is taken
+        from get_db function
+    
+    skip: {integer}
+        The given integer represents the offset value for query. Database
+        will start query from the position after skip index.
+        The parameter may not be given, in this case it is taken as 0.
+
+    limit: {integer}
+        The given integer represents the limit for query response. Query
+        will return data tuples as many as limit value.
+        The parameter may not be given, in this case it is taken as 100
+
+    Returns
+    -------
+    teams: {list of Team object}
+        Contains list of the team object which taken from applied query
+    """
+    teams = db.query(_models.Team).offset(skip).limit(limit).all() # query is applied here aacording to skip and offset values
     return list(map(_schemas.Team.from_orm,teams))
 
 # Get Items - Team
