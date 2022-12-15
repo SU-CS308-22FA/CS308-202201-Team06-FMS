@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>delete_item_admin.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>delete_item_admin.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Deletes item which is selected by admins from the database</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="k">as</span> <span class="nn">_orm</span>
+<span class="kn">import</span> <span class="nn">fastapi</span> <span class="k">as</span> <span class="nn">_fastapi</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h3><span id="args:" href="args:"> Args: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">async</span> <span class="k">def</span> <span class="nf">delete_item_admin</span><span class="p">(</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>team</strong> : The team object calling for which the uploaded file belongs to.   </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">team_name</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong>item_name</strong> : The item name for the supporting document. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">item_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong>db</strong> : The current database session.    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">db</span><span class="p">:</span> <span class="n">_orm</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h3><span id="comments:" href="comments:"> Comments: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">item</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_item_selector_admin</span><span class="p">(</span><span class="n">item_name</span> <span class="o">=</span> <span class="n">item_name</span><span class="p">,</span> <span class="n">team_name</span> <span class="o">=</span> <span class="n">team_name</span><span class="p">,</span> <span class="n">db</span> <span class="o">=</span> <span class="n">db</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Update team budget as well</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">await</span> <span class="n">update_team_budget</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">team_name</span><span class="p">,</span> <span class="n">change</span> <span class="o">=</span> <span class="o">-</span><span class="n">item</span><span class="o">.</span><span class="n">amount</span><span class="p">,</span> <span class="n">db</span> <span class="o">=</span> <span class="n">db</span><span class="p">)</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

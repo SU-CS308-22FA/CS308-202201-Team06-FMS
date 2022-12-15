@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>admin_create.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>admin_create.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Creates admin for the management system</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">schemas</span> <span class="k">as</span> <span class="nn">_schemas</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="k">as</span> <span class="nn">_orm</span>
+<span class="kn">import</span> <span class="nn">fastapi</span> <span class="k">as</span> <span class="nn">_fastapi</span>
+<span class="kn">import</span> <span class="nn">models</span> <span class="k">as</span> <span class="nn">_models</span>
+<span class="kn">import</span> <span class="nn">passlib.hash</span> <span class="k">as</span> <span class="nn">_hash</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h3><span id="args:" href="args:"> Args: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">async</span> <span class="k">def</span> <span class="nf">create_admin</span><span class="p">(</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p><strong>admin</strong> : The admin schema that contains an id integer and and the date of the creation.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">admin</span><span class="p">:</span> <span class="n">_schemas</span><span class="o">.</span><span class="n">AdminCreate</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p><strong>db</strong> : The database that is currently being used.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">db</span><span class="p">:</span> <span class="n">_orm</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <h3><span id="comments:" href="comments:"> Comments: </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>New admin object</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">adminObj</span> <span class="o">=</span> <span class="n">_models</span><span class="o">.</span><span class="n">Admin</span><span class="p">(</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> 
+        <span class="n">first_name</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span> 
+        <span class="n">last_name</span> <span class="o">=</span> <span class="n">admin</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span> 
+        <span class="n">pass_hash</span> <span class="o">=</span> <span class="n">_hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">pass_hash</span><span class="p">)</span>
+    <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Write to db</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">db</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">adminObj</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">adminObj</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong>AdminObj</strong> : A new admin is created for the web application.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">adminObj</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
