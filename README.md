@@ -11,7 +11,7 @@
 
 - **For Developers:**
     - [Source Code](#source-code)
-    - [Directory & Branch Layout](#directory--branch-layout)
+    - [Directory Layout](#directory--branch-layout)
     - [Local Build & Deploy](#local-build--deploy)
 
 ## <a name="Desc"></a>Description
@@ -26,6 +26,19 @@ Please refer to the [Local Build & Deploy](#local-build--deploy) section and use
 ## <a name="BugRep"></a>Report Bugs
 - Use the [Issues](https://github.com/SU-CS308-22FA/CS308-202201-Team06-FMS/issues) tab for bug reports. Please specify which bug concerns which sprint if you can pinpoint the issue.
 - If the issue is **unrecoverable**, make sure to use the **Highly Important** label.
+- Use the following template:
+        
+        Description
+        ===========
+        Describe the issue
+        
+        Reporter
+        ===========
+        Leave identifier for yourself, with contact info if you are not registered to the repo
+        
+        Status
+        ===========
+        Leave this field empty, it will be filled by the repo admins
 
 ## <a name="BugKnw"></a>Known Bugs
 - File preview modal does not load the pdf before activating itself. The previous pdf flashes before new one is opened.
@@ -34,23 +47,59 @@ Please refer to the [Local Build & Deploy](#local-build--deploy) section and use
 
 ## <a name="Dev"></a>Source Code 
 - Both the backend and the frontend source code are available in this repository. Just clone it to get started. 
-## <a name="Dir"></a>Directory & Branch Layout
-### backend
-- Includes all the files used in the FastAPI backend. All filenames are self-explanatory.
-- The `supportdocuments` folder should not be touched to ensure synchronization. It is used by the backend to store files.
-### frontend
-#### public
-- This is the root directory of the serviced frontend.
-#### src 
-- components: Includes all the react components for the app.
-- context: Includes the client and admin contexts used within the app.
-### Branching
-#### main
-- The serviced branch.
-#### dev
-- The development branch. Should be cloned and then checked out to a new feature branch
-#### feature & task branches
-- Identified by the keyword. Are deleted after the corresponding feature is pushed to dev.
+
+## <a name="Dir"></a>Directory Layout
+  
+    root 
+    | .gitignore
+    | README.md
+    |__ backend
+        | Procfile
+        | __init__.py
+        | database.py
+        | main.py
+        | models.py
+        | requirements.txt
+        | schemas.py
+        | services.py
+        | setup.sh 
+        |__ docs
+        |__ exporttables
+        |__ supportfiles
+    |__frontend
+       | .gitginore
+       | README.md
+       | package-lock.json
+       | package.json
+       |__ public
+           | index.html
+           | manifest.json
+           | robots.txt
+       |__ src
+           | App.jsx
+           | faq-css.css
+           | index.js
+           | setupProxy.js
+           |__ components
+               | AdminTable.jsx
+               | BalanceDashboard.jsx
+               | BudgetItemModal.jsx
+               | DeleteTeamAdmin.jsx
+               | ErrorMessage.jsx
+               | FilePreviewModal.jsx
+               | FileUploadModal.jsx
+               | FrequentlyAskedQs.jsx
+               | Header.jsx
+               | LoginAdmin.jsx
+               | LoginTeam.jsx
+               | RegisterTeamAdmin.jsx
+               | SuccessMessage.jsx
+               | TeamBalance.jsx
+               | TeamBudgetTable.jsx
+               | UpdateTeamAdmin.jsx
+           |__ context
+               | AdminContext.jsx
+               | TeamContext.jsx
 
 ## <a name="DepLoc"></a>Local Build & Deploy
 1. Clone the repo
