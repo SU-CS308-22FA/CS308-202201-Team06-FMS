@@ -91,6 +91,7 @@ class BudgetItem(_BudgetItemBase):
     id: int
     doc_verified: bool
     doc_rejected: bool
+    is_private: bool 
 
     class Config:
         orm_mode = True
