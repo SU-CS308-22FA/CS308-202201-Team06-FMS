@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { useState, useEffect } from "react";
 import BudgetItemModal from "./BudgetItemModal";
 import FileUploadModal from "./FileUploadModal";
+import TableImportModal from "./TableImportModal";
 
 const TeamBudgetTable = ({ loggedInTeam }) => {
     const [budgetItems, setBudgetItems] = useState(null);
@@ -15,6 +16,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
     const [activeUpload, setActiveUpload] = useState(false);
+    const [activeImport, setActiveImport] = useState(false);
     const [itemName, setItemName] = useState(null);
     const [id, setId] = useState(null);
     const [file, setFile] = useState(null);
@@ -104,6 +106,11 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setSelected(null);
     }
 
+    const handleImport = () => {
+        setActiveImport(!activeImport);
+        getBudgetItems();
+    }
+
     const handleDownload = async (itemName) => {
         const requestOptions = {
             method: "GET",
@@ -139,8 +146,6 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
         }
     }
-
-
 
 
 
@@ -196,6 +201,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         }
     }
 
+
     const handlePrivate = async(teamName, id) => {
         const requestOptions = {
             method: "PUT",    
@@ -217,6 +223,11 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const DownloadButton = ({teamName}) => {
         return <button className="button mr-2 is-success is-pulled-right" onClick={() => {handleExport(teamName)}}>Export Table</button>
     }
+    
+    const ImportButton = ({teamName}) => {
+        return <button className="button mr-2 is-info is-pulled-right" onClick={() => {handleImport(teamName)}}>Import Table</button>
+    }
+
 
     const PrivateButton = ({teamName, isPriv, id}) => {
         if (isPriv){
@@ -246,6 +257,12 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 itemName={selected}
                 uploadStatus={uploadStatus}
             />
+
+            <TableImportModal
+                active={activeImport}
+                handleImport={handleImport}
+            />
+            
             <div className="columns">
                 <div className="column">
                     <h1 style={{ align: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
@@ -253,6 +270,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
                 </div>
+                <div className="column"><ImportButton teamName={teamName}/></div>
                 <div className="column"><DownloadButton teamName={teamName}/></div>
             </div>
 
