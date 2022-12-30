@@ -20,6 +20,8 @@ import fastapi.responses as _resp
 import datetime as _dt
 from dateutil import tz as _tz
 import pandas as _pd
+from pandas.api.types import is_datetime64_any_dtype as is_datetime
+import numpy as _np
 import PyPDF2 as _pdf
 from ast import literal_eval
 import os
@@ -199,9 +201,8 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
 
 # Get Items - Admin
 async def get_all_items(db: _orm.Session,  skip: int= 0, limit: int = 100):
-    items = db.query(_models.BudgetItem).all()
+    items = db.query(_models.BudgetItem).filter(_models.BudgetItem.is_private == False).all()
     return list(map(_schemas.BudgetItem.from_orm, items))
-
 
 # Item selector - Admin
 async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
@@ -603,6 +604,103 @@ async def export_table_team( team: _schemas.Team, db: _orm.Session):
 
     return _resp.FileResponse(path=filepath, filename=filename, media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')    
 
+# Import team table - Team
+async def import_table_team( team: _schemas.Team, db: _orm.Session, file : _fastapi.UploadFile):
+    items = db.query(_models.BudgetItem).filter_by(team_name = team.name)
+    items = list(map(_schemas.BudgetItem.from_orm, items))
+    itemnames = [budgetitem.item_name for budgetitem in items]
+
+    # Try upload
+    filename_temp = "exporttables/" + team.name + "_budget_table_buffer.xlsx"
+    
+    try:
+        contents = file.file.read()
+        with open(filename_temp, 'wb') as f:
+            f.write(contents)
+    
+    except:
+        os.remove(filename_temp)
+        raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
+
+    # File type check
+    try:    
+        import_df = _pd.read_excel(filename_temp, index_col=0)
+    
+    except:
+        raise _fastapi.HTTPException(status_code=415, detail= "The uploaded file is not a valid xlsx file!")
+
+    # Table format check
+    try:
+        import_df.columns == ['Item Name', 'Amount', 'Date Created', 'Date Last Updated', 'Verified?']
+        assert import_df["Item Name"].dtype == _pd.StringDtype
+        assert import_df["Amount"].dtype == int
+        assert (is_datetime(_pd.to_datetime(import_df["Date Created"])))
+        assert (is_datetime(_pd.to_datetime(import_df["Date Last Updated"])))
+        assert import_df["Verified?"].dtype == bool
+        
+        
+
+    except:
+        raise _fastapi.HTTPException(status_code=406, detail= "The uploaded file does not conform to excel standards!")
+
+    # Try getting the items
+    names = import_df["Item Name"].values
+    amounts = import_df["Amount"].values
+
+    for i in range(len(names)):
+        if names[i] in itemnames: # Update condition
+            item = await _item_selector(item_name = names[i], team = team, db = db)
+            change = amounts[i] - item.amount 
+            item.amount = amounts[i]
+            item.date_last_updated = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)
+
+            if not item.is_private:
+                await update_team_budget(name = team.name, change = change, db = db)
+            
+            item.doc_verified = False
+            item.doc_rejected = False
+            
+            db.commit()
+            db.refresh(item)
+        
+        else: # Add condition
+            budgetProto = _schemas.BudgetItemCreate(
+                item_name = names[i],
+                amount = amounts[i],
+                team_name = team.name
+            )
+
+            await create_budget_item(budgetProto, db)
+    
+    return True
+
+# Private item - Team
+async def private_item_id(id : int, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector_id(id = id, team = team, db = db)
+
+    if item.doc_verified:
+        raise _fastapi.HTTPException(status_code=405, detail= "Verified items cannot be made private!")
+
+    if item.is_private: # Means will make it public
+        await update_team_budget(name = team.name, change = item.amount, db = db)
+        item.is_private = False
+    
+    else: # Means will make it private
+        await update_team_budget(name = team.name, change = -item.amount, db = db)
+        item.is_private = True
+
+
+
+    try:
+        db.commit()
+        db.refresh(item)
+    
+    except:
+        raise _fastapi.HTTPException(status_code=401, detail= "Item names must be unique for teams!")
+
+
+    return _schemas.BudgetItem.from_orm(item)
+
 #*************************
 #       BUDGET
 #*************************
@@ -622,7 +720,7 @@ async def get_item_id(team : _schemas.Team, id : int, db : _orm.Session):
         return db_item
 
 # Create new BudgetItem
-async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):
+async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):  
     
     # Update Team Budget
     await update_team_budget(budgetItem.team_name, budgetItem.amount, db)
