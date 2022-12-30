@@ -16,6 +16,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
     const [activeUpload, setActiveUpload] = useState(false);
+    const [activeImport, setActiveImport] = useState(false);
     const [itemName, setItemName] = useState(null);
     const [id, setId] = useState(null);
     const [file, setFile] = useState(null);
@@ -105,6 +106,11 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         setSelected(null);
     }
 
+    const handleImport = () => {
+        setActiveImport(!activeImport);
+        getBudgetItems();
+    }
+
     const handleDownload = async (itemName) => {
         const requestOptions = {
             method: "GET",
@@ -140,8 +146,6 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
 
         }
     }
-
-
 
 
 
@@ -253,6 +257,12 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 itemName={selected}
                 uploadStatus={uploadStatus}
             />
+
+            <TableImportModal
+                active={activeImport}
+                handleImport={handleImport}
+            />
+            
             <div className="columns">
                 <div className="column">
                     <h1 style={{ align: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>

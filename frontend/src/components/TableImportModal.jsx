@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TeamContext } from "../context/TeamContext";
 import ErrorMessage from "./ErrorMessage";
 
-const TableImportModal = ({ active, handleUpload }) => {
+const TableImportModal = ({ active, handleImport }) => {
 
     const [file, setFile] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -50,7 +50,7 @@ const TableImportModal = ({ active, handleUpload }) => {
 
     return (
         <div className={`modal ${active && "is-active"}`}>
-            <div className="modal-background" onClick={handleUpload}></div>
+            <div className="modal-background" onClick={handleImport}></div>
             <div className="modal-card">
                 <header className="modal-card-head has-background-primary-light">
                     <h1 className="modal-card-title">
