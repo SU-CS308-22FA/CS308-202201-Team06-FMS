@@ -196,16 +196,42 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         }
     }
 
+    const handlePrivate = async(teamName, id) => {
+        const requestOptions = {
+            method: "PUT",    
+            headers: {
+                Authorization: "Bearer " + teamToken
+            },
+        };
+
+        const response = await fetch("/api/teams/setprivate/" + teamName + "/" + id, requestOptions);
+
+        if (!response.ok) {
+            const data = await response.json();
+            setErrorMessage(data.detail);
+        }
+
+        getBudgetItems();
+    }
+
     const DownloadButton = ({teamName}) => {
         return <button className="button mr-2 is-success is-pulled-right" onClick={() => {handleExport(teamName)}}>Export Table</button>
     }
 
+    const PrivateButton = ({teamName, isPriv, id}) => {
+        if (isPriv){
+            return  <button className="button mr-2 is-link" onClick={() => {handlePrivate(teamName, id)}}>Set Public</button>
+        }
+
+        return <button className="button mr-2 is-link" onClick={() => {handlePrivate(teamName, id)}}>Set Private</button>
+    }
     
 
 
 
 
     return (
+        
 
         <>
             <BudgetItemModal
@@ -222,7 +248,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             />
             <div className="columns">
                 <div className="column">
-                    <h1 style={{ allign: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
+                    <h1 style={{ align: "center", fontSize: 30 }}>Budget Table - {teamName} </h1>
                 </div>
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
@@ -238,7 +264,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 <div>
                     <input type="text" placeholder="Search..." onChange={handleSearchChange} />
 
-                    <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
+                    <table className="table is-fullwidth is-narrow is-bordered is-striped is-hoverable">
                         <thead>
                             <tr>
                                 <th>Item Name</th>
@@ -247,6 +273,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                 <th>Date Last Updated</th>
                                 <th>Verification Status</th>
                                 <th>Actions</th>
+                                <th>Visibility</th>
 
                             </tr>
                         </thead>
@@ -285,6 +312,21 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                             </button>
                                         ) : (
                                             <br></br>
+                                        )
+                                        }
+                                    </td>
+                                    <td>
+                                    {!budgetItem.is_private || budgetItem.doc_verified ? (
+                                            <p className="has-text-weight-bold has-text-primary-dark">Public</p>
+                                        ) : (
+                                            <p className="has-text-weight-bold has-text-info-dark">Private</p>
+                                        )
+                                        }
+                                    
+                                        {budgetItem.doc_verified ? (
+                                            <br></br>
+                                        ) : (
+                                            <PrivateButton teamName={teamName} isPriv={budgetItem.is_private} id={budgetItem.id}/>
                                         )
                                         }
 

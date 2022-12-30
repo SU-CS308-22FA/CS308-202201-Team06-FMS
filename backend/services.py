@@ -649,7 +649,7 @@ async def get_item_id(team : _schemas.Team, id : int, db : _orm.Session):
         return db_item
 
 # Create new BudgetItem
-async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):
+async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):  
     
     # Update Team Budget
     await update_team_budget(budgetItem.team_name, budgetItem.amount, db)
