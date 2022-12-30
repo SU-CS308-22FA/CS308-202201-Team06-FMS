@@ -69,6 +69,7 @@ class BudgetItem(_database.Base):
     support_docs = _sql.Column(_sql.String, nullable=True)                                                                  # Supporting documents
     doc_verified = _sql.Column(_sql.Boolean, default = False)                                                   # Doc verification
     doc_rejected = _sql.Column(_sql.Boolean, default = False)                                                   # Doc rejected
+    is_private = _sql.Column(_sql.Boolean, default = False)                                                   # Is private item      
     date_created = _sql.Column(_sql.DateTime, default = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone))      # Date of entry creation
     date_last_updated = _sql.Column(_sql.DateTime, default = _dt.datetime.utcnow().replace(tzinfo=from_zone).astimezone(to_zone)) # Date of last entry update
     __table_args__ = (_sql.UniqueConstraint('team_name', 'item_name', name='_team_item_uc'),)

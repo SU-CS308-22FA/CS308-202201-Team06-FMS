@@ -199,9 +199,8 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
 
 # Get Items - Admin
 async def get_all_items(db: _orm.Session,  skip: int= 0, limit: int = 100):
-    items = db.query(_models.BudgetItem).all()
+    items = db.query(_models.BudgetItem).filter(_models.BudgetItem.is_private == False).all()
     return list(map(_schemas.BudgetItem.from_orm, items))
-
 
 # Item selector - Admin
 async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
@@ -577,7 +576,7 @@ async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
 
 # Export team table - Team
 async def export_table_team( team: _schemas.Team, db: _orm.Session):
-    items = db.query(_models.BudgetItem.filter_by(team_name = team.name))
+    items = db.query(_models.BudgetItem).filter_by(team_name = team.name)
     items = list(map(_schemas.BudgetItem.from_orm, items))
 
     count = 0
@@ -589,7 +588,7 @@ async def export_table_team( team: _schemas.Team, db: _orm.Session):
         item_name = item.item_name
         amount = item.amount
         date_created = item.date_created.strftime("%d/%m/%Y")
-        date_last_updated = item.date_last_updated("%d/%m/%Y")
+        date_last_updated = item.date_last_updated.strftime("%d/%m/%Y")
         doc_verified = item.doc_verified
         exportDict[str(count)] = [item_name, amount, date_created, date_last_updated, doc_verified]
 
@@ -602,6 +601,33 @@ async def export_table_team( team: _schemas.Team, db: _orm.Session):
     df.to_excel(filepath) # Create excel
 
     return _resp.FileResponse(path=filepath, filename=filename, media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')    
+
+# Private item - Team
+async def private_item_id(id : int, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector_id(id = id, team = team, db = db)
+
+    if item.doc_verified:
+        raise _fastapi.HTTPException(status_code=405, detail= "Verified items cannot be made private!")
+
+    if item.is_private: # Means will make it public
+        await update_team_budget(name = team.name, change = item.amount, db = db)
+        item.is_private = False
+    
+    else: # Means will make it private
+        await update_team_budget(name = team.name, change = -item.amount, db = db)
+        item.is_private = True
+
+
+
+    try:
+        db.commit()
+        db.refresh(item)
+    
+    except:
+        raise _fastapi.HTTPException(status_code=401, detail= "Item names must be unique for teams!")
+
+
+    return _schemas.BudgetItem.from_orm(item)
 
 #*************************
 #       BUDGET
@@ -622,7 +648,7 @@ async def get_item_id(team : _schemas.Team, id : int, db : _orm.Session):
         return db_item
 
 # Create new BudgetItem
-async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):
+async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Session):  
     
     # Update Team Budget
     await update_team_budget(budgetItem.team_name, budgetItem.amount, db)

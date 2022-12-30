@@ -27,18 +27,19 @@ const AdminLogin = () => {
 
         if (!response.ok) {
             setErrorMessage(data.detail);
-            setButtonText('Login');
 
         } else {
             setAdminToken(data.access_token);
             setAdminLogin(true);
-            setButtonText('Login');
 
         }
+        setButtonText('Login');
+
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setButtonText('Logging in...')
         submitLogin();
     }
 
@@ -90,7 +91,7 @@ const AdminLogin = () => {
                 <br />
                 <br />
 
-                <button className="button is-primary" type="submit" onClick={() => setButtonText('Logging in...')}>
+                <button className="button is-primary" type="submit" >
                     {buttonText}
                 </button>
 
