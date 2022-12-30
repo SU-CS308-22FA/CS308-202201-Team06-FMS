@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { useState, useEffect } from "react";
 import BudgetItemModal from "./BudgetItemModal";
 import FileUploadModal from "./FileUploadModal";
+import TableImportModal from "./TableImportModal";
 
 const TeamBudgetTable = ({ loggedInTeam }) => {
     const [budgetItems, setBudgetItems] = useState(null);
@@ -196,6 +197,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
         }
     }
 
+
     const handlePrivate = async(teamName, id) => {
         const requestOptions = {
             method: "PUT",    
@@ -217,6 +219,11 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
     const DownloadButton = ({teamName}) => {
         return <button className="button mr-2 is-success is-pulled-right" onClick={() => {handleExport(teamName)}}>Export Table</button>
     }
+    
+    const ImportButton = ({teamName}) => {
+        return <button className="button mr-2 is-info is-pulled-right" onClick={() => {handleImport(teamName)}}>Import Table</button>
+    }
+
 
     const PrivateButton = ({teamName, isPriv, id}) => {
         if (isPriv){
@@ -253,6 +260,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                 <div className="column">
                     {errorMessage ? (<ErrorMessage message={errorMessage} />) : (<SuccessMessage message={successMessage} />)}
                 </div>
+                <div className="column"><ImportButton teamName={teamName}/></div>
                 <div className="column"><DownloadButton teamName={teamName}/></div>
             </div>
 
