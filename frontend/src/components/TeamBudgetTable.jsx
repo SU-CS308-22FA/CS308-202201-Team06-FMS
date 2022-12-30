@@ -316,14 +316,14 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
                                         }
                                     </td>
                                     <td>
-                                    {!budgetItem.is_private || budgetItem.doc_verified ? (
+                                    {!budgetItem.is_private || budgetItem.doc_verified || budgetItem.doc_rejected ? (
                                             <p className="has-text-weight-bold has-text-primary-dark">Public</p>
                                         ) : (
                                             <p className="has-text-weight-bold has-text-info-dark">Private</p>
                                         )
                                         }
                                     
-                                        {budgetItem.doc_verified ? (
+                                        {budgetItem.doc_verified || budgetItem.doc_rejected ? (
                                             <br></br>
                                         ) : (
                                             <PrivateButton teamName={teamName} isPriv={budgetItem.is_private} id={budgetItem.id}/>

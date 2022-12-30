@@ -199,9 +199,8 @@ async def get_current_admin( db: _orm.Session = _fastapi.Depends(get_db), token:
 
 # Get Items - Admin
 async def get_all_items(db: _orm.Session,  skip: int= 0, limit: int = 100):
-    items = db.query(_models.BudgetItem).all()
+    items = db.query(_models.BudgetItem).filter(_models.BudgetItem.is_private == False).all()
     return list(map(_schemas.BudgetItem.from_orm, items))
-
 
 # Item selector - Admin
 async def _item_selector_admin(item_name: str, team_name: str, db: _orm.Session):
