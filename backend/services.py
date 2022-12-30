@@ -603,6 +603,33 @@ async def export_table_team( team: _schemas.Team, db: _orm.Session):
 
     return _resp.FileResponse(path=filepath, filename=filename, media_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')    
 
+# Private item - Team
+async def private_item_id(id : int, team: _schemas.Team, db: _orm.Session):
+    item = await _item_selector_id(id = id, team = team, db = db)
+
+    if item.doc_verified:
+        raise _fastapi.HTTPException(status_code=405, detail= "Verified items cannot be made private!")
+
+    if item.is_private: # Means will make it public
+        await update_team_budget(name = team.name, change = item.amount, db = db)
+        item.is_private = False
+    
+    else: # Means will make it private
+        await update_team_budget(name = team.name, change = -item.amount, db = db)
+        item.is_private = True
+
+
+
+    try:
+        db.commit()
+        db.refresh(item)
+    
+    except:
+        raise _fastapi.HTTPException(status_code=401, detail= "Item names must be unique for teams!")
+
+
+    return _schemas.BudgetItem.from_orm(item)
+
 #*************************
 #       BUDGET
 #*************************
