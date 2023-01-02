@@ -5,9 +5,7 @@
 
 import React, { useContext, useState, useEffect, CSSProperties } from "react";
 import RegisterAdmin from "./components/RegisterAdmin";
-import RegisterTeamAdmin from "./components/RegisterTeamAdmin";
 import DeleteTeamAdmin from "./components/DeleteTeamAdmin";
-import UpdateTeamAdmin from "./components/UpdateTeamAdmin";
 import Header from "./components/Header";
 import AdminLogin from "./components/LoginAdmin";
 import { AdminContext } from "./context/AdminContext";
@@ -87,9 +85,7 @@ const App = () => {
                     <AdminTable loggedInAdmin={adminLogin}/>
                     <div className="columns">
                       <RegisterAdmin loggedInAdmin={adminLogin} />
-                      <RegisterTeamAdmin loggedInAdmin={adminLogin} />
                       <DeleteTeamAdmin loggedInAdmin={adminLogin} />
-                      <UpdateTeamAdmin loggedInAdmin={adminLogin} />
                     </div>
                   </div>
                 </div>

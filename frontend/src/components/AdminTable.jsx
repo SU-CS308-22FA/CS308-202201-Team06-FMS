@@ -7,6 +7,8 @@ import { useContext } from "react";
 import { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf";
 import FilePreviewModal from "./FilePreviewModal";
+import AdminTeamCreateModal from "./AdminTeamCreateModal";
+import AdminTeamUpdateModal from "./AdminTeamUpdateModal";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -16,6 +18,8 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
+    const [activeCreate, setActiveCreate] = useState(false);
+    const [activeUpdate, setActiveUpdate] = useState(false);
     const [teamName, setTeamName] = useState("");
     const [itemName, setItemName] = useState("");
 
@@ -124,6 +128,19 @@ const AdminTable = ({ loggedInAdmin }) => {
         setItemName(null);
     }
 
+    const handleCreate = async () => {
+        setActiveCreate(!activeCreate);
+        setErrorMessage(null);
+        getTeams();
+    }
+
+    const handleUpdate = async (teamName) => {
+        setTeamName(teamName);
+        setActiveUpdate(!activeUpdate);
+        setErrorMessage(null);
+        getTeams();
+    }
+
     const handleDownload = async (itemName,teamName) => {
         const requestOptions = {
             method: "GET",    
@@ -187,6 +204,10 @@ const AdminTable = ({ loggedInAdmin }) => {
         return <button className="button mr-2 is-success" onClick={() => {handleDownload(itemName, teamName)}}>Download</button>
     }
 
+    const UpdateButton = ({teamName}) => {
+        return <button className="button mr-2 is-info is-light" onClick={() => {handleUpdate(teamName)}}>Update</button>
+    }
+
     if (loggedInAdmin) {
         return (
 
@@ -198,21 +219,34 @@ const AdminTable = ({ loggedInAdmin }) => {
                 handleModal={handleModal}
                 />
 
+                <AdminTeamCreateModal
+                active={activeCreate}
+                handleModal={handleCreate}
+                />
+                
+                <AdminTeamUpdateModal
+                name={teamName}
+                active={activeUpdate}
+                handleModal={handleUpdate}
+                />
+
                 <ErrorMessage message={errorMessage} />
                 {!childLoading ? (
                     <div className="rows">
-                        <button className="button is-fullwidth mb-5 is-info" onClick={() => { getItems(); getTeams(); }}>
-                            Refresh Info
-                        </button>
                         <div className="columns">
                             <div className="column">
+                            <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveCreate(true)}>
+                                Register Team
+                            </button>
+
                                 <table className="table table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
                                             <th>Team Id</th>
                                             <th>Team Name</th>
-                                            <th>Budget_Allocated</th>
-                                            <th>Budget_Remaining</th>
+                                            <th>Allocated Budget</th>
+                                            <th>Remaining Budget</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -222,11 +256,15 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{team.name}</td>
                                                 <td>{team.budget_alloc}</td>
                                                 <td>{team.budget_rem}</td>
+                                                <td>
+                                                    <UpdateButton teamName={team.name} />
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>                        <div className="column">
+                            </div>                        
+                            <div className="column">
                                 <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
