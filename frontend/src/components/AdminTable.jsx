@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf";
 import FilePreviewModal from "./FilePreviewModal";
 import AdminTeamCreateModal from "./AdminTeamCreateModal";
+import AdminTeamUpdateModal from "./AdminTeamUpdateModal";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -18,6 +19,7 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
     const [activeCreate, setActiveCreate] = useState(false);
+    const [activeUpdate, setActiveUpdate] = useState(false);
     const [teamName, setTeamName] = useState("");
     const [itemName, setItemName] = useState("");
 
@@ -132,6 +134,13 @@ const AdminTable = ({ loggedInAdmin }) => {
         getTeams();
     }
 
+    const handleUpdate = async (teamName) => {
+        setTeamName(teamName);
+        setActiveUpdate(!activeUpdate);
+        setErrorMessage(null);
+        getTeams();
+    }
+
     const handleDownload = async (itemName,teamName) => {
         const requestOptions = {
             method: "GET",    
@@ -195,6 +204,10 @@ const AdminTable = ({ loggedInAdmin }) => {
         return <button className="button mr-2 is-success" onClick={() => {handleDownload(itemName, teamName)}}>Download</button>
     }
 
+    const UpdateButton = ({teamName}) => {
+        return <button className="button mr-2 is-info is-light" onClick={() => {handleUpdate(teamName)}}>Update</button>
+    }
+
     if (loggedInAdmin) {
         return (
 
@@ -209,6 +222,12 @@ const AdminTable = ({ loggedInAdmin }) => {
                 <AdminTeamCreateModal
                 active={activeCreate}
                 handleModal={handleCreate}
+                />
+                
+                <AdminTeamUpdateModal
+                name={teamName}
+                active={activeUpdate}
+                handleModal={handleUpdate}
                 />
 
                 <ErrorMessage message={errorMessage} />
@@ -225,8 +244,9 @@ const AdminTable = ({ loggedInAdmin }) => {
                                         <tr>
                                             <th>Team Id</th>
                                             <th>Team Name</th>
-                                            <th>Budget_Allocated</th>
-                                            <th>Budget_Remaining</th>
+                                            <th>Allocated Budget</th>
+                                            <th>Remaining Budget</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -236,6 +256,9 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{team.name}</td>
                                                 <td>{team.budget_alloc}</td>
                                                 <td>{team.budget_rem}</td>
+                                                <td>
+                                                    <UpdateButton teamName={team.name} />
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
