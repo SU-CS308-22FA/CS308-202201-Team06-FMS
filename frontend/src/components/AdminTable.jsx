@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf";
 import FilePreviewModal from "./FilePreviewModal";
 import AdminTeamCreateModal from "./AdminTeamCreateModal";
+import AdminTeamUpdateModal from "./AdminTeamUpdateModal";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -133,6 +134,13 @@ const AdminTable = ({ loggedInAdmin }) => {
         getTeams();
     }
 
+    const handleUpdate = async (teamName) => {
+        setTeamName(teamName);
+        setActiveUpdate(!activeUpdate);
+        setErrorMessage(null);
+        getTeams();
+    }
+
     const handleDownload = async (itemName,teamName) => {
         const requestOptions = {
             method: "GET",    
@@ -197,7 +205,7 @@ const AdminTable = ({ loggedInAdmin }) => {
     }
 
     const UpdateButton = ({teamName}) => {
-        return <button className="button mr-2 is-info is-light" onClick={() => {setActiveUpdate(teamName)}}>Update</button>
+        return <button className="button mr-2 is-info is-light" onClick={() => {handleUpdate(teamName)}}>Update</button>
     }
 
     if (loggedInAdmin) {
@@ -214,6 +222,12 @@ const AdminTable = ({ loggedInAdmin }) => {
                 <AdminTeamCreateModal
                 active={activeCreate}
                 handleModal={handleCreate}
+                />
+                
+                <AdminTeamUpdateModal
+                name={teamName}
+                active={activeUpdate}
+                handleModal={handleUpdate}
                 />
 
                 <ErrorMessage message={errorMessage} />
