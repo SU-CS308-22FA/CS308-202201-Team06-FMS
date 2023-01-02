@@ -201,11 +201,11 @@ const AdminTable = ({ loggedInAdmin }) => {
                 <ErrorMessage message={errorMessage} />
                 {!childLoading ? (
                     <div className="rows">
-                        <button className="button is-fullwidth mb-5 is-info" onClick={() => { getItems(); getTeams(); }}>
-                            Refresh Info
-                        </button>
                         <div className="columns">
                             <div className="column">
+                            <button className="button is-fullwidth mb-5 is-success" onClick={() => { getItems(); getTeams(); }}>
+                            Register Team
+                            </button>
                                 <table className="table table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
@@ -226,7 +226,8 @@ const AdminTable = ({ loggedInAdmin }) => {
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>                        <div className="column">
+                            </div>                        
+                            <div className="column">
                                 <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
