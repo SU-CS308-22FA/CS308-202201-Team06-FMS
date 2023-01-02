@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf";
 import FilePreviewModal from "./FilePreviewModal";
+import AdminTeamCreateModal from "./AdminTeamCreateModal";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -16,6 +17,7 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
+    const [activeCreate, setActiveCreate] = useState(false);
     const [teamName, setTeamName] = useState("");
     const [itemName, setItemName] = useState("");
 
@@ -124,6 +126,12 @@ const AdminTable = ({ loggedInAdmin }) => {
         setItemName(null);
     }
 
+    const handleCreate = async () => {
+        setActiveCreate(!activeCreate);
+        setErrorMessage(null);
+        getTeams();
+    }
+
     const handleDownload = async (itemName,teamName) => {
         const requestOptions = {
             method: "GET",    
@@ -198,14 +206,20 @@ const AdminTable = ({ loggedInAdmin }) => {
                 handleModal={handleModal}
                 />
 
+                <AdminTeamCreateModal
+                active={activeCreate}
+                handleModal={handleCreate}
+                />
+
                 <ErrorMessage message={errorMessage} />
                 {!childLoading ? (
                     <div className="rows">
-                        <button className="button is-fullwidth mb-5 is-info" onClick={() => { getItems(); getTeams(); }}>
-                            Refresh Info
-                        </button>
                         <div className="columns">
                             <div className="column">
+                            <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveCreate(true)}>
+                                Register Team
+                            </button>
+
                                 <table className="table table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
@@ -226,7 +240,8 @@ const AdminTable = ({ loggedInAdmin }) => {
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>                        <div className="column">
+                            </div>                        
+                            <div className="column">
                                 <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
