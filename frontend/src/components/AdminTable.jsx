@@ -129,6 +129,7 @@ const AdminTable = ({ loggedInAdmin }) => {
     const handleCreate = async () => {
         setActiveCreate(!activeCreate);
         setErrorMessage(null);
+        getTeams();
     }
 
     const handleDownload = async (itemName,teamName) => {

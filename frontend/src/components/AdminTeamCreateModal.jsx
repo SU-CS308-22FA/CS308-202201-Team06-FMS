@@ -12,6 +12,7 @@ const AdminTeamCreateModal = ({ active, handleModal }) => {
     const [budget, setBudget] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [adminToken] = useContext(AdminContext);
+    const [buttonText, setButtonText] = useState("Create")
 
     const cleanFormData = () => {
         setTeamName("");
@@ -23,6 +24,7 @@ const AdminTeamCreateModal = ({ active, handleModal }) => {
 
     const handleCreateTeam = async (e) => {
         e.preventDefault();
+
         if (!teamName || !teamMail || !budget || !teamPass || !teamPassConfirm) {
             setErrorMessage("Inputs cannot be empty!");
             return
@@ -40,6 +42,8 @@ const AdminTeamCreateModal = ({ active, handleModal }) => {
             setErrorMessage("Invalid Budget Entry!");
             return
         }
+
+        setButtonText("Processing...")
 
         const requestOptions = {
             method: "POST",
@@ -64,6 +68,7 @@ const AdminTeamCreateModal = ({ active, handleModal }) => {
         } else {
             cleanFormData();
             setErrorMessage(null);
+            setButtonText("Create");
             handleModal();
         }
     }
@@ -155,7 +160,7 @@ const AdminTeamCreateModal = ({ active, handleModal }) => {
                 </form>
                 </section>
                 <footer className="modal-card-foot has-background-primary-light">
-                    <button className="button is-primary" onClick={handleCreateTeam}>Create</button>
+                    <button className="button is-primary" onClick={handleCreateTeam}>{buttonText}</button>
                     < button className="button " onClick={() => {cleanFormData();setErrorMessage(null);handleModal();}}>Cancel</button>
                     <ErrorMessage message={errorMessage} />
                 </footer>
