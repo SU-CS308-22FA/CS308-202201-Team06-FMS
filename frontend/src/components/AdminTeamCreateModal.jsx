@@ -1,14 +1,14 @@
 import React from "react";
-import { useContext } from "react";
-import { useState, useEffect } from "react";
-import { TeamContext } from "../context/TeamContext";
 import ErrorMessage from "./ErrorMessage";
+import { AdminContext } from "../context/AdminContext";
+import { useState, useContext } from "react";
 
 
-const BudgetItemModal = ({ name, active, handleModal }) => {
+const AdminTeamCreateModal = ({ active, handleModal }) => {
     const [teamName, setTeamName] = useState("");
     const [teamMail, setTeamMail] = useState("");
     const [teamPass, setTeamPass] = useState("");
+    const [teamPassConfirm, setTeamPassConfirm] = useState("");
     const [budget, setBudget] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [adminToken] = useContext(AdminContext);
@@ -17,42 +17,27 @@ const BudgetItemModal = ({ name, active, handleModal }) => {
         setTeamName("");
         setTeamMail("");
         setBudget("");
+        setTeamPass("");
+        setTeamPassConfirm("");
     }
-
-
-    useEffect(() => {
-        const getTeam = async () => {
-            const requestOptions = {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + adminToken,
-                },
-            };
-            const response = await fetch(`/api/admins/` + teamName, requestOptions);
-
-            if (!response.ok) {
-                setErrorMessage("Could not get the team!");
-            } else {
-                const data = await response.json();
-                setTeamName(data.name);
-                setTeamMail(data.email);
-                setTeamPass("");
-                setBudget(data.budget_total);
-            }
-
-
-        }
-
-        if (name) {
-            getTeam();
-        }
-    }, [name, adminToken]);
 
     const handleCreateTeam = async (e) => {
         e.preventDefault();
-        if (!teamName || !teamMail || !amount) {
-            setErrorMessage("Inputs cannot be empty!")
+        if (!teamName || !teamMail || !budget || !teamPass || !teamPassConfirm) {
+            setErrorMessage("Inputs cannot be empty!");
+            return
+        }
+
+        
+        if (teamPass === teamPassConfirm && teamPass.length > 8) {
+            ;
+        } else {
+            setErrorMessage("Ensure that the passwords are matching and longer than 8 characters.");
+            return
+        }
+ 
+        if (isNaN(budget) || Number(budget) <= 0) {
+            setErrorMessage("Invalid Budget Entry!");
             return
         }
 
@@ -89,42 +74,85 @@ const BudgetItemModal = ({ name, active, handleModal }) => {
             <div className="modal-card">
                 <header className="modal-card-head has-background-primary-light">
                     <h1 className="modal-card-title">
-                        Create Budget Item
+                        Register New Team
                     </h1>
                 </header>
                 <section className="modal-card-body">
                     <form>
+                    <div className="field">
+                    <label className="label">Email Address</label>
+                    <div className="control">
+                        <input
+                            type="email"
+                            placeholder="E-mail"
+                            value={teamMail}
+                            onChange={(e) => setTeamMail(e.target.value)}
+                            className="input"
+                            required
+                        />
+                    </div>
+                </div>
 
-                        <div className="field">
-                            <label className="label">Team Name</label>
-                            <div className="control">
-                                <input
-                                    type="text"
-                                    placeholder="Enter the Team Name"
-                                    value={teamName}
-                                    onChange={(e) => setTeamName(e.target.value)}
-                                    className="input"
-                                    required
-                                />
-                            </div>
-                        </div>
+                <div className="field">
+                    <label className="label">Team Name</label>
+                    <div className="control">
+                        <input
+                            type="text"
+                            placeholder="Team Name"
+                            value={teamName}
+                            onChange={(n) => setTeamName(n.target.value)}
+                            className="input"
+                            required
+                        />
+                    </div>
+                </div>
 
-                        <div className="field">
-                            <label className="label">Budget</label>
-                            <div className="control">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    placeholder="Enter the Budget"
-                                    value={budget}
-                                    onChange={(e) => setBudget(e.target.value)}
-                                    className="input"
-                                    required
-                                />
-                            </div>
-                        </div>
+                <div className="field">
+                    <label className="label">Total Budget</label>
+                    <div className="control">
+                        <input
+                            type="text"
+                            placeholder="Budget"
+                            value={budget}
+                            onChange={(s) => setBudget(s.target.value)}
+                            className="input"
+                            required
+                        />
+                    </div>
+                </div>
 
-                    </form>
+                <br />
+                <br />
+
+                <div className="field">
+                    <label className="label">Password</label>
+                    <div className="control">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={teamPass}
+                            onChange={(p) => setTeamPass(p.target.value)}
+                            className="input"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="field">
+                    <label className="label">Confirm Password</label>
+                    <div className="control">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={teamPassConfirm}
+                            onChange={(c) => setTeamPassConfirm(c.target.value)}
+                            className="input"
+                            required
+                        />
+                    </div>
+                </div>
+
+                </form>
                 </section>
                 <footer className="modal-card-foot has-background-primary-light">
                     <button className="button is-primary" onClick={handleCreateTeam}>Create</button>
@@ -136,4 +164,4 @@ const BudgetItemModal = ({ name, active, handleModal }) => {
     )
 }
 
-export default BudgetItemModal;
+export default AdminTeamCreateModal;
