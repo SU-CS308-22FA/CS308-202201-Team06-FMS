@@ -97,6 +97,18 @@ const Header = () => {
         }
       }
 
+      const handleRemove = async () =>{
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + adminToken,
+            },
+        };
+
+        const response = await fetch("/api/admins/deletepic/" + "a@a", requestOptions);
+        const data = await response.json();
+      }
+
     const fileData = () => {
      
         if (img) {
@@ -104,6 +116,7 @@ const Header = () => {
           return (
             <div>
             <img src={img}/>
+            <button onClick={handleRemove}> Remove</button>
             </div>
           );
         } else {

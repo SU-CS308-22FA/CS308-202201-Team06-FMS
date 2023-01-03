@@ -631,6 +631,10 @@ async def admin_pic_get(admin: _schemas.Admin, db: _orm.Session):
     
     return _resp.FileResponse(path=filepath, filename=filename, media_type="image/png")
 
+async def admin_pic_delete(admin: _schemas.Admin, db: _orm.Session):
+    filepath = "profilepics/" + admin.email + "_" + "pic" + ".png"
+    os.remove(filepath)
+
 # Get docs - Team - Check security later
 async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
     """ Fetches the uploaded document from the database belonging
