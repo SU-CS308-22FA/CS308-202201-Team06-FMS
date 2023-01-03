@@ -18,7 +18,7 @@
 Financial Management System is a pilot application to answer the need of tracking team budgets by the Turkish Football Federation. It hopes to provide a user-friendly interface where system admins can track current Financial Fair-Play limits set forth by the federation with ease. 
 
 ## <a name="Dep"></a>Current Deploy
-Find the current working copy by following **[this link](https://finms.onrender.com/)**.
+Find the current working copy by following **[this link](https://finmsapp.netlify.app/)**.
 
 ## <a name="Ins"></a>Local Install & Run
 Please refer to the [Local Build & Deploy](#local-build--deploy) section and use the **main** branch for local installation of the software. 
