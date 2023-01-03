@@ -354,6 +354,39 @@ async def create_team_token(team: _models.Team):
 
 # Get current Team user
 async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: str = _fastapi.Depends(oauth2scheme)):
+    """ Gets the current team. This team is required to login
+        to system in order to have a team token. Otherwise,
+        there will be an exception.
+
+    Parameters
+    ----------
+
+    db: {list of tables}
+        An instance of the current database. The instance required
+        for reaching particular data tuple in a table. 
+        It can be empty instance. If any value is not given, default value is taken
+        from get_db function.
+
+    token: {string}
+        A string variable which are unique for each team indicating
+        login session of the team. Each token is given after an succesful
+        login. If any value is not given, the default value will be taken 
+        according to oauth2scheme.
+
+    Returns
+    -------
+    team: {Team Object}
+        A schema of a particular team representing corresponding
+        values for a team object.
+    
+    Raises
+    ------
+    Exception: {HTTP Exception}
+        If this function called by a unauthenticated user, an error
+        will raise stating the situtation with a 401 http status code
+    """
+
+    # tries to decode given token according to jwt code
     try:
         payload = _jwt.decode(token, JWT_SECRET_TEAM, algorithms=["HS256"])
         team = db.query(_models.Team).get(payload["id"])
@@ -364,7 +397,32 @@ async def get_current_team( db: _orm.Session = _fastapi.Depends(get_db), token: 
 
 #Get all teams
 async def get_all_teams(db: _orm.Session = _fastapi.Depends(get_db), skip: int= 0, limit: int = 100):
-    teams = db.query(_models.Team).all()
+    """Get all teams which are registered to database by a query.
+
+    Parameters
+    ----------
+    db: {list of tables} 
+        An instance of the current database. The instance required
+        for reaching particular data tuple in a table. 
+        It can be empty instance. If any value given, default value is taken
+        from get_db function
+    
+    skip: {integer}
+        The given integer represents the offset value for query. Database
+        will start query from the position after skip index.
+        The parameter may not be given, in this case it is taken as 0.
+
+    limit: {integer}
+        The given integer represents the limit for query response. Query
+        will return data tuples as many as limit value.
+        The parameter may not be given, in this case it is taken as 100
+
+    Returns
+    -------
+    teams: {list of Team object}
+        Contains list of the team object which taken from applied query
+    """
+    teams = db.query(_models.Team).offset(skip).limit(limit).all() # query is applied here aacording to skip and offset values
     return list(map(_schemas.Team.from_orm,teams))
 
 # Get Items - Team
@@ -545,6 +603,37 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
         db.refresh(item)
 
         return _schemas.BudgetItem.from_orm(item)
+# Get profile pic - Admin
+async def upload_admin_pic(file: _fastapi.UploadFile,admin: _schemas.Admin, db: _orm.Session):
+        filename_temp = "profilepics/" + admin.email + "_" + "pic" + "_temp.png"
+        filename = "profilepics/" + admin.email + "_" + "pic" + ".png"
+        
+        # Try upload
+        try:
+            contents = file.file.read()
+            with open(filename_temp, 'wb') as f:
+                f.write(contents)
+
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
+        
+        os.rename(filename_temp, filename)
+        
+        return
+
+async def admin_pic_get(admin: _schemas.Admin, db: _orm.Session):
+    filename = admin.email + "_" + "pic" + ".png"
+    filepath = "profilepics/" + admin.email + "_" + "pic" + ".png"
+
+    if not os.path.exists(filepath):
+        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
+    
+    return _resp.FileResponse(path=filepath, filename=filename, media_type="image/png")
+
+async def admin_pic_delete(admin: _schemas.Admin, db: _orm.Session):
+    filepath = "profilepics/" + admin.email + "_" + "pic" + ".png"
+    os.remove(filepath)
 
 # Get docs - Team - Check security later
 async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
@@ -738,6 +827,37 @@ async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Ses
     db.refresh(budgetObj)
     return budgetObj
 
+
+async def upload_team_pic(file: _fastapi.UploadFile,team: _schemas.Team, db: _orm.Session):
+        filename_temp = "profilepics/" + team.name + "_" + "pic" + "_temp.png"
+        filename = "profilepics/" + team.name + "_" + "pic" + ".png"
+        
+        # Try upload
+        try:
+            contents = file.file.read()
+            with open(filename_temp, 'wb') as f:
+                f.write(contents)
+
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
+        
+        os.rename(filename_temp, filename)
+        
+        return
+
+async def team_pic_get(team: _schemas.Team, db: _orm.Session):
+    filename = team.name + "_" + "pic" + ".png"
+    filepath = "profilepics/" + team.name + "_" + "pic" + ".png"
+
+    if not os.path.exists(filepath):
+        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
+    
+    return _resp.FileResponse(path=filepath, filename=filename, media_type="image/png")
+
+async def team_pic_delete(team: _schemas.Team, db: _orm.Session):
+    filepath = "profilepics/" + team.name + "_" + "pic" + ".png"
+    os.remove(filepath)
 
 
 

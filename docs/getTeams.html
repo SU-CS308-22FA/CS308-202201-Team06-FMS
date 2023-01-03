@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>getTeams.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>getTeams.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sqlalchemy.orm</span> <span class="k">as</span> <span class="nn">_orm</span>
+<span class="kn">import</span> <span class="nn">fastapi</span> <span class="k">as</span> <span class="nn">_fastapi</span>
+<span class="kn">import</span> <span class="nn">models</span> <span class="k">as</span> <span class="nn">_models</span>
+<span class="kn">import</span> <span class="nn">schemas</span> <span class="k">as</span> <span class="nn">_schemas</span>
+<span class="kn">import</span> <span class="nn">services</span> <span class="k">as</span> <span class="nn">_services</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>=== Query function for all Teams ===
+Get all teams which are registered to database by a query</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">async</span> <span class="k">def</span> <span class="nf">get_all_teams</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">_orm</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="n">_fastapi</span><span class="o">.</span><span class="n">Depends</span><span class="p">(</span><span class="n">_services</span><span class="o">.</span><span class="n">get_db</span><span class="p">),</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <pre><code>Parameters
+----------
+db: {list of tables}
+</code></pre>
+<p>An instance of the current database. The instance required
+   for reaching particular data tuple in a table. 
+   It can be empty instance. If any value given, default value is taken
+   from get_db function.</p>
+<pre><code>skip: {integer}
+</code></pre>
+<p>The given integer represents the offset value for query. Database
+   will start query from the position after skip index.
+   The parameter may not be given, in this case it is taken as 0.</p>
+<pre><code>limit: {integer}
+</code></pre>
+<p>The given integer represents the limit for query response. Query
+   will return data tuples as many as limit value.
+   The parameter may not be given, in this case it is taken as 100</p>
+<pre><code>Returns
+-------
+teams: {list of Team object}
+</code></pre>
+<p>Contains list of the team object which taken from applied query</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">teams</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">_models</span><span class="o">.</span><span class="n">Team</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">skip</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="c1"># query is applied here aacording to skip and offset values</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_schemas</span><span class="o">.</span><span class="n">Team</span><span class="o">.</span><span class="n">from_orm</span><span class="p">,</span><span class="n">teams</span><span class="p">))</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
