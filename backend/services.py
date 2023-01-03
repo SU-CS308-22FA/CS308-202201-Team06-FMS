@@ -828,6 +828,37 @@ async def create_budget_item(budgetItem: _schemas.BudgetItemCreate, db: _orm.Ses
     return budgetObj
 
 
+async def upload_team_pic(file: _fastapi.UploadFile,team: _schemas.Team, db: _orm.Session):
+        filename_temp = "profilepics/" + team.name + "_" + "pic" + "_temp.png"
+        filename = "profilepics/" + team.name + "_" + "pic" + ".png"
+        
+        # Try upload
+        try:
+            contents = file.file.read()
+            with open(filename_temp, 'wb') as f:
+                f.write(contents)
+
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
+        
+        os.rename(filename_temp, filename)
+        
+        return
+
+async def team_pic_get(team: _schemas.Team, db: _orm.Session):
+    filename = team.name + "_" + "pic" + ".png"
+    filepath = "profilepics/" + team.name + "_" + "pic" + ".png"
+
+    if not os.path.exists(filepath):
+        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
+    
+    return _resp.FileResponse(path=filepath, filename=filename, media_type="image/png")
+
+async def team_pic_delete(team: _schemas.Team, db: _orm.Session):
+    filepath = "profilepics/" + team.name + "_" + "pic" + ".png"
+    os.remove(filepath)
+
 
 
 
