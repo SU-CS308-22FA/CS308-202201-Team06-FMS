@@ -197,6 +197,19 @@ async def admin_verify_docs(item_name : str, team_name : str, admin: _schemas.Ad
 async def admin_reject_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.reject_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
+
+# Get admin profile picture
+@app.post("/api/admins/profilepics/{email}")
+async def admin_get_profilepic(file: _fastapi.UploadFile, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session= _fastapi.Depends(_services.get_db)):
+    return await _services.upload_admin_pic(file = file, admin = admin, db = db)
+
+@app.get("/api/admins/getpic/{email}")
+async def admin_get_pic(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.admin_pic_get(admin = admin, db = db)
+
+@app.delete("/api/admins/deletepic/{email}")
+async def admin_delete_pic(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session= _fastapi.Depends(_services.get_db)):
+    return await _services.admin_pic_delete(admin = admin, db = db)
 #*************************
 #       TEAM
 #*************************
@@ -304,3 +317,15 @@ async def team_import_table(team_name : str, file : _fastapi.UploadFile, team : 
 @app.put("/api/teams/setprivate/{team_name}/{id}", status_code = 200)
 async def team_private_toggle(id : int, team_name: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.private_item_id(id = id, team = team, db = db)
+
+@app.post("/api/teams/profilepics/{email}")
+async def team_get_profilepic(file: _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db: _orm.Session= _fastapi.Depends(_services.get_db)):
+    return await _services.upload_team_pic(file = file, team = team, db = db)
+
+@app.get("/api/teams/getpic/{email}")
+async def team_get_pic(email: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db: _orm.Session = _fastapi.Depends(_services.get_db)):
+    return await _services.team_pic_get(team = team, db = db)
+
+@app.delete("/api/teams/deletepic/{email}")
+async def team_delete_pic(team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db: _orm.Session= _fastapi.Depends(_services.get_db)):
+    return await _services.team_pic_delete(team = team, db = db)
