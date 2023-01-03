@@ -10,6 +10,7 @@ import FilePreviewModal from "./FilePreviewModal";
 import AdminTeamCreateModal from "./AdminTeamCreateModal";
 import AdminTeamUpdateModal from "./AdminTeamUpdateModal";
 import RegisterAdmin from "./RegisterAdmin";
+import DeleteTeamAdmin from "./DeleteTeamAdmin";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -24,6 +25,29 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [activeUpdate, setActiveUpdate] = useState(false);
     const [teamName, setTeamName] = useState("");
     const [itemName, setItemName] = useState("");
+
+    const submitDelete = async (name) => {
+        const requestOptions = {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + adminToken
+            },
+        };
+
+        const response = await fetch('/api/admins/deleteteam/' + name, requestOptions);
+
+        if (!response.ok) {
+            setErrorMessage("Team not found in database!");
+            setSuccessMessage("");
+
+        } else {
+            setSuccessMessage("Team deleted successfully!");
+            setErrorMessage("");
+        }
+        getTeams();
+    };
+
 
 
     const getTeams = async () => {
@@ -141,6 +165,8 @@ const AdminTable = ({ loggedInAdmin }) => {
         getTeams();
     }
 
+
+
     const handleUpdate = async (teamName) => {
         setTeamName(teamName);
         setActiveUpdate(!activeUpdate);
@@ -215,6 +241,11 @@ const AdminTable = ({ loggedInAdmin }) => {
         return <button className="button mr-2 is-info is-light" onClick={() => { handleUpdate(teamName) }}>Update</button>
     }
 
+    const DeleteButton = ({ teamName }) => {
+        return <button className="button mr-2 is-info is-danger" onClick={() => { submitDelete(teamName) }}>Delete</button>
+
+    }
+
     if (loggedInAdmin) {
         return (
 
@@ -237,10 +268,10 @@ const AdminTable = ({ loggedInAdmin }) => {
                     handleModal={handleCreate}
                 />
 
-                <DeleteTeamAdmin/>
 
                 <AdminTeamUpdateModal
-                    name={teamName}
+                    tName={teamName}
+                    loggedInAdmin={loggedInAdmin}
                     active={activeUpdate}
                     handleModal={handleUpdate}
                 />
@@ -274,6 +305,7 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{team.budget_rem}</td>
                                                 <td>
                                                     <UpdateButton teamName={team.name} />
+                                                    <DeleteButton teamName={team.name} />
                                                 </td>
                                             </tr>
                                         ))}
