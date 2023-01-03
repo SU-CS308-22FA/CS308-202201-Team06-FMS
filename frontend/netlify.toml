@@ -1,6 +1,1 @@
-[[redirects]]
-  from = "/"
-  to = "https://finms-backend.onrender.com/"
-  status = 200
-  force = true
-  headers = {X-From = "Netlify"}
+
