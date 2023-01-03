@@ -197,10 +197,11 @@ async def admin_verify_docs(item_name : str, team_name : str, admin: _schemas.Ad
 async def admin_reject_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.reject_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
+
 # Get admin profile picture
 @app.post("/api/admins/profilepics/{email}")
-async def admin_get_profilepic(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session= _fastapi.Depends(_services.get_db)):
-    return await _services.get_admin_pic(admin = admin, db = db)
+async def admin_get_profilepic(file: _fastapi.UploadFile, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session= _fastapi.Depends(_services.get_db)):
+    return await _services.upload_admin_pic(file = file, admin = admin, db = db)
 
 #*************************
 #       TEAM

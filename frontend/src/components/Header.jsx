@@ -37,7 +37,7 @@ const Header = () => {
        
         // Update the formData object
         formData.append(
-          "myFile",
+          "file",
           selectedFile,
           selectedFile.name
         );

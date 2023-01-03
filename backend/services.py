@@ -604,14 +604,23 @@ async def add_docs_team(item_name: str, file: _fastapi.UploadFile, team: _schema
 
         return _schemas.BudgetItem.from_orm(item)
 # Get profile pic - Admin
-async def get_admin_pic(admin_mail: str, admin: _schemas.Admin, db: _orm.Session):
-    filepath = "profilepics/" + admin.email  + ".png"
-    filename = admin.email + "_" + "profilepic" + ".png"
+async def upload_admin_pic(file: _fastapi.UploadFile,admin: _schemas.Admin, db: _orm.Session):
+        filename_temp = "profilepics/" + admin.email + "_" + "pic" + "_temp.png"
+        filename = "profilepics/" + admin.email + "_" + "pic" + ".png"
+        
+        # Try upload
+        try:
+            contents = file.file.read()
+            with open(filename_temp, 'wb') as f:
+                f.write(contents)
 
-    if not os.path.exists(filepath):
-        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
-    
-    return _resp.FileResponse(path=filepath, filename=filename, media_type='application/png')
+        except:
+            os.remove(filename_temp)
+            raise _fastapi.HTTPException(status_code=500, detail= "There was an error during file upload, please try again...")
+        
+        os.rename(filename_temp, filename)
+        
+        return
 
 # Get docs - Team - Check security later
 async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
