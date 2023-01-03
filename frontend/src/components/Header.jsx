@@ -2,7 +2,7 @@
 //
 // @zgr2788
 import React, { useContext } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
 
 import { AdminContext } from "../context/AdminContext";
@@ -21,6 +21,32 @@ const Header = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
+
+    const getPicture = async () =>{
+        const requestOptions2 = {
+            method: "GET",
+            headers: {
+                Authorization: "Bearer " + adminToken,
+            },
+        };
+        const response2 = await fetch("/api/admins/getpic/" + "a@a", requestOptions2);
+        if (!response2.ok) {
+            console.log(response2.detail);
+            setErrorMessage(response2.status);
+        }
+        else {
+            //const data2 = await response2.json();
+            console.log(response2);
+        }
+    }
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            getPicture();
+        }, 200)
+    }, [selectedFile]);
+
 
 
     const onFileChange = event => {

@@ -622,6 +622,15 @@ async def upload_admin_pic(file: _fastapi.UploadFile,admin: _schemas.Admin, db: 
         
         return
 
+async def admin_pic_get(admin: _schemas.Admin, db: _orm.Session):
+    filename = admin.email + "_" + "pic" + ".png"
+    filepath = "profilepics/" + admin.email + "_" + "pic" + ".png"
+
+    if not os.path.exists(filepath):
+        raise _fastapi.HTTPException(status_code=404, detail= "No supporting document exists for this item!")
+    
+    return _resp.FileResponse(path=filepath, filename=filename, media_type="image/png")
+
 # Get docs - Team - Check security later
 async def get_docs_team(item_name: str, team: _schemas.Team, db: _orm.Session):
     """ Fetches the uploaded document from the database belonging
