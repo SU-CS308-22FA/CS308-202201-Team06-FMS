@@ -22,7 +22,8 @@ const RegisterAdmin = ({ loggedInAdmin, active, handleModal }) => {
         const requestOptions = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + adminToken   
             },
             body: JSON.stringify({ email: email, first_name: name, last_name: surname, pass_hash: password })
         };
@@ -56,93 +57,99 @@ const RegisterAdmin = ({ loggedInAdmin, active, handleModal }) => {
         return (
             <div className={`modal ${active && "is-active"}`}>
                 <div className="modal-background" onClick={handleModal}></div>
+                <div className="modal-card">
+                    <header className="modal-card-head has-background-primary-light">
+                        <h1 className="modal-card-title">
+                            Register New Admin
+                        </h1>
+                    </header>
+                    <div className="column">
+                        <form className="box" onSubmit={handleSubmit}>
+                            <h1 className="title has-text-centered">Register New Admin</h1>
 
-                <div className="column">
-                    <form className="box" onSubmit={handleSubmit}>
-                        <h1 className="title has-text-centered">Register New Admin</h1>
-
-                        <div className="field">
-                            <label className="label">Email Address</label>
-                            <div className="control">
-                                <input
-                                    type="email"
-                                    placeholder="E-mail"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="input"
-                                    required
-                                />
+                            <div className="field">
+                                <label className="label">Email Address</label>
+                                <div className="control">
+                                    <input
+                                        type="email"
+                                        placeholder="E-mail"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="input"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="field">
-                            <label className="label">Name</label>
-                            <div className="control">
-                                <input
-                                    type="text"
-                                    placeholder="First Name"
-                                    value={name}
-                                    onChange={(n) => setName(n.target.value)}
-                                    className="input"
-                                    required
-                                />
+                            <div className="field">
+                                <label className="label">Name</label>
+                                <div className="control">
+                                    <input
+                                        type="text"
+                                        placeholder="First Name"
+                                        value={name}
+                                        onChange={(n) => setName(n.target.value)}
+                                        className="input"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="field">
-                            <label className="label">Surname</label>
-                            <div className="control">
-                                <input
-                                    type="text"
-                                    placeholder="Surname"
-                                    value={surname}
-                                    onChange={(s) => setSurname(s.target.value)}
-                                    className="input"
-                                    required
-                                />
+                            <div className="field">
+                                <label className="label">Surname</label>
+                                <div className="control">
+                                    <input
+                                        type="text"
+                                        placeholder="Surname"
+                                        value={surname}
+                                        onChange={(s) => setSurname(s.target.value)}
+                                        className="input"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <br />
-                        <br />
+                            <br />
+                            <br />
 
-                        <div className="field">
-                            <label className="label">Password</label>
-                            <div className="control">
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(p) => setPassword(p.target.value)}
-                                    className="input"
-                                    required
-                                />
+                            <div className="field">
+                                <label className="label">Password</label>
+                                <div className="control">
+                                    <input
+                                        type="password"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(p) => setPassword(p.target.value)}
+                                        className="input"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="field">
-                            <label className="label">Confirm Password</label>
-                            <div className="control">
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={confirmationPassword}
-                                    onChange={(c) => setConfirmationPassword(c.target.value)}
-                                    className="input"
-                                    required
-                                />
+                            <div className="field">
+                                <label className="label">Confirm Password</label>
+                                <div className="control">
+                                    <input
+                                        type="password"
+                                        placeholder="Password"
+                                        value={confirmationPassword}
+                                        onChange={(c) => setConfirmationPassword(c.target.value)}
+                                        className="input"
+                                        required
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <ErrorMessage message={errorMessage} />
-                        <SuccessMessage message={successMessage} />
-                        <br />
+                            <ErrorMessage message={errorMessage} />
+                            <SuccessMessage message={successMessage} />
+                            <br />
 
-                        <button className="button is-primary" type="submit">
-                            Register
-                        </button>
+                            <button className="button is-primary" type="submit">
+                                Register
+                            </button>
 
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
 

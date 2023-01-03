@@ -7,7 +7,6 @@ import { useContext } from "react";
 import { useState, useEffect } from "react";
 import { Document, Page } from "react-pdf";
 import FilePreviewModal from "./FilePreviewModal";
-import CreateAdminModal from "./CreateAdminModal";
 import AdminTeamCreateModal from "./AdminTeamCreateModal";
 import AdminTeamUpdateModal from "./AdminTeamUpdateModal";
 import RegisterAdmin from "./RegisterAdmin";
@@ -20,7 +19,6 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
-    const [activeAdminCreateModal, setActiveCreateModal] = useState(false);
     const [activeAdminCreate, setActiveAdminCreate] = useState(false);
     const [activeCreate, setActiveCreate] = useState(false);
     const [activeUpdate, setActiveUpdate] = useState(false);
