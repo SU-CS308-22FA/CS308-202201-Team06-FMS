@@ -13,15 +13,20 @@ import { AppBar } from '@mui/material';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { useRenderQueue } from "@react-pdf-viewer/core";
 
 
 
 const Header = () => {
     const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [renderer, setRenderer] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [img, setImg] = useState();
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
+
 
     const getPicture = async () =>{
         const requestOptions2 = {
@@ -49,8 +54,9 @@ const Header = () => {
         setTimeout(() => {
             getPicture();
             fileData();
+            forceUpdate();
         }, 200)
-    }, []);
+    }, [renderer]);
 
 
 
@@ -92,9 +98,8 @@ const Header = () => {
 
         if (!response.ok) {
             setErrorMessage(data.detail);
-        } else {
-            document.getElementById("fileUpload").value = "";
-        }
+        } 
+        setRenderer(!renderer);
       }
 
       const handleRemove = async () =>{
@@ -107,6 +112,8 @@ const Header = () => {
 
         const response = await fetch("/api/admins/deletepic/" + "a@a", requestOptions);
         const data = await response.json();
+
+        setImg("");
       }
 
     const fileData = () => {
