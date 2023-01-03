@@ -8,7 +8,7 @@ import { AdminContext } from "../context/AdminContext";
 import ErrorMessage from "./ErrorMessage";
 import SuccessMessage from "./SuccessMessage";
 
-const DeleteTeamAdmin = ({loggedInAdmin, teamName}) => {
+const DeleteTeamAdmin = ({loggedInAdmin}) => {
     const [name, setName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
