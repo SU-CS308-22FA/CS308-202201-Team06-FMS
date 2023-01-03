@@ -18,7 +18,6 @@ import Button from "@mui/material/Button";
 
 const Header = () => {
     const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
-
     const [selectedFile, setSelectedFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
@@ -31,7 +30,8 @@ const Header = () => {
       }
 
     const onFileUpload = async () => {
-     
+        
+
         // Create an object of formData
         const formData = new FormData();
        
@@ -55,6 +55,7 @@ const Header = () => {
        
         // Request made to the backend api
         // Send formData object
+
         const response = await fetch("/api/admins/profilepics/" + "a@a", requestOptions);
         const data = await response.json();
 
@@ -71,19 +72,12 @@ const Header = () => {
             
           return (
             <div>
-              <h2>File Details:</h2>
-              <p>File Name: {selectedFile.name}</p>
-    
-              <p>File Type: {selectedFile.type}</p>
-    
-    
+            <img src="https://www.w3schools.com/images/lamp.jpg"/>
             </div>
           );
         } else {
           return (
             <div>
-              <br />
-              <h4>Choose before Pressing the Upload button</h4>
             </div>
           );
         }
@@ -103,14 +97,14 @@ const Header = () => {
         <Toolbar>  
           <Typography variant="h6" 
             component="div" sx={{ flexGrow: 1 }}>
-            GeeksforGeeks Header
+
 
             <input type="file" onChange={onFileChange} />
             <button onClick={onFileUpload}>
                   Upload!
                 </button>
                 {fileData()}
-            <img src="https://www.w3schools.com/images/lamp.jpg"/>
+
           </Typography>
           <button className="button" onClick={handleLogout}>
                         Logout
