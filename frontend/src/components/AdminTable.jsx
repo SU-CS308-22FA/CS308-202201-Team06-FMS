@@ -9,6 +9,7 @@ import { Document, Page } from "react-pdf";
 import FilePreviewModal from "./FilePreviewModal";
 import AdminTeamCreateModal from "./AdminTeamCreateModal";
 import AdminTeamUpdateModal from "./AdminTeamUpdateModal";
+import RegisterAdmin from "./RegisterAdmin";
 
 const AdminTable = ({ loggedInAdmin }) => {
     const [adminToken] = useContext(AdminContext);
@@ -18,6 +19,7 @@ const AdminTable = ({ loggedInAdmin }) => {
     const [itemList, setItemList] = useState([]);
     const [childLoading, setChildLoading] = useState(false);
     const [activeModal, setActiveModal] = useState(false);
+    const [activeAdminCreate, setActiveAdminCreate] = useState(false);
     const [activeCreate, setActiveCreate] = useState(false);
     const [activeUpdate, setActiveUpdate] = useState(false);
     const [teamName, setTeamName] = useState("");
@@ -81,7 +83,7 @@ const AdminTable = ({ loggedInAdmin }) => {
 
     const handleVerify = async (teamName, itemName) => {
         const requestOptions = {
-            method: "PUT",    
+            method: "PUT",
             headers: {
                 Authorization: "Bearer " + adminToken
             },
@@ -99,7 +101,7 @@ const AdminTable = ({ loggedInAdmin }) => {
 
     const handleReject = async (teamName, itemName) => {
         const requestOptions = {
-            method: "PUT",    
+            method: "PUT",
             headers: {
                 Authorization: "Bearer " + adminToken
             },
@@ -128,6 +130,11 @@ const AdminTable = ({ loggedInAdmin }) => {
         setItemName(null);
     }
 
+    const handleCreateAdminModal = async () => {
+        setActiveAdminCreate(!activeAdminCreate);
+        setErrorMessage(null);
+    }
+
     const handleCreate = async () => {
         setActiveCreate(!activeCreate);
         setErrorMessage(null);
@@ -141,9 +148,9 @@ const AdminTable = ({ loggedInAdmin }) => {
         getTeams();
     }
 
-    const handleDownload = async (itemName,teamName) => {
+    const handleDownload = async (itemName, teamName) => {
         const requestOptions = {
-            method: "GET",    
+            method: "GET",
             headers: {
                 Authorization: "Bearer " + adminToken
             },
@@ -165,69 +172,77 @@ const AdminTable = ({ loggedInAdmin }) => {
             else
                 filename = filename.replace(/['"]/g, '');
 
-        response.arrayBuffer().then(function(buffer) {
-          const url = window.URL.createObjectURL(new Blob([buffer]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", filename); //or any other extension
-          document.body.appendChild(link);
-          link.click();
-        });
+            response.arrayBuffer().then(function (buffer) {
+                const url = window.URL.createObjectURL(new Blob([buffer]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", filename); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+            });
 
         }
     }
 
-    const NoDocMessage = ({isRejected}) => {
-        if (isRejected){
+    const NoDocMessage = ({ isRejected }) => {
+        if (isRejected) {
             return null
         }
-        
-        return <p className = "has-text-weight-bold has-text-warning-dark">No docs</p>
+
+        return <p className="has-text-weight-bold has-text-warning-dark">No docs</p>
     }
 
-    const VerifyButton = ({itemName, teamName, isVerified}) => {
-        if (isVerified){
-            return <button className="button mr-2 is-danger is-light" onClick={() => handleVerify(teamName, itemName)}>Revoke</button> 
+    const VerifyButton = ({ itemName, teamName, isVerified }) => {
+        if (isVerified) {
+            return <button className="button mr-2 is-danger is-light" onClick={() => handleVerify(teamName, itemName)}>Revoke</button>
         }
-        return <button className="button mr-2 is-success is-light" onClick={() => handleVerify(teamName, itemName)}>Verify</button> 
+        return <button className="button mr-2 is-success is-light" onClick={() => handleVerify(teamName, itemName)}>Verify</button>
     }
 
-    const RejectButton = ({itemName, teamName}) => {
+    const RejectButton = ({ itemName, teamName }) => {
         return <button className="button mr-2 is-danger" onClick={() => handleReject(teamName, itemName)}>Reject</button>
     }
 
-    const PreviewButton = ({itemName, teamName}) => {
-        return <button className="button mr-2 is-info" onClick={() => {handlePreview(itemName, teamName)}}>Preview</button>
+    const PreviewButton = ({ itemName, teamName }) => {
+        return <button className="button mr-2 is-info" onClick={() => { handlePreview(itemName, teamName) }}>Preview</button>
     }
 
-    const DownloadButton = ({itemName, teamName}) => {
-        return <button className="button mr-2 is-success" onClick={() => {handleDownload(itemName, teamName)}}>Download</button>
+    const DownloadButton = ({ itemName, teamName }) => {
+        return <button className="button mr-2 is-success" onClick={() => { handleDownload(itemName, teamName) }}>Download</button>
     }
 
-    const UpdateButton = ({teamName}) => {
-        return <button className="button mr-2 is-info is-light" onClick={() => {handleUpdate(teamName)}}>Update</button>
+    const UpdateButton = ({ teamName }) => {
+        return <button className="button mr-2 is-info is-light" onClick={() => { handleUpdate(teamName) }}>Update</button>
     }
 
     if (loggedInAdmin) {
         return (
 
             <>
-                <FilePreviewModal 
-                teamName={teamName}
-                itemName={itemName}
-                active={activeModal}
-                handleModal={handleModal}
+                <FilePreviewModal
+                    teamName={teamName}
+                    itemName={itemName}
+                    active={activeModal}
+                    handleModal={handleModal}
+                />
+
+                <RegisterAdmin
+                    loggedInAdmin={loggedInAdmin}
+                    active={activeAdminCreate}
+                    handleModal={handleCreateAdminModal}
                 />
 
                 <AdminTeamCreateModal
-                active={activeCreate}
-                handleModal={handleCreate}
+                    active={activeCreate}
+                    handleModal={handleCreate}
                 />
-                
+
+                <DeleteTeamAdmin/>
+
                 <AdminTeamUpdateModal
-                name={teamName}
-                active={activeUpdate}
-                handleModal={handleUpdate}
+                    name={teamName}
+                    active={activeUpdate}
+                    handleModal={handleUpdate}
                 />
 
                 <ErrorMessage message={errorMessage} />
@@ -235,9 +250,10 @@ const AdminTable = ({ loggedInAdmin }) => {
                     <div className="rows">
                         <div className="columns">
                             <div className="column">
-                            <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveCreate(true)}>
-                                Register Team
-                            </button>
+
+                                <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveCreate(true)}>
+                                    Register Team
+                                </button>
 
                                 <table className="table table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
@@ -263,8 +279,11 @@ const AdminTable = ({ loggedInAdmin }) => {
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>                        
+                            </div>
                             <div className="column">
+                                <button className="button is-fullwidth mb-5 is-warning" onClick={() => setActiveAdminCreate(true)}>
+                                    Register Admin
+                                </button>
                                 <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
@@ -283,18 +302,18 @@ const AdminTable = ({ loggedInAdmin }) => {
                                                 <td>{item.amount}</td>
                                                 <td>
                                                     {(item.support_docs && !item.doc_rejected) ? (
-                                                    <VerifyButton 
-                                                        itemName={item.item_name} 
-                                                        teamName={item.team_name}
-                                                        isVerified={item.doc_verified}
-                                                    />) : 
-                                                    
-                                                    (<NoDocMessage isRejected={item.doc_rejected} />)
+                                                        <VerifyButton
+                                                            itemName={item.item_name}
+                                                            teamName={item.team_name}
+                                                            isVerified={item.doc_verified}
+                                                        />) :
+
+                                                        (<NoDocMessage isRejected={item.doc_rejected} />)
                                                     }
-                                                    {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
-                                                    {(item.support_docs && !item.doc_rejected) ? (<DownloadButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
-                                                    {(item.support_docs && !item.doc_rejected) ? (<PreviewButton itemName={item.item_name} teamName={item.team_name}/>) : (null)}
-                                                    {(item.doc_rejected) ? (<p className = "has-text-weight-bold has-text-danger">Rejected</p>) : (null)}    
+                                                    {(item.support_docs && !item.doc_rejected) ? (<RejectButton itemName={item.item_name} teamName={item.team_name} />) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<DownloadButton itemName={item.item_name} teamName={item.team_name} />) : (null)}
+                                                    {(item.support_docs && !item.doc_rejected) ? (<PreviewButton itemName={item.item_name} teamName={item.team_name} />) : (null)}
+                                                    {(item.doc_rejected) ? (<p className="has-text-weight-bold has-text-danger">Rejected</p>) : (null)}
                                                 </td>
                                             </tr>
                                         ))}
