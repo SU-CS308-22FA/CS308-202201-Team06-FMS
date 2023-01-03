@@ -23,7 +23,7 @@ const RegisterAdmin = ({ loggedInAdmin, active, handleModal }) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + adminToken   
+                Authorization: "Bearer " + adminToken
             },
             body: JSON.stringify({ email: email, first_name: name, last_name: surname, pass_hash: password })
         };
@@ -63,7 +63,7 @@ const RegisterAdmin = ({ loggedInAdmin, active, handleModal }) => {
                             Register New Admin
                         </h1>
                     </header>
-                    <div className="column">
+                    <section className="mnodal-card-body">
                         <form className="box" onSubmit={handleSubmit}>
                             <h1 className="title has-text-centered">Register New Admin</h1>
 
@@ -149,7 +149,7 @@ const RegisterAdmin = ({ loggedInAdmin, active, handleModal }) => {
                             </button>
 
                         </form>
-                    </div>
+                    </section>
                 </div>
             </div>
 

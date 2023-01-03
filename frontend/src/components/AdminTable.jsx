@@ -237,7 +237,7 @@ const AdminTable = ({ loggedInAdmin }) => {
                     handleModal={handleCreate}
                 />
 
-
+                <DeleteTeamAdmin/>
 
                 <AdminTeamUpdateModal
                     name={teamName}
@@ -250,9 +250,7 @@ const AdminTable = ({ loggedInAdmin }) => {
                     <div className="rows">
                         <div className="columns">
                             <div className="column">
-                                <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveAdminCreate(true)}>
-                                    Register Admin
-                                </button>
+
                                 <button className="button is-fullwidth mb-5 is-primary" onClick={() => setActiveCreate(true)}>
                                     Register Team
                                 </button>
@@ -283,6 +281,9 @@ const AdminTable = ({ loggedInAdmin }) => {
                                 </table>
                             </div>
                             <div className="column">
+                                <button className="button is-fullwidth mb-5 is-warning" onClick={() => setActiveAdminCreate(true)}>
+                                    Register Admin
+                                </button>
                                 <table className="table is-fullwidth is-bordered is-striped is-narrow is-hoverable">
                                     <thead>
                                         <tr>
