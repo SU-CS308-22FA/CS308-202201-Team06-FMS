@@ -20,6 +20,7 @@ const Header = () => {
     const [adminToken, setAdminToken, adminLogin, setAdminLogin] = useContext(AdminContext);
     const [selectedFile, setSelectedFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const [img, setImg] = useState();
     const [teamToken, setTeamToken, teamLogin, setTeamLogin, teamName, setTeamName] = useContext(TeamContext);
 
     const getPicture = async () =>{
@@ -35,8 +36,11 @@ const Header = () => {
             setErrorMessage(response2.status);
         }
         else {
-            //const data2 = await response2.json();
-            console.log(response2);
+            const data2 = await response2.blob();
+            console.log(data2);
+            const imageObjectURL = URL.createObjectURL(data2);
+            setImg(imageObjectURL);
+
         }
     }
 
@@ -44,8 +48,9 @@ const Header = () => {
     useEffect(() => {
         setTimeout(() => {
             getPicture();
+            fileData();
         }, 200)
-    }, [selectedFile]);
+    }, []);
 
 
 
@@ -94,16 +99,20 @@ const Header = () => {
 
     const fileData = () => {
      
-        if (selectedFile) {
+        if (img) {
             
           return (
             <div>
-            <img src="https://www.w3schools.com/images/lamp.jpg"/>
+            <img src={img}/>
             </div>
           );
         } else {
           return (
             <div>
+            <input type="file" onChange={onFileChange} />
+            <button onClick={onFileUpload}>
+                  Upload!
+                </button>
             </div>
           );
         }
@@ -124,11 +133,6 @@ const Header = () => {
           <Typography variant="h6" 
             component="div" sx={{ flexGrow: 1 }}>
 
-
-            <input type="file" onChange={onFileChange} />
-            <button onClick={onFileUpload}>
-                  Upload!
-                </button>
                 {fileData()}
 
           </Typography>
