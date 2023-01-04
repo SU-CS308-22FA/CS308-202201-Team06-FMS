@@ -28,7 +28,7 @@ const RegisterAdmin = ({ loggedInAdmin, active, handleModal }) => {
             body: JSON.stringify({ email: email, first_name: name, last_name: surname, pass_hash: password })
         };
 
-        const response = await fetch("/api/admins", requestOptions);
+        const response = await fetch("/api/admins/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

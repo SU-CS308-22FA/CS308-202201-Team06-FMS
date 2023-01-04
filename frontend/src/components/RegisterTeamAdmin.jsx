@@ -28,7 +28,7 @@ const RegisterTeamAdmin = ({loggedInAdmin}) => {
             body: JSON.stringify({ name: name, email: email, budget_total: budget, pass_hash: password })
         };
 
-        const response = await fetch("/api/admins/createteam", requestOptions);
+        const response = await fetch("/api/admins/createteam/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

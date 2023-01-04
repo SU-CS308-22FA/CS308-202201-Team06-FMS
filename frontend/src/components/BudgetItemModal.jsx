@@ -27,7 +27,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
                     Authorization: "Bearer " + teamToken,
                 },
             };
-            const response = await fetch(`/api/teams/getspecificitembyid/` + teamName + `/` + id, requestOptions);
+            const response = await fetch(`/api/teams/getspecificitembyid/` + teamName + `/` + id + "/", requestOptions);
 
             if (!response.ok) {
                 setErrorMessage("Could not get the item!");
@@ -66,7 +66,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
 
         };
 
-        const response = await fetch("/api/teams/createitem", requestOptions);
+        const response = await fetch("/api/teams/createitem/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {
@@ -100,7 +100,7 @@ const BudgetItemModal = ({ id, active, handleModal }) => {
             })
         };
         console.log(itemName, amount, teamName)
-        const response = await fetch(`/api/teams/updateitembyid/` + teamName + `/` + id, requestOptions);
+        const response = await fetch(`/api/teams/updateitembyid/` + teamName + `/` + id + "/", requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Item names must be unique!");

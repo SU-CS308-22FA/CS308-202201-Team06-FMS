@@ -48,7 +48,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch(`/api/teams/deleteitem/` + teamName + "/" + item_name, requestOptions);
+        const response = await fetch(`/api/teams/deleteitem/` + teamName + "/" + item_name + "/", requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Failed to delete item");
@@ -74,7 +74,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch("/api/teams/getitems", requestOptions);
+        const response = await fetch("/api/teams/getitems/", requestOptions);
         if (!response.ok) {
             setErrorMessage("Ooops, budget table could not be loaded! Refresh the page and try again.");
         }
@@ -119,7 +119,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch("/api/teams/getdocs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/teams/getdocs/" + teamName + "/" + itemName + "/", requestOptions);
 
         if (!response.ok) {
             const data = await response.json();
@@ -173,7 +173,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch("/api/teams/exporttable/" + teamName , requestOptions);
+        const response = await fetch("/api/teams/exporttable/" + teamName + "/" , requestOptions);
 
         if (!response.ok) {
             const data = await response.json();
@@ -210,7 +210,7 @@ const TeamBudgetTable = ({ loggedInTeam }) => {
             },
         };
 
-        const response = await fetch("/api/teams/setprivate/" + teamName + "/" + id, requestOptions);
+        const response = await fetch("/api/teams/setprivate/" + teamName + "/" + id + "/", requestOptions);
 
         if (!response.ok) {
             const data = await response.json();

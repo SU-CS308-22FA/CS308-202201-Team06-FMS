@@ -31,7 +31,7 @@ const AdminTeamUpdateModal = ({ name, active, handleModal }) => {
                     Authorization: "Bearer " + adminToken,
                 },
             };
-            const response = await fetch(`/api/admins/` + name, requestOptions);
+            const response = await fetch(`/api/admins/` + name + "/", requestOptions);
 
             if (!response.ok) {
                 setErrorMessage("Could not get the team!");
@@ -88,7 +88,7 @@ const AdminTeamUpdateModal = ({ name, active, handleModal }) => {
 
         };
 
-        const response = await fetch("/api/admins/updateteam/" + name, requestOptions);
+        const response = await fetch("/api/admins/updateteam/" + name + "/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

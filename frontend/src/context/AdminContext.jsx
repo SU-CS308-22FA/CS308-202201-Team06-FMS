@@ -22,7 +22,7 @@ export const AdminProvider = (props) => {
             };
             
             // Get response
-            const response = await fetch("/api/admins/me", requestOptions);
+            const response = await fetch("/api/admins/me/", requestOptions);
 
             if (!response.ok){
                 setToken(null);

@@ -37,7 +37,7 @@ const Header = () => {
                 Authorization: "Bearer " + adminToken,
             },
         };
-        const response2 = await fetch("/api/admins/getpic/" + "a@a", requestOptions2);
+        const response2 = await fetch("/api/admins/getpic/" + "a@a/", requestOptions2);
         if (!response2.ok) {
             console.log(response2.detail);
             setErrorMessage(response2.status);
@@ -57,7 +57,7 @@ const Header = () => {
                 Authorization: "Bearer " + teamToken,
             },
         };
-        const response2 = await fetch("/api/teams/getpic/" + "b@b", requestOptions2);
+        const response2 = await fetch("/api/teams/getpic/" + "b@b/", requestOptions2);
         if (!response2.ok) {
             console.log(response2.status);
             setErrorMessage(response2.status);
@@ -109,7 +109,7 @@ const Header = () => {
             body: formData
         };
 
-        const response = await fetch("/api/admins/profilepics/" + "a@a", requestOptions);
+        const response = await fetch("/api/admins/profilepics/" + "a@a/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {
@@ -128,7 +128,7 @@ const Header = () => {
             body: formData
         };
 
-        const response = await fetch("/api/teams/profilepics/" + "b@b", requestOptions);
+        const response = await fetch("/api/teams/profilepics/" + "b@b/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {
@@ -147,7 +147,7 @@ const Header = () => {
             },
         };
 
-        const response = await fetch("/api/admins/deletepic/" + "a@a", requestOptions);
+        const response = await fetch("/api/admins/deletepic/" + "a@a/", requestOptions);
         const data = await response.json();
 
         setImg("");
@@ -160,7 +160,7 @@ const Header = () => {
             },
         };
 
-        const response = await fetch("/api/teams/deletepic/" + "b@b", requestOptions);
+        const response = await fetch("/api/teams/deletepic/" + "b@b/", requestOptions);
         const data = await response.json();
 
         setImg("");

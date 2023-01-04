@@ -27,7 +27,7 @@ export const TeamProvider = (props) => {
             };
 
             // Get response
-            const response = await fetch("/api/teams/me", requestOptions);
+            const response = await fetch("/api/teams/me/", requestOptions);
 
             if (!response.ok) {
                 setToken(null);

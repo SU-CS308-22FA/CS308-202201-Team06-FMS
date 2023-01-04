@@ -60,7 +60,7 @@ const AdminTeamCreateModal = ({ active, handleModal }) => {
 
         };
 
-        const response = await fetch("/api/admins/createteam", requestOptions);
+        const response = await fetch("/api/admins/createteam/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

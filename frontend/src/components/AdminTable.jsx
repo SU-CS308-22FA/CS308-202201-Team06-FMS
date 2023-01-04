@@ -35,7 +35,7 @@ const AdminTable = ({ loggedInAdmin }) => {
             },
         };
 
-        const response = await fetch('/api/admins/deleteteam/' + name, requestOptions);
+        const response = await fetch('/api/admins/deleteteam/' + name + "/", requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Team not found in database!");
@@ -113,7 +113,7 @@ const AdminTable = ({ loggedInAdmin }) => {
             },
         };
 
-        const response = await fetch("/api/admins/verifydocs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/admins/verifydocs/" + teamName + "/" + itemName + "/", requestOptions);
 
         if (!response.ok) {
             const data = await response.json();
@@ -131,7 +131,7 @@ const AdminTable = ({ loggedInAdmin }) => {
             },
         };
 
-        const response = await fetch("/api/admins/rejectdocs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/admins/rejectdocs/" + teamName + "/" + itemName + "/", requestOptions);
 
         if (!response.ok) {
             const data = await response.json();
@@ -182,7 +182,7 @@ const AdminTable = ({ loggedInAdmin }) => {
             },
         };
 
-        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName + "/", requestOptions);
 
         if (!response.ok) {
             const data = await response.json();

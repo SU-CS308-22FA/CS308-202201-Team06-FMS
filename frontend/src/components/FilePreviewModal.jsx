@@ -42,7 +42,7 @@ const FilePreviewModal = ({teamName, itemName, active, handleModal}) => {
             },
         };
 
-        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/admins/getdocs/" + teamName + "/" + itemName + "/", requestOptions);
 
         if (response.ok) {
 

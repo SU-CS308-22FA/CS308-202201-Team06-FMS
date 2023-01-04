@@ -32,7 +32,7 @@ const TableImportModal = ({ active, handleImport }) => {
             body: formData
         };
 
-        const response = await fetch("/api/teams/importtable/" + teamName, requestOptions);
+        const response = await fetch("/api/teams/importtable/" + teamName + "/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

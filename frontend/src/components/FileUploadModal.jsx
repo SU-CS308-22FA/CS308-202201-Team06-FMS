@@ -35,7 +35,7 @@ const FileUploadModal = ({ active, handleUpload, itemName, uploadStatus }) => {
             body: formData
         };
 
-        const response = await fetch("/api/teams/docs/" + teamName + "/" + itemName, requestOptions);
+        const response = await fetch("/api/teams/docs/" + teamName + "/" + itemName + "/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

@@ -29,7 +29,7 @@ const UpdateTeamAdmin = ({loggedInAdmin}) => {
             body: JSON.stringify({ name: name, email: email, budget_total: budget, pass_hash: password })
         };
 
-        const response = await fetch('/api/admins/updateteam/' + namedb, requestOptions);
+        const response = await fetch('/api/admins/updateteam/' + namedb + "/", requestOptions);
 
         if (!response.ok) {
             setErrorMessage("Team not found in database!");

@@ -37,7 +37,7 @@ async def startup():
 #*************************
 #       ROOT
 #*************************
-@app.get("/api")
+@app.get("/api/")
 async def root():
     return {"message" : "Welcome to the Financial Management System by Team 06"}
 
@@ -46,7 +46,7 @@ async def root():
 #       ADMIN + TEAM
 #*************************
 
-@app.post("/api/tokens")
+@app.post("/api/tokens/")
 async def generate_token(
     form_data: _security.OAuth2PasswordRequestForm = _fastapi.Depends(), 
     db: _orm.Session = _fastapi.Depends(_services.get_db)
@@ -70,7 +70,7 @@ async def generate_token(
 #*************************
 
 # Create admin user
-@app.post("/api/admins")
+@app.post("/api/admins/")
 async def create_admin(
     admin: _schemas.AdminCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), adminAuth: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
@@ -84,12 +84,12 @@ async def create_admin(
     return await _services.create_admin(admin, db)
 
 # Get current admin user
-@app.get("/api/admins/me", response_model=_schemas.Admin)
+@app.get("/api/admins/me/", response_model=_schemas.Admin)
 async def get_admin(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)):
     return admin
 
 # Create Team user
-@app.post("/api/admins/createteam")
+@app.post("/api/admins/createteam/")
 async def create_team(
     team: _schemas.TeamCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
@@ -109,7 +109,7 @@ async def create_team(
     #return await _services.create_team_token(teamObj)
 
 # Get Team user
-@app.get("/api/admins/{team_name}", status_code = 200)
+@app.get("/api/admins/{team_name}/", status_code = 200)
 async def admin_get_team(team_name: str, admin : _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_team_admin(team_name = team_name, db = db)
 
@@ -119,18 +119,18 @@ async def get_teams(admin: _schemas.Admin = _fastapi.Depends(_services.get_curre
 
 
 # Update Team user
-@app.put("/api/admins/updateteam/{team_name}", status_code = 200)
+@app.put("/api/admins/updateteam/{team_name}/", status_code = 200)
 async def admin_update_team(team_name : str, team: _schemas.TeamCreate, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_team_admin(team_name = team_name, team = team, db = db)
 
 # Delete Team user
-@app.delete("/api/admins/deleteteam/{team_name}", status_code = 204)
+@app.delete("/api/admins/deleteteam/{team_name}/", status_code = 204)
 async def admin_delete_team(team_name: str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_team_admin(team_name = team_name, db = db)
     return {"message" : "Successfully Deleted"}
 
 # Create budget item - Admin
-@app.post("/api/admins/createitem", response_model=_schemas.BudgetItem)
+@app.post("/api/admins/createitem/", response_model=_schemas.BudgetItem)
 async def admin_create_item(budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin)
 ):
 
@@ -167,47 +167,47 @@ async def get_all_items(admin: _schemas.Admin = _fastapi.Depends(_services.get_c
     return await _services.get_all_items(db = db)
 
 # Get a specific budget item - Admin
-@app.get("/api/admins/getspecificitem/{team_name}/{item_name}", status_code=200)
+@app.get("/api/admins/getspecificitem/{team_name}/{item_name}/", status_code=200)
 async def admin_get_item(team_name: str, item_name : str , admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_admin(item_name = item_name, team_name = team_name, db = db)
 
 # Delete a specific budget item - Admin
-@app.delete("/api/admins/deleteitem/{team_name}/{item_name}", status_code = 204)
+@app.delete("/api/admins/deleteitem/{team_name}/{item_name}/", status_code = 204)
 async def admin_delete_item(team_name: str, item_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_item_admin(team_name = team_name, item_name = item_name, db = db)
     return {"message" : "Successfully Deleted"}
 
 # Update a specific budget item - Admin
-@app.put("/api/admins/updateitem/{team_name}/{item_name}", status_code = 200)
+@app.put("/api/admins/updateitem/{team_name}/{item_name}/", status_code = 200)
 async def admin_update_item(team_name : str, item_name : str, budgetItem: _schemas._BudgetItemBase, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_admin(team_name = team_name, item_name = item_name, budgetItem = budgetItem, db = db)
 
 # Download item - Admin
-@app.get("/api/admins/getdocs/{team_name}/{item_name}")
+@app.get("/api/admins/getdocs/{team_name}/{item_name}/")
 async def admin_get_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
 # Verify item - Admin
-@app.put("/api/admins/verifydocs/{team_name}/{item_name}")
+@app.put("/api/admins/verifydocs/{team_name}/{item_name}/")
 async def admin_verify_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.verify_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
 # Reject item - Admin
-@app.put("/api/admins/rejectdocs/{team_name}/{item_name}")
+@app.put("/api/admins/rejectdocs/{team_name}/{item_name}/")
 async def admin_reject_docs(item_name : str, team_name : str, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.reject_docs_admin(item_name = item_name, team_name = team_name, db = db)
 
 
 # Get admin profile picture
-@app.post("/api/admins/profilepics/{email}")
+@app.post("/api/admins/profilepics/{email}/")
 async def admin_get_profilepic(file: _fastapi.UploadFile, admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session= _fastapi.Depends(_services.get_db)):
     return await _services.upload_admin_pic(file = file, admin = admin, db = db)
 
-@app.get("/api/admins/getpic/{email}")
+@app.get("/api/admins/getpic/{email}/")
 async def admin_get_pic(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.admin_pic_get(admin = admin, db = db)
 
-@app.delete("/api/admins/deletepic/{email}")
+@app.delete("/api/admins/deletepic/{email}/")
 async def admin_delete_pic(admin: _schemas.Admin = _fastapi.Depends(_services.get_current_admin), db: _orm.Session= _fastapi.Depends(_services.get_db)):
     return await _services.admin_pic_delete(admin = admin, db = db)
 #*************************
@@ -216,12 +216,12 @@ async def admin_delete_pic(admin: _schemas.Admin = _fastapi.Depends(_services.ge
 
 
 # Get current team user
-@app.get("/api/teams/me", response_model=_schemas.Team)
+@app.get("/api/teams/me/", response_model=_schemas.Team)
 async def get_team(team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
     return team
 
 # Create budget item - Team
-@app.post("/api/teams/createitem", response_model=_schemas.BudgetItem)
+@app.post("/api/teams/createitem/", response_model=_schemas.BudgetItem)
 async def team_create_item(
     budgetItem: _schemas.BudgetItemCreate, db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)
 ):
@@ -262,70 +262,70 @@ async def team_create_item(
     return await _services.create_budget_item(budgetItem, db)
 
 # Get all budget items - Team
-@app.get("/api/teams/getitems", response_model= List[_schemas.BudgetItem])
+@app.get("/api/teams/getitems/", response_model= List[_schemas.BudgetItem])
 async def team_get_items(db:_orm.Session = _fastapi.Depends(_services.get_db), team: _schemas.Team = _fastapi.Depends(_services.get_current_team)):
     return await _services.get_items_team(team = team, db = db)
 
 # Get a specific budget item - Team
-@app.get("/api/teams/getspecificitem/{team_name}/{item_name}", status_code=200)
+@app.get("/api/teams/getspecificitem/{team_name}/{item_name}/", status_code=200)
 async def team_get_item(item_name : str, team_name: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_team(item_name = item_name, team = team, db = db)
 
 # Delete a specific budget item - Team
-@app.delete("/api/teams/deleteitem/{team_name}/{item_name}", status_code = 204)
+@app.delete("/api/teams/deleteitem/{team_name}/{item_name}/", status_code = 204)
 async def team_delete_item(item_name : str, team_name: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     await _services.delete_item_team(item_name = item_name, team = team, db = db)
     return {"message" : "Successfully Deleted"}
 
 # Update a specific budget item - Team
-@app.put("/api/teams/updateitem/{team_name}/{item_name}", status_code = 200)
+@app.put("/api/teams/updateitem/{team_name}/{item_name}/", status_code = 200)
 async def team_update_item(item_name : str, team_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_team(item_name = item_name, budgetItem = budgetItem, team = team, db = db)
 
 # Upload supporting docs for a specific budget item - Team
-@app.post("/api/teams/docs/{team_name}/{item_name}")
+@app.post("/api/teams/docs/{team_name}/{item_name}/")
 async def team_add_docs(item_name : str, team_name : str, file : _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.add_docs_team(item_name = item_name, file = file, team = team, db = db)
 
 # Download supporting docs for a specific budget item - Team
-@app.get("/api/teams/getdocs/{team_name}/{item_name}")
+@app.get("/api/teams/getdocs/{team_name}/{item_name}/")
 async def team_get_docs(item_name : str, team_name : str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_docs_team(item_name = item_name, team = team, db = db)
 
 # Get specific budget item by id - Team
-@app.get("/api/teams/getspecificitembyid/{team_name}/{id}", status_code=200)
+@app.get("/api/teams/getspecificitembyid/{team_name}/{id}/", status_code=200)
 async def team_get_item_id(team_name : str, id: int, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.get_item_id(team = team, id = id, db = db)
 
 # Update specific budget item by id - Team
 # Update a specific budget item - Team
-@app.put("/api/teams/updateitembyid/{team_name}/{id}", status_code = 200)
+@app.put("/api/teams/updateitembyid/{team_name}/{id}/", status_code = 200)
 async def team_update_item_id(id : int, team_name: str, budgetItem: _schemas._BudgetItemBase, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.update_item_id(id = id, budgetItem = budgetItem, team = team, db = db)
 
 # Export table - Team
-@app.get("/api/teams/exporttable/{team_name}")
+@app.get("/api/teams/exporttable/{team_name}/")
 async def team_export_table(team_name : str, team : _schemas.Team = _fastapi.Depends(_services.get_current_team), db : _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.export_table_team(team = team, db = db)
 
 # Import table - Team
-@app.post("/api/teams/importtable/{team_name}")
+@app.post("/api/teams/importtable/{team_name}/")
 async def team_import_table(team_name : str, file : _fastapi.UploadFile, team : _schemas.Team = _fastapi.Depends(_services.get_current_team), db : _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.import_table_team(team = team, db = db, file=file)
 
 # Private item - Team
-@app.put("/api/teams/setprivate/{team_name}/{id}", status_code = 200)
+@app.put("/api/teams/setprivate/{team_name}/{id}/", status_code = 200)
 async def team_private_toggle(id : int, team_name: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db:_orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.private_item_id(id = id, team = team, db = db)
 
-@app.post("/api/teams/profilepics/{email}")
+@app.post("/api/teams/profilepics/{email}/")
 async def team_get_profilepic(file: _fastapi.UploadFile, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db: _orm.Session= _fastapi.Depends(_services.get_db)):
     return await _services.upload_team_pic(file = file, team = team, db = db)
 
-@app.get("/api/teams/getpic/{email}")
+@app.get("/api/teams/getpic/{email}/")
 async def team_get_pic(email: str, team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db: _orm.Session = _fastapi.Depends(_services.get_db)):
     return await _services.team_pic_get(team = team, db = db)
 
-@app.delete("/api/teams/deletepic/{email}")
+@app.delete("/api/teams/deletepic/{email}/")
 async def team_delete_pic(team: _schemas.Team = _fastapi.Depends(_services.get_current_team), db: _orm.Session= _fastapi.Depends(_services.get_db)):
     return await _services.team_pic_delete(team = team, db = db)

@@ -26,7 +26,7 @@ const TeamLogin = () => {
             ),
         };
 
-        const response = await fetch("/api/tokens", requestOptions);
+        const response = await fetch("/api/tokens/", requestOptions);
         const data = await response.json();
 
         if (!response.ok) {

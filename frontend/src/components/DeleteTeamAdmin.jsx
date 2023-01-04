@@ -23,7 +23,7 @@ const DeleteTeamAdmin = ({loggedInAdmin}) => {
             },
         };
 
-        const response = await fetch('/api/admins/deleteteam/' + name, requestOptions);
+        const response = await fetch('/api/admins/deleteteam/' + name + "/", requestOptions);
 
         if (!response.ok){
             setErrorMessage("Team not found in database!");
