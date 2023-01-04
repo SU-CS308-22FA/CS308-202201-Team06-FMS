@@ -85,7 +85,6 @@ const App = () => {
                     <AdminTable loggedInAdmin={adminLogin}/>
                     <div className="columns">
                       <RegisterAdmin loggedInAdmin={adminLogin} />
-                      <DeleteTeamAdmin loggedInAdmin={adminLogin} />
                     </div>
                   </div>
                 </div>
