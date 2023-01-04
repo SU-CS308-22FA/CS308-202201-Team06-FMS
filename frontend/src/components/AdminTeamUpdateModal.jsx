@@ -34,6 +34,7 @@ const AdminTeamUpdateModal = ({ name, active, handleModal }) => {
             const response = await fetch(`/api/admins/getteam/` + name + "/", requestOptions);
 
             if (!response.ok) {
+                console.log("aaaaaa")
                 setErrorMessage("Could not get the team!");
             } else {
                 const data = await response.json();

@@ -270,7 +270,7 @@ const AdminTable = ({ loggedInAdmin }) => {
 
 
                 <AdminTeamUpdateModal
-                    tName={teamName}
+                    name={teamName}
                     loggedInAdmin={loggedInAdmin}
                     active={activeUpdate}
                     handleModal={handleUpdate}
