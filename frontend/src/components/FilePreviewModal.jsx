@@ -87,7 +87,7 @@ const FilePreviewModal = ({teamName, itemName, active, handleModal}) => {
                     </h1>
                 </header>
                 <section className="modal-card-body">
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.1.81/build/pdf.worker.min.js">
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.2.146/build/pdf.worker.min.js">
                     <div
                         style={{
                             height: '100%',
